@@ -1,146 +1,118 @@
-2026-05-07 00:30:28 | INFO     | ai-search | [BUILD AGENT GRAPH] Graph compiled successfully
-2026-05-07 00:30:28 | INFO     | ai-search | [BUILD AGENT GRAPH] Graph compiled successfully
-2026-05-07 00:30:49 | INFO     | ai-search | [AGENT RUN] Starting pipeline for: 'aziende piastrelle bari'
-2026-05-07 00:30:49 | INFO     | ai-search | [SEARCH NODE] Query: aziende piastrelle bari
-2026-05-07 00:30:50 | INFO     | ai-search | [SEARCH NODE] Found 15 results
-2026-05-07 00:30:50 | INFO     | ai-search | [SCRAPE NODE] Processing 15 URLs
-2026-05-07 00:30:50 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:50 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.edilpugliese.it/
-2026-05-07 00:30:50 | INFO     | ai-search | [FETCH] Downloading: https://www.edilpugliese.it/
-2026-05-07 00:30:50 | INFO     | ai-search | [FETCH] Success: https://www.edilpugliese.it/
-2026-05-07 00:30:50 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 3987 characters
-2026-05-07 00:30:50 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.edilpugliese.it/chi-siamo/
-2026-05-07 00:30:50 | INFO     | ai-search | [FETCH] Downloading: https://www.edilpugliese.it/chi-siamo/
-2026-05-07 00:30:51 | INFO     | ai-search | [FETCH] Success: https://www.edilpugliese.it/chi-siamo/
-2026-05-07 00:30:51 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 1475 characters
-2026-05-07 00:30:51 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.edilpugliese.it/
-2026-05-07 00:30:51 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:51 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:51 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.larucciadesign.it/prodotti/pavimenti-e-rivestimenti/
-2026-05-07 00:30:51 | INFO     | ai-search | [FETCH] Downloading: https://www.larucciadesign.it/prodotti/pavimenti-e-rivestimenti/
-2026-05-07 00:30:51 | ERROR    | ai-search | [FETCH ERROR] https://www.larucciadesign.it/prodotti/pavimenti-e-rivestimenti/ -> 403 Client Error: Forbidden for url: https://www.larucciadesign.it/prodotti/pavimenti-e-rivestimenti/
-2026-05-07 00:30:51 | WARNING  | ai-search | [SCRAPING FAILED] Could not fetch homepage: https://www.larucciadesign.it/prodotti/pavimenti-e-rivestimenti/
-2026-05-07 00:30:51 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:51 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.menolascina.it/
-2026-05-07 00:30:51 | INFO     | ai-search | [FETCH] Downloading: https://www.menolascina.it/
-2026-05-07 00:30:53 | INFO     | ai-search | [FETCH] Success: https://www.menolascina.it/
-2026-05-07 00:30:53 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 3712 characters
-2026-05-07 00:30:53 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.menolascina.it/chi-siamo/
-2026-05-07 00:30:53 | INFO     | ai-search | [FETCH] Downloading: https://www.menolascina.it/chi-siamo/
-2026-05-07 00:30:55 | INFO     | ai-search | [FETCH] Success: https://www.menolascina.it/chi-siamo/
-2026-05-07 00:30:55 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 1248 characters
-2026-05-07 00:30:55 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.menolascina.it/
-2026-05-07 00:30:55 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:55 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:55 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.posapavimentierivestimenti.it/
-2026-05-07 00:30:55 | INFO     | ai-search | [FETCH] Downloading: https://www.posapavimentierivestimenti.it/
-2026-05-07 00:30:56 | INFO     | ai-search | [FETCH] Success: https://www.posapavimentierivestimenti.it/
-2026-05-07 00:30:56 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 2227 characters
-2026-05-07 00:30:56 | WARNING  | ai-search | [CONTACT PAGE NOT FOUND] https://www.posapavimentierivestimenti.it/
-2026-05-07 00:30:56 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.posapavimentierivestimenti.it/
-2026-05-07 00:30:56 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:56 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:56 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.leroymerlin.it/negozi/bari/piastrelle-e-rivestimenti-bari-lpl.html
-2026-05-07 00:30:56 | INFO     | ai-search | [FETCH] Downloading: https://www.leroymerlin.it/negozi/bari/piastrelle-e-rivestimenti-bari-lpl.html
-2026-05-07 00:30:57 | ERROR    | ai-search | [FETCH ERROR] https://www.leroymerlin.it/negozi/bari/piastrelle-e-rivestimenti-bari-lpl.html -> 403 Client Error: Forbidden for url: https://www.leroymerlin.it/negozi/bari/piastrelle-e-rivestimenti-bari-lpl.html
-2026-05-07 00:30:57 | WARNING  | ai-search | [SCRAPING FAILED] Could not fetch homepage: https://www.leroymerlin.it/negozi/bari/piastrelle-e-rivestimenti-bari-lpl.html
-2026-05-07 00:30:57 | INFO     | ai-search | ================================================================================
-2026-05-07 00:30:57 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.edilventrella.it/
-2026-05-07 00:30:57 | INFO     | ai-search | [FETCH] Downloading: https://www.edilventrella.it/
-2026-05-07 00:30:59 | INFO     | ai-search | [FETCH] Success: https://www.edilventrella.it/
-2026-05-07 00:30:59 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 2928 characters
-2026-05-07 00:30:59 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.edilventrella.it/#contatti
-2026-05-07 00:30:59 | INFO     | ai-search | [FETCH] Downloading: https://www.edilventrella.it/#contatti
-2026-05-07 00:31:02 | INFO     | ai-search | [FETCH] Success: https://www.edilventrella.it/#contatti
-2026-05-07 00:31:02 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 2928 characters
-2026-05-07 00:31:02 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.edilventrella.it/
-2026-05-07 00:31:02 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:02 | WARNING  | ai-search | [SCRAPE NODE] Skipping blacklisted: https://www.paginegialle.it/puglia/bari/ceramiche.html
-2026-05-07 00:31:02 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:02 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.ceramicheorion.it/
-2026-05-07 00:31:02 | INFO     | ai-search | [FETCH] Downloading: https://www.ceramicheorion.it/
-2026-05-07 00:31:07 | INFO     | ai-search | [FETCH] Success: https://www.ceramicheorion.it/
-2026-05-07 00:31:07 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 4806 characters
-2026-05-07 00:31:07 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.ceramicheorion.it/chi-siamo/
-2026-05-07 00:31:07 | INFO     | ai-search | [FETCH] Downloading: https://www.ceramicheorion.it/chi-siamo/
-2026-05-07 00:31:09 | INFO     | ai-search | [FETCH] Success: https://www.ceramicheorion.it/chi-siamo/
-2026-05-07 00:31:09 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 2887 characters
-2026-05-07 00:31:09 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.ceramicheorion.it/
-2026-05-07 00:31:09 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:09 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:09 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.leaceramiche.it/punti-vendita/italia/bari
-2026-05-07 00:31:09 | INFO     | ai-search | [FETCH] Downloading: https://www.leaceramiche.it/punti-vendita/italia/bari
-2026-05-07 00:31:10 | INFO     | ai-search | [FETCH] Success: https://www.leaceramiche.it/punti-vendita/italia/bari
-2026-05-07 00:31:10 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 3861 characters
-2026-05-07 00:31:10 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.leaceramiche.it/azienda/profilo-aziendale
-2026-05-07 00:31:10 | INFO     | ai-search | [FETCH] Downloading: https://www.leaceramiche.it/azienda/profilo-aziendale
-2026-05-07 00:31:11 | INFO     | ai-search | [FETCH] Success: https://www.leaceramiche.it/azienda/profilo-aziendale
-2026-05-07 00:31:11 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 4391 characters
-2026-05-07 00:31:11 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.leaceramiche.it/punti-vendita/italia/bari
-2026-05-07 00:31:11 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:11 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:11 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.pavimentisulweb.it/piastrelle-bari.html
-2026-05-07 00:31:11 | INFO     | ai-search | [FETCH] Downloading: https://www.pavimentisulweb.it/piastrelle-bari.html
-2026-05-07 00:31:11 | INFO     | ai-search | [FETCH] Success: https://www.pavimentisulweb.it/piastrelle-bari.html
-2026-05-07 00:31:11 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 7832 characters
-2026-05-07 00:31:11 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.pavimentisulweb.it/about.php
-2026-05-07 00:31:11 | INFO     | ai-search | [FETCH] Downloading: https://www.pavimentisulweb.it/about.php
-2026-05-07 00:31:12 | INFO     | ai-search | [FETCH] Success: https://www.pavimentisulweb.it/about.php
-2026-05-07 00:31:12 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 2013 characters
-2026-05-07 00:31:12 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.pavimentisulweb.it/piastrelle-bari.html
-2026-05-07 00:31:12 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:12 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:12 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.reteimprese.it/piastrelle-rivestimenti-pavimenti/bari
-2026-05-07 00:31:12 | INFO     | ai-search | [FETCH] Downloading: https://www.reteimprese.it/piastrelle-rivestimenti-pavimenti/bari
-2026-05-07 00:31:13 | INFO     | ai-search | [FETCH] Success: https://www.reteimprese.it/piastrelle-rivestimenti-pavimenti/bari
-2026-05-07 00:31:13 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 7594 characters
-2026-05-07 00:31:13 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.reteimprese.it/piastrelle-rivestimenti-pavimenti/bari/azienda/319249
-2026-05-07 00:31:13 | INFO     | ai-search | [FETCH] Downloading: https://www.reteimprese.it/piastrelle-rivestimenti-pavimenti/bari/azienda/319249
-2026-05-07 00:31:13 | INFO     | ai-search | [FETCH] Success: https://www.reteimprese.it/piastrelle-rivestimenti-pavimenti/bari/azienda/319249
-2026-05-07 00:31:14 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 2207 characters
-2026-05-07 00:31:14 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.reteimprese.it/piastrelle-rivestimenti-pavimenti/bari
-2026-05-07 00:31:14 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:14 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:14 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.europages.it/aziende/italia/bari%20e%20puglia/piastrelle-rivestimenti.html
-2026-05-07 00:31:14 | INFO     | ai-search | [FETCH] Downloading: https://www.europages.it/aziende/italia/bari%20e%20puglia/piastrelle-rivestimenti.html
-2026-05-07 00:31:15 | INFO     | ai-search | [FETCH] Success: https://www.europages.it/aziende/italia/bari%20e%20puglia/piastrelle-rivestimenti.html
-2026-05-07 00:31:15 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 4655 characters
-2026-05-07 00:31:15 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.visable.com/it_it/chi-siamo/media
-2026-05-07 00:31:15 | INFO     | ai-search | [FETCH] Downloading: https://www.visable.com/it_it/chi-siamo/media
-2026-05-07 00:31:17 | INFO     | ai-search | [FETCH] Success: https://www.visable.com/it_it/chi-siamo/media
-2026-05-07 00:31:17 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 4246 characters
-2026-05-07 00:31:17 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.europages.it/aziende/italia/bari%20e%20puglia/piastrelle-rivestimenti.html
-2026-05-07 00:31:17 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:17 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:17 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.quarantasrl.com/
-2026-05-07 00:31:17 | INFO     | ai-search | [FETCH] Downloading: https://www.quarantasrl.com/
-2026-05-07 00:31:19 | INFO     | ai-search | [FETCH] Success: https://www.quarantasrl.com/
-2026-05-07 00:31:19 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 1232 characters
-2026-05-07 00:31:19 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.quarantasrl.com/azienda/
-2026-05-07 00:31:19 | INFO     | ai-search | [FETCH] Downloading: https://www.quarantasrl.com/azienda/
-2026-05-07 00:31:20 | INFO     | ai-search | [FETCH] Success: https://www.quarantasrl.com/azienda/
-2026-05-07 00:31:20 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 1447 characters
-2026-05-07 00:31:20 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.quarantasrl.com/
-2026-05-07 00:31:20 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:20 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:20 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.ceramichesannicola.it/
-2026-05-07 00:31:20 | INFO     | ai-search | [FETCH] Downloading: https://www.ceramichesannicola.it/
-2026-05-07 00:31:22 | INFO     | ai-search | [FETCH] Success: https://www.ceramichesannicola.it/
-2026-05-07 00:31:22 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 1527 characters
-2026-05-07 00:31:22 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.ceramichesannicola.it/azienda/
-2026-05-07 00:31:22 | INFO     | ai-search | [FETCH] Downloading: https://www.ceramichesannicola.it/azienda/
-2026-05-07 00:31:26 | INFO     | ai-search | [FETCH] Success: https://www.ceramichesannicola.it/azienda/
-2026-05-07 00:31:26 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 2141 characters
-2026-05-07 00:31:26 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.ceramichesannicola.it/
-2026-05-07 00:31:26 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:26 | INFO     | ai-search | ================================================================================
-2026-05-07 00:31:26 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.iperceramica.it/it/ita/negozi/iperceramica-bari
-2026-05-07 00:31:26 | INFO     | ai-search | [FETCH] Downloading: https://www.iperceramica.it/it/ita/negozi/iperceramica-bari
-2026-05-07 00:31:26 | ERROR    | ai-search | [FETCH ERROR] https://www.iperceramica.it/it/ita/negozi/iperceramica-bari -> HTTPSConnectionPool(host='www.iperceramica.it', port=443): Max retries exceeded with url: /it/ita/negozi/iperceramica-bari (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)')))
-2026-05-07 00:31:26 | WARNING  | ai-search | [SCRAPING FAILED] Could not fetch homepage: https://www.iperceramica.it/it/ita/negozi/iperceramica-bari
-2026-05-07 00:31:26 | INFO     | ai-search | [SCRAPE NODE] Successfully scraped 14 websites
-2026-05-07 00:31:26 | INFO     | ai-search | [EXTRACT NODE] Extracting data from 14 companies
-2026-05-07 00:32:45 | INFO     | ai-search | [EXTRACT NODE] Extracted data for 14 companies
-2026-05-07 00:32:45 | INFO     | ai-search | [FINAL ANSWER NODE] Generating final answer with 14 items
-2026-05-07 00:32:45 | INFO     | ai-search | [AGENT RUN] Completed pipeline for: 'aziende piastrelle bari'
-2026-05-07 00:32:45 | INFO     | ai-search | [API RESPONSE] Query: 'aziende piastrelle bari' - Results: 14
+2026-05-07 01:09:15 | INFO     | ai-search | [BUILD AGENT GRAPH] Graph compiled successfully
+2026-05-07 01:09:15 | INFO     | ai-search | [BUILD AGENT GRAPH] Graph compiled successfully
+2026-05-07 01:09:34 | INFO     | ai-search | [SEARCH NODE] Query: aziende piastrelle matera
+2026-05-07 01:09:35 | INFO     | ai-search | [SEARCH NODE] Found 15 results
+2026-05-07 01:09:35 | INFO     | ai-search | [SCRAPE NODE] Processing 15 URLs
+2026-05-07 01:09:35 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:35 | INFO     | ai-search | [COMPANY SCRAPING START] https://edilmea.com/pavimenti-e-rivestimenti/
+2026-05-07 01:09:35 | INFO     | ai-search | [FETCH] Downloading: https://edilmea.com/pavimenti-e-rivestimenti/
+2026-05-07 01:09:35 | INFO     | ai-search | [FETCH] Success: https://edilmea.com/pavimenti-e-rivestimenti/
+2026-05-07 01:09:35 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 30674 characters
+2026-05-07 01:09:35 | INFO     | ai-search | [CONTACT PAGE FOUND] https://edilmea.com/contatti/
+2026-05-07 01:09:35 | INFO     | ai-search | [FETCH] Downloading: https://edilmea.com/contatti/
+2026-05-07 01:09:36 | INFO     | ai-search | [FETCH] Success: https://edilmea.com/contatti/
+2026-05-07 01:09:36 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 1162 characters
+2026-05-07 01:09:36 | INFO     | ai-search | [COMPANY SCRAPING END] https://edilmea.com/pavimenti-e-rivestimenti/
+2026-05-07 01:09:36 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:36 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:36 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.leaceramiche.it/punti-vendita/italia/matera
+2026-05-07 01:09:36 | INFO     | ai-search | [FETCH] Downloading: https://www.leaceramiche.it/punti-vendita/italia/matera
+2026-05-07 01:09:37 | INFO     | ai-search | [FETCH] Success: https://www.leaceramiche.it/punti-vendita/italia/matera
+2026-05-07 01:09:37 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 3871 characters
+2026-05-07 01:09:37 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.leaceramiche.it/azienda/profilo-aziendale
+2026-05-07 01:09:37 | INFO     | ai-search | [FETCH] Downloading: https://www.leaceramiche.it/azienda/profilo-aziendale
+2026-05-07 01:09:37 | INFO     | ai-search | [FETCH] Success: https://www.leaceramiche.it/azienda/profilo-aziendale
+2026-05-07 01:09:38 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 4391 characters
+2026-05-07 01:09:38 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.leaceramiche.it/punti-vendita/italia/matera
+2026-05-07 01:09:38 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:38 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:38 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.designdercole.it/ceramiche
+2026-05-07 01:09:38 | INFO     | ai-search | [FETCH] Downloading: https://www.designdercole.it/ceramiche
+2026-05-07 01:09:38 | INFO     | ai-search | [FETCH] Success: https://www.designdercole.it/ceramiche
+2026-05-07 01:09:38 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 7068 characters
+2026-05-07 01:09:38 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.designdercole.it/contatti
+2026-05-07 01:09:38 | INFO     | ai-search | [FETCH] Downloading: https://www.designdercole.it/contatti
+2026-05-07 01:09:39 | INFO     | ai-search | [FETCH] Success: https://www.designdercole.it/contatti
+2026-05-07 01:09:39 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 2280 characters
+2026-05-07 01:09:39 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.designdercole.it/ceramiche
+2026-05-07 01:09:39 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:39 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:39 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.attivissimosrl.it/
+2026-05-07 01:09:39 | INFO     | ai-search | [FETCH] Downloading: https://www.attivissimosrl.it/
+2026-05-07 01:09:40 | INFO     | ai-search | [FETCH] Success: https://www.attivissimosrl.it/
+2026-05-07 01:09:40 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 5174 characters
+2026-05-07 01:09:40 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.attivissimosrl.it/contatti/
+2026-05-07 01:09:40 | INFO     | ai-search | [FETCH] Downloading: https://www.attivissimosrl.it/contatti/
+2026-05-07 01:09:40 | INFO     | ai-search | [FETCH] Success: https://www.attivissimosrl.it/contatti/
+2026-05-07 01:09:40 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 407 characters
+2026-05-07 01:09:40 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.attivissimosrl.it/
+2026-05-07 01:09:40 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:40 | WARNING  | ai-search | [SCRAPE NODE] Skipping blacklisted: https://www.paginebianche.it/basilicata/matera/piastrelle.html
+2026-05-07 01:09:40 | WARNING  | ai-search | [SCRAPE NODE] Skipping blacklisted: https://www.paginegialle.it/basilicata/matera/piastrelle.html
+2026-05-07 01:09:40 | WARNING  | ai-search | [SCRAPE NODE] Skipping blacklisted: https://www.paginegialle.it/basilicata/matera/pavimenti.html
+2026-05-07 01:09:40 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:40 | INFO     | ai-search | [COMPANY SCRAPING START] https://bertolanistore.it/
+2026-05-07 01:09:40 | INFO     | ai-search | [FETCH] Downloading: https://bertolanistore.it/
+2026-05-07 01:09:42 | INFO     | ai-search | [FETCH] Success: https://bertolanistore.it/
+2026-05-07 01:09:42 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 6711 characters
+2026-05-07 01:09:42 | INFO     | ai-search | [CONTACT PAGE FOUND] https://bertolanistore.it/chi-siamo/
+2026-05-07 01:09:42 | INFO     | ai-search | [FETCH] Downloading: https://bertolanistore.it/chi-siamo/
+2026-05-07 01:09:43 | INFO     | ai-search | [FETCH] Success: https://bertolanistore.it/chi-siamo/
+2026-05-07 01:09:43 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 4516 characters
+2026-05-07 01:09:43 | INFO     | ai-search | [COMPANY SCRAPING END] https://bertolanistore.it/
+2026-05-07 01:09:43 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:43 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:43 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.houzz.it/professionisti/ceramica-piastrelle-e-mosaici/attivissimo-srl-pfvwit-pf~758394613
+2026-05-07 01:09:43 | INFO     | ai-search | [FETCH] Downloading: https://www.houzz.it/professionisti/ceramica-piastrelle-e-mosaici/attivissimo-srl-pfvwit-pf~758394613
+2026-05-07 01:09:44 | INFO     | ai-search | [FETCH] Success: https://www.houzz.it/professionisti/ceramica-piastrelle-e-mosaici/attivissimo-srl-pfvwit-pf~758394613
+2026-05-07 01:09:44 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 7100 characters
+2026-05-07 01:09:44 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.houzz.it/professionisti/ceramica-piastrelle-e-mosaici/attivissimo-srl-pfvwit-pf~758394613#about-us
+2026-05-07 01:09:44 | INFO     | ai-search | [FETCH] Downloading: https://www.houzz.it/professionisti/ceramica-piastrelle-e-mosaici/attivissimo-srl-pfvwit-pf~758394613#about-us
+2026-05-07 01:09:45 | INFO     | ai-search | [FETCH] Success: https://www.houzz.it/professionisti/ceramica-piastrelle-e-mosaici/attivissimo-srl-pfvwit-pf~758394613#about-us
+2026-05-07 01:09:45 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 7100 characters
+2026-05-07 01:09:45 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.houzz.it/professionisti/ceramica-piastrelle-e-mosaici/attivissimo-srl-pfvwit-pf~758394613
+2026-05-07 01:09:45 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:45 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:45 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.euroedilmt.com/
+2026-05-07 01:09:45 | INFO     | ai-search | [FETCH] Downloading: https://www.euroedilmt.com/
+2026-05-07 01:09:47 | INFO     | ai-search | [FETCH] Success: https://www.euroedilmt.com/
+2026-05-07 01:09:47 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 775 characters
+2026-05-07 01:09:47 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.euroedilmt.com/chi-siamo/
+2026-05-07 01:09:47 | INFO     | ai-search | [FETCH] Downloading: https://www.euroedilmt.com/chi-siamo/
+2026-05-07 01:09:48 | INFO     | ai-search | [FETCH] Success: https://www.euroedilmt.com/chi-siamo/
+2026-05-07 01:09:48 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 642 characters
+2026-05-07 01:09:48 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.euroedilmt.com/
+2026-05-07 01:09:48 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:48 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:48 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.marazzi.it/
+2026-05-07 01:09:48 | INFO     | ai-search | [FETCH] Downloading: https://www.marazzi.it/
+2026-05-07 01:09:48 | INFO     | ai-search | [FETCH] Success: https://www.marazzi.it/
+2026-05-07 01:09:48 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 5213 characters
+2026-05-07 01:09:48 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.marazzi.it/contatti/
+2026-05-07 01:09:48 | INFO     | ai-search | [FETCH] Downloading: https://www.marazzi.it/contatti/
+2026-05-07 01:09:49 | INFO     | ai-search | [FETCH] Success: https://www.marazzi.it/contatti/
+2026-05-07 01:09:49 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 22755 characters
+2026-05-07 01:09:49 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.marazzi.it/
+2026-05-07 01:09:49 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:49 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:49 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.archisio.it/piastrellisti/matera
+2026-05-07 01:09:49 | INFO     | ai-search | [FETCH] Downloading: https://www.archisio.it/piastrellisti/matera
+2026-05-07 01:09:50 | INFO     | ai-search | [FETCH] Success: https://www.archisio.it/piastrellisti/matera
+2026-05-07 01:09:50 | INFO     | ai-search | [HOMEPAGE TEXT EXTRACTED] 23229 characters
+2026-05-07 01:09:50 | INFO     | ai-search | [CONTACT PAGE FOUND] https://www.archisio.it/contatti
+2026-05-07 01:09:50 | INFO     | ai-search | [FETCH] Downloading: https://www.archisio.it/contatti
+2026-05-07 01:09:51 | INFO     | ai-search | [FETCH] Success: https://www.archisio.it/contatti
+2026-05-07 01:09:51 | INFO     | ai-search | [CONTACT TEXT EXTRACTED] 1049 characters
+2026-05-07 01:09:51 | INFO     | ai-search | [COMPANY SCRAPING END] https://www.archisio.it/piastrellisti/matera
+2026-05-07 01:09:51 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:51 | INFO     | ai-search | ================================================================================
+2026-05-07 01:09:51 | INFO     | ai-search | [COMPANY SCRAPING START] https://www.italpietra.it/it/
+2026-05-07 01:09:51 | INFO     | ai-search | [FETCH] Downloading: https://www.italpietra.it/it/
+2026-05-07 01:09:51 | ERROR    | ai-search | [FETCH ERROR] https://www.italpietra.it/it/ -> 403 Client Error: Forbidden for url: https://www.italpietra.it/it/
+2026-05-07 01:09:51 | WARNING  | ai-search | [SCRAPING FAILED] Could not fetch homepage: https://www.italpietra.it/it/
+2026-05-07 01:09:51 | WARNING  | ai-search | [SCRAPE NODE] Skipping blacklisted: https://prontopro.it/matera-piastrellista
+2026-05-07 01:09:51 | WARNING  | ai-search | [SCRAPE NODE] Skipping blacklisted: https://prontopro.it/matera-posa-piastrelle-bagno
+2026-05-07 01:09:51 | INFO     | ai-search | [SCRAPE NODE] Successfully scraped 10 websites
+2026-05-07 01:09:51 | INFO     | ai-search | [LLM EXTRACT NODE] Extracting data from 10 companies
+2026-05-07 01:11:06 | INFO     | ai-search | [LLM EXTRACT NODE] Extracted data for 10 companies
+2026-05-07 01:11:06 | INFO     | ai-search | [FINAL ANSWER NODE] Generating final answer with 10 items

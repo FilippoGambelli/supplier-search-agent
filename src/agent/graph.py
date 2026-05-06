@@ -1,6 +1,6 @@
 """
 LangGraph-based AI Agent for supplier search.
-Implements a sequential graph with nodes: Search -> Scrape -> Extract -> FinalAnswer
+Implements a sequential graph with nodes: Search -> Scrape -> llm_extract -> FinalAnswer
 """
 from dotenv import load_dotenv
 import os
@@ -11,12 +11,10 @@ import operator
 
 from langgraph.graph import StateGraph, END
 from langchain_core.runnables import RunnableConfig
-from langchain_ollama import ChatOllama
-
 
 from agent.search import search_web
 from agent.scrape import scrape_company_website, is_valid_company_result
-from agent.extract import extract_company_data
+from agent.llm_extract import extract_data
 
 from src.logger import logger
 
@@ -29,7 +27,7 @@ class AgentState(TypedDict):
     query: str                      # User query
     search_results: List[Dict]      # Results from SearXNG
     scraped_data: List[Dict]        # Scraped homepage + contact pages
-    extracted: List[Dict]           # Extracted company data from LLM
+    llm_extracted: List[Dict]       # Extracted company data from LLM
     final_answer: List[Dict]        # Final aggregated answer
     error: Optional[str]            # Any error that occurred
 
@@ -93,41 +91,44 @@ def scrape_node(state: AgentState, config: RunnableConfig) -> Dict:
     return {"scraped_data": scraped_data}
 
 
-def extract_node(state: AgentState, config: RunnableConfig) -> Dict:
+def llm_extract_node(state: AgentState, config: RunnableConfig) -> Dict:
     """Extract company data from scraped content using LLM."""
     scraped_data = state.get("scraped_data", [])
 
-    logger.info(f"[EXTRACT NODE] Extracting data from {len(scraped_data)} companies")
+    logger.info(f"[LLM EXTRACT NODE] Extracting data from {len(scraped_data)} companies")
 
     extracted = []
 
     for company in scraped_data:
         try:
-            data = extract_company_data(company)
+            # Now calls the new function that uses ChatOllama
+            data = extract_data(company)
             extracted.append(data)
 
         except Exception as e:
-            logger.error(f"[EXTRACT NODE ERROR] {company.get('url')} -> {e}")
+            logger.error(f"[LLM EXTRACT NODE ERROR] {company.get('url')} -> {e}")
             extracted.append({
                 "company_name": company.get("title"),
                 "website": company.get("url"),
                 "error": str(e)
             })
 
-    logger.info(f"[EXTRACT NODE] Extracted data for {len(extracted)} companies")
+    logger.info(f"[LLM EXTRACT NODE] Extracted data for {len(extracted)} companies")
 
-    return {"extracted": extracted}
+    # FIX 1: Updated the return key to match AgentState
+    return {"llm_extracted": extracted}
 
 
 def final_answer_node(state: AgentState, config: RunnableConfig) -> Dict:
     """Create final answer from extracted data."""
-    extracted = state.get("extracted", [])
+    # FIX 2: Updated the get key to match AgentState
+    extracted = state.get("llm_extracted", [])
     error = state.get("error")
 
     logger.info(f"[FINAL ANSWER NODE] Generating final answer with {len(extracted)} items")
 
     # Filter out errors if any
-    valid_results = [e for e in extracted if "error" not in e or e.get("error") != "Invalid JSON returned by model"]
+    valid_results = [e for e in extracted if "error" not in e or not str(e.get("error")).startswith("Invalid JSON")]
 
     return {
         "final_answer": valid_results,
@@ -145,13 +146,13 @@ graph = StateGraph(AgentState)
 # Add nodes
 graph.add_node("search", search_node)
 graph.add_node("scrape", scrape_node)
-graph.add_node("extract", extract_node)
+graph.add_node("llm_extract", llm_extract_node)
 graph.add_node("final_answer", final_answer_node)
 
 # Define edges (sequential flow)
 graph.add_edge("search", "scrape")
-graph.add_edge("scrape", "extract")
-graph.add_edge("extract", "final_answer")
+graph.add_edge("scrape", "llm_extract")
+graph.add_edge("llm_extract", "final_answer")
 
 # Set entry and end
 graph.set_entry_point("search")
@@ -178,7 +179,7 @@ def run_agent(query: str) -> Dict:
         "query": query,
         "search_results": [],
         "scraped_data": [],
-        "extracted": [],
+        "llm_extracted": [],
         "final_answer": [],
         "error": None
     }

@@ -1,8 +1,9 @@
 import json
-import requests
-from typing import Dict, List
+from typing import Dict
+from langchain_ollama import ChatOllama
 
-OLLAMA_URL = "http://localhost:11434/api/generate"
+# Note: for LangChain we pass the base_url instead of the full /api/generate endpoint
+OLLAMA_BASE_URL = "http://localhost:11434"
 MODEL = "gemma4:31b-cloud"
 
 
@@ -18,8 +19,8 @@ def build_company_prompt(company: Dict) -> str:
     contact_text = company.get("contact_text", "") or ""
 
     # Limit text size to avoid LLM overload
-    homepage_text = homepage_text[:12000]
-    contact_text = contact_text[:8000]
+    homepage_text = homepage_text[:12000]           # TODO
+    contact_text = contact_text[:8000]              # TODO
 
     prompt = f"""
 You are an expert business information extraction system.
@@ -71,34 +72,30 @@ Return ONLY valid JSON.
     return prompt
 
 
-def extract_company_data(company: Dict) -> Dict:
+def extract_data(company: Dict) -> Dict:
     """
-    Send company scraped content to Ollama
+    Send the scraped content to the model using ChatOllama
     and extract structured business information.
     """
-
     prompt = build_company_prompt(company)
 
-    response = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": MODEL,
-            "prompt": prompt,
-            "stream": False,
-            "format": "json"
-        },
-        timeout=120
+    # Initialize the ChatOllama client forcing JSON format
+    llm = ChatOllama(
+        base_url=OLLAMA_BASE_URL,
+        model=MODEL,
+        format="json",
+        temperature=0  # Recommended 0 for deterministic data extraction
     )
 
-    response.raise_for_status()
-
-    raw_output = response.json()["response"]
-
     try:
+        # Use LangChain's invoke method
+        response = llm.invoke(prompt)
+        raw_output = response.content
+        
         return json.loads(raw_output)
 
-    except Exception:
+    except Exception as e:
         return {
-            "error": "Invalid JSON returned by model",
-            "raw_output": raw_output
+            "error": f"Invalid JSON returned by model or connection error: {str(e)}",
+            "raw_output": raw_output if 'raw_output' in locals() else None
         }
