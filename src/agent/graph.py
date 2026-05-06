@@ -11,11 +11,11 @@ from langchain_core.runnables import RunnableConfig
 from langchain_ollama import ChatOllama
 
 
-from .search import search_web
-from .scrape import scrape_company_website, is_valid_company_result
-from .extract import extract_company_data
+from agent.search import search_web
+from agent.scrape import scrape_company_website, is_valid_company_result
+from agent.extract import extract_company_data
 
-from backend.logger import logger
+from src.logger import logger
 
 
 # =========================================================
@@ -137,39 +137,28 @@ def final_answer_node(state: AgentState, config: RunnableConfig) -> Dict:
 # BUILD GRAPH
 # =========================================================
 
-def build_agent_graph():
-    """Build and compile the LangGraph agent."""
+# Create graph
+graph = StateGraph(AgentState)
 
-    logger.info("[BUILD AGENT GRAPH] Creating graph nodes")
+# Add nodes
+graph.add_node("search", search_node)
+graph.add_node("scrape", scrape_node)
+graph.add_node("extract", extract_node)
+graph.add_node("final_answer", final_answer_node)
 
-    # Create workflow
-    workflow = StateGraph(AgentState)
+# Define edges (sequential flow)
+graph.add_edge("search", "scrape")
+graph.add_edge("scrape", "extract")
+graph.add_edge("extract", "final_answer")
 
-    # Add nodes
-    workflow.add_node("search", search_node)
-    workflow.add_node("scrape", scrape_node)
-    workflow.add_node("extract", extract_node)
-    workflow.add_node("final_answer", final_answer_node)
+# Set entry and end
+graph.set_entry_point("search")
+graph.add_edge("final_answer", END)
 
-    # Define edges (sequential flow)
-    logger.info("[BUILD AGENT GRAPH] Adding edges")
+# Compile
+app = graph.compile()
 
-    workflow.add_edge("search", "scrape")
-    workflow.add_edge("scrape", "extract")
-    workflow.add_edge("extract", "final_answer")
-
-    # Set entry and end
-    workflow.set_entry_point("search")
-    workflow.add_edge("final_answer", END)
-
-    # Compile
-    logger.info("[BUILD AGENT GRAPH] Compiling graph")
-
-    app = workflow.compile()
-
-    logger.info("[BUILD AGENT GRAPH] Graph compiled successfully")
-
-    return app
+logger.info("[BUILD AGENT GRAPH] Graph compiled successfully")
 
 
 # =========================================================
@@ -182,8 +171,6 @@ def run_agent(query: str) -> Dict:
     Returns the final answer.
     """
     logger.info(f"[AGENT RUN] Starting pipeline for: '{query}'")
-
-    app = build_agent_graph()
 
     initial_state = {
         "query": query,

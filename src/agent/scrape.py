@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from backend.logger import logger
+from src.logger import logger
 
 
 # =========================================================
