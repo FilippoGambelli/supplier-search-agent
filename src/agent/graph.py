@@ -2,6 +2,9 @@
 LangGraph-based AI Agent for supplier search.
 Implements a sequential graph with nodes: Search -> Scrape -> Extract -> FinalAnswer
 """
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 from typing import TypedDict, List, Dict, Optional, Annotated
 import operator
@@ -16,7 +19,6 @@ from agent.scrape import scrape_company_website, is_valid_company_result
 from agent.extract import extract_company_data
 
 from src.logger import logger
-
 
 # =========================================================
 # AGENT STATE

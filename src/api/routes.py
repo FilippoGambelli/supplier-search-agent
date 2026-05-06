@@ -3,8 +3,8 @@
 import json
 from fastapi import FastAPI, APIRouter, Query
 
-from backend.agent.agent import run_agent
-from backend.logger import logger
+from src.agent.graph import run_agent
+from src.logger import logger
 
 app = FastAPI(title="AI Search Pipeline with LangGraph")
 

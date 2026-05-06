@@ -1,161 +1,210 @@
-[
-    {
-        "company_name": "Malasoma Brunello",
-        "website": "https://malasomabrunelloedilizia.com/",
-        "emails": [],
-        "phone_numbers": [],
-        "vat_number": null,
-        "address": null,
-        "city": "Pisa",
-        "postal_code": null,
-        "country": "Italy",
-        "description": "Fornitore di materiali da costruzioni a Pisa",
-        "contact_person": null
-    },
-    {
-        "company_name": "Edilcomes Commerciale Srl",
-        "website": "https://edilcomes.gruppomade.com/",
-        "emails": [
-            "[email protected]",
-            "[email protected]"
-        ],
-        "phone_numbers": [
-            "050982228"
-        ],
-        "vat_number": "01264010503",
-        "address": "Via Emilia, 349/A – Km 43",
-        "city": "Loc. Ospedaletto PI",
-        "postal_code": "56121",
-        "country": "Italy",
-        "description": "Rivendita a Pisa di Gruppo Made specializzata in materiali edili, finiture e soluzioni per ristrutturazioni, offrendo servizi di progettazione e rendering 3D.",
-        "contact_person": null
-    },
-    {
-        "company_name": "Renato Lupetti",
-        "website": "https://www.renatolupetti.it/",
-        "emails": [],
-        "phone_numbers": [
-            "050 817025",
-            "050 571234"
-        ],
-        "vat_number": null,
-        "address": "Via Marino, 5; Via Guidiccioni, 2/4",
-        "city": "Pisa",
-        "postal_code": null,
-        "country": "Italy",
-        "description": "Offre la sicurezza di un’ampia gamma dei migliori materiali e prodotti per l’edilizia, in pronta consegna.",
-        "contact_person": "Renato Lupetti"
-    },
-    {
-        "company_name": "RVF Bitozzi",
-        "website": "https://www.rvfbitozzi.it/",
-        "emails": [
-            "mostra@bitozzi.it",
-            "magazzino@bitozzi.it"
-        ],
-        "phone_numbers": [
-            "+39 0587 642069",
-            "+39 0587 674003"
-        ],
-        "vat_number": null,
-        "address": "La Sterza",
-        "city": "Lajatico",
-        "postal_code": null,
-        "country": "Italy",
-        "description": "Vendita e esposizione di materiali edili, arredo bagno, arredo giardino, pavimenti, rivestimenti, caminetti e stufe per Pisa e provincia.",
-        "contact_person": null
-    },
-    {
-        "company_name": "Tecnomat Pisa - utensileria, edilizia, ristrutturazione casa",
-        "website": "https://www.tecnomat.it/it/n/pisa/",
-        "emails": [
-            "bricoman@pec.bricoman.it"
-        ],
-        "phone_numbers": [],
-        "vat_number": "05602670969",
-        "address": "Via G. Marconi, 24",
-        "city": "Rozzano (MI)",
-        "postal_code": "20089",
-        "country": "Italia",
-        "description": "Tecnomat: prodotti professionali per la ristrutturazione e costruzione della casa, focalizzato sulla vendita di prodotti tecnici per l'edilizia, idraulica, elettricità e falegnameria sia all'ingrosso che al dettaglio.",
-        "contact_person": null
-    },
-    {
-        "company_name": "GIESSEDI Srl",
-        "website": "https://www.giessediedilizia.com",
-        "emails": [],
-        "phone_numbers": [],
-        "vat_number": null,
-        "address": null,
-        "city": "Navacchio Pisa",
-        "postal_code": null,
-        "country": "Italy",
-        "description": "Tutto per l'edilizia a Navacchio Pisa",
-        "contact_person": null
-    },
-    {
-        "company_name": "RVF di Bitozzi SRL",
-        "website": "https://www.rvfbitozzi.it/materiale-edile/",
-        "emails": [
-            "mostra@bitozzi.it",
-            "magazzino@bitozzi.it"
-        ],
-        "phone_numbers": [
-            "+39 0587 642069",
-            "+39 0587 674003"
-        ],
-        "vat_number": null,
-        "address": null,
-        "city": "Pisa",
-        "postal_code": null,
-        "country": "Italy",
-        "description": "Vendita di materiale edile, autobloccanti, cartongesso, laterizi, legname, malte e cementi a Pisa e provincia.",
-        "contact_person": null
-    },
-    {
-        "company_name": "GIESSEDI Srl",
-        "website": "https://www.giessediedilizia.com/",
-        "emails": [],
-        "phone_numbers": [],
-        "vat_number": null,
-        "address": null,
-        "city": "Navacchio Pisa",
-        "postal_code": null,
-        "country": "Italy",
-        "description": "Tutto per l'edilizia a Navacchio Pisa",
-        "contact_person": null
-    },
-    {
-        "company_name": "IDEALCOMFORT S.p.A.",
-        "website": "https://www.idealcomfort.it/materiali-edili-pisa-lucca-livorno",
-        "emails": [
-            "info@servizi-edili.it",
-            "info@idealcomfort.it"
-        ],
-        "phone_numbers": [
-            "050 809141",
-            "366 6722480",
-            "+39 050 809111"
-        ],
-        "vat_number": "01426250500",
-        "address": "Via Antonio Meucci, 18",
-        "city": "Pisa",
-        "postal_code": "56121",
-        "country": "Italy",
-        "description": "IdealComfort si occupa di progettazione e distribuzione di materiale idraulico e caldaie, impianti di teleriscaldamento e condizionatori, materiale edile, sanitari e arredobagno.",
-        "contact_person": null
-    },
-    {
-        "company_name": "Scarpellini",
-        "website": "https://www.scarpelliniedilizia.com/",
-        "emails": [],
-        "phone_numbers": [],
-        "vat_number": null,
-        "address": null,
-        "city": "Pisa",
-        "postal_code": null,
-        "country": "Italy",
-        "description": "Forniture per edilizia",
-        "contact_person": null
-    }
-]
+{
+    "query": "aziende piastrelle bari",
+    "answer": [
+        {
+            "company_name": "Edilpugliese",
+            "website": "https://www.edilpugliese.it/",
+            "emails": [
+                "commerciale@edilpugliese.it"
+            ],
+            "phone_numbers": [
+                "(+39) 080.5031946"
+            ],
+            "vat_number": null,
+            "address": "Via della Vela, 74/E (traversa di Via Fanelli)",
+            "city": "Bari",
+            "postal_code": "70131",
+            "country": "Italy",
+            "description": "Company specializing in design furniture and coatings with 45 years of experience, providing a wide range of products including ceramics, parquet, bathroom furnishings, and wallpaper.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Laruccia Design",
+            "website": "https://www.larucciadesign.it",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": null,
+            "description": null,
+            "contact_person": null
+        },
+        {
+            "company_name": "Menolascina Materiale Edile e Arredo Bagno Bari",
+            "website": "https://www.menolascina.it/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Bari",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Fondata nel 1980, Menolascina è un punto di riferimento a Bari per la fornitura di materiale edile, ceramiche, arredo bagno e ferramenta, offrendo servizi di consulenza, assistenza post-vendita e consegna a domicilio con autogru.",
+            "contact_person": "Vito Antonio Menolascina"
+        },
+        {
+            "company_name": "Loconsole pavimenti e rivestimenti",
+            "website": "https://www.posapavimentierivestimenti.it/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Bari",
+            "postal_code": null,
+            "country": "Italia",
+            "description": "Azienda specializzata nella posa in opera di pavimenti, rivestimenti e realizzazione massetti per grandi superfici come Centri Commerciali, Aeroporti e Resort.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Piastrelle e rivestimenti Bari - Leroy Merlin",
+            "website": "https://www.leroymerlin.it/negozi/bari/piastrelle-e-rivestimenti-bari-lpl.html",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Bari",
+            "postal_code": null,
+            "country": "Italy",
+            "description": null,
+            "contact_person": null
+        },
+        {
+            "company_name": "Edilizia Ventrella",
+            "website": "https://www.edilventrella.it/",
+            "emails": [
+                "info@edilventrella.it",
+                "info@ediliziaventrella.it"
+            ],
+            "phone_numbers": [
+                "0805461207",
+                "+39 0805461207",
+                "+39 3351804548"
+            ],
+            "vat_number": "02154390724",
+            "address": "Strada Rurale Rafaschieri, 14",
+            "city": "Bari",
+            "postal_code": "70126",
+            "country": "Italy",
+            "description": "Specialist in the wholesale trade of bathroom furnishings, ceramics, taps, and building materials, serving retailers in Puglia and surrounding regions since 1945.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Ceramiche Orion s.r.l.",
+            "website": "https://www.ceramicheorion.it/",
+            "emails": [
+                "clienti@ceramicheorion.it",
+                "orioncarovigno@ceramicheorion.it"
+            ],
+            "phone_numbers": [
+                "+39 080 4741819",
+                "+39 080 4745900",
+                "+39 0831 995414"
+            ],
+            "vat_number": "04409870724",
+            "address": "Contrada Scannacinque - Zona Industriale",
+            "city": "Mola di Bari",
+            "postal_code": "70042",
+            "country": "Italy",
+            "description": "Vendita di ceramiche, sanitari, pavimenti e rivestimenti, arredo bagno e area wellness.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Lea Ceramiche",
+            "website": "https://www.leaceramiche.it",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "Via Durini 3",
+            "city": "Milano",
+            "postal_code": null,
+            "country": "Italia",
+            "description": "Brand di design specializzato nella produzione di superfici in gres porcellanato e ceramiche di fascia alta, parte di Panariagroup.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Pavimenti Sul Web",
+            "website": "https://www.pavimentisulweb.it",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": "01248670521",
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Il portale delle aziende di pavimenti e rivestimenti",
+            "contact_person": null
+        },
+        {
+            "company_name": "Colonna - Banco Termoidraulica",
+            "website": "www.colonnasaverio.com",
+            "emails": [],
+            "phone_numbers": [
+                "+39 0805046562"
+            ],
+            "vat_number": null,
+            "address": "Via Generale Nicola Bellomo, 93ter",
+            "city": "Bari",
+            "postal_code": "70124",
+            "country": "Italia",
+            "description": "Piastrelle per Rivestimenti e Pavimenti",
+            "contact_person": null
+        },
+        {
+            "company_name": "europages",
+            "website": "https://www.europages.it",
+            "emails": [
+                "press@visable.com"
+            ],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "ABC-Straße 21",
+            "city": "Amburgo",
+            "postal_code": "20354",
+            "country": "Germania",
+            "description": "Marketplace B2B e fornitore di contatti commerciali in tutta Europa, parte del gruppo Visable.",
+            "contact_person": "Theresa Frey"
+        },
+        {
+            "company_name": "Quaranta s.r.l.",
+            "website": "https://www.quarantasrl.com/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "via Tanzi",
+            "city": "Bari",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Vendita materiali per l'edilizia, pavimenti, rivestimenti, sanitari, rubinetterie e arredi bagno.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Ceramiche San Nicola s.r.l.",
+            "website": "https://www.ceramichesannicola.it/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Produzione e commercio di gres porcellanato di altissima qualità, specializzata nella realizzazione di pavimenti e rivestimenti.",
+            "contact_person": null
+        },
+        {
+            "company_name": "IPERCERAMICA Bari",
+            "website": "https://www.iperceramica.it/it/ita/negozi/iperceramica-bari",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Bari",
+            "postal_code": null,
+            "country": "Italy",
+            "description": null,
+            "contact_person": null
+        }
+    ],
+    "error": null
+}
