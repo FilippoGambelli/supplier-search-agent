@@ -1,38 +1,42 @@
 from fastapi import FastAPI, Query
 import json
 
-from .search import search_web
-from .processor import process_results
-from .llm import generate_answer
+from .agent import run_agent
 from .logger import logger
 
-app = FastAPI(title="AI Search Pipeline")
+app = FastAPI(title="AI Search Pipeline with LangGraph")
 
 @app.get("/")
 def root():
-    return {"status": "ok"}
+    return {"status": "ok", "agent": "LangGraph"}
+
 
 @app.get("/ask")
 def ask(q: str = Query(...)):
     """
-    Full AI pipeline:
-    search → process → LLM → answer
+    Full AI pipeline using LangGraph:
+    search → scrape → extract → final_answer
     """
 
-    # 1. Search web
-    results = search_web(q)
+    # Run the LangGraph agent
+    result = run_agent(q)
 
-    # 2. Process results (intelligence layer)
-    context = process_results(results)
-    logger.info(context)
+    # Prepare response
+    answer = result.get("final_answer", [])
+    error = result.get("error")
 
-    # 3. LLM final answer
-    answer = generate_answer(context)
-
+    # Save to output file
     with open("output.json", "w", encoding="utf-8") as f:
-        json.dump(answer, f, indent=4, ensure_ascii=False)
+        json.dump({
+            "query": q,
+            "answer": answer,
+            "error": error
+        }, f, indent=4, ensure_ascii=False)
+
+    logger.info(f"[API RESPONSE] Query: '{q}' - Results: {len(answer)}")
 
     return {
         "query": q,
-        "answer": answer
+        "answer": answer,
+        "error": error
     }
