@@ -1,0 +1,25 @@
+use_default_settings: true
+
+server:
+  secret_key: "change_this_secret"
+  public_instance: false
+
+search:
+  safe_search: 0
+  autocomplete: "google"
+  formats:
+    - html
+    - json
+
+ui:
+  static_use_hash: true
+
+enabled_plugins:
+  - "Hash plugin"
+
+limiter: false
+
+botdetection:
+  ip_limit:
+    link_token: false
+    filter_link_local: false

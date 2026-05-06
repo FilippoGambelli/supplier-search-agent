@@ -1,0 +1,161 @@
+[
+    {
+        "company_name": "Malasoma Brunello",
+        "website": "https://malasomabrunelloedilizia.com/",
+        "emails": [],
+        "phone_numbers": [],
+        "vat_number": null,
+        "address": null,
+        "city": "Pisa",
+        "postal_code": null,
+        "country": "Italy",
+        "description": "Fornitore di materiali da costruzioni a Pisa",
+        "contact_person": null
+    },
+    {
+        "company_name": "Edilcomes Commerciale Srl",
+        "website": "https://edilcomes.gruppomade.com/",
+        "emails": [
+            "[email protected]",
+            "[email protected]"
+        ],
+        "phone_numbers": [
+            "050982228"
+        ],
+        "vat_number": "01264010503",
+        "address": "Via Emilia, 349/A – Km 43",
+        "city": "Loc. Ospedaletto PI",
+        "postal_code": "56121",
+        "country": "Italy",
+        "description": "Rivendita a Pisa di Gruppo Made specializzata in materiali edili, finiture e soluzioni per ristrutturazioni, offrendo servizi di progettazione e rendering 3D.",
+        "contact_person": null
+    },
+    {
+        "company_name": "Renato Lupetti",
+        "website": "https://www.renatolupetti.it/",
+        "emails": [],
+        "phone_numbers": [
+            "050 817025",
+            "050 571234"
+        ],
+        "vat_number": null,
+        "address": "Via Marino, 5; Via Guidiccioni, 2/4",
+        "city": "Pisa",
+        "postal_code": null,
+        "country": "Italy",
+        "description": "Offre la sicurezza di un’ampia gamma dei migliori materiali e prodotti per l’edilizia, in pronta consegna.",
+        "contact_person": "Renato Lupetti"
+    },
+    {
+        "company_name": "RVF Bitozzi",
+        "website": "https://www.rvfbitozzi.it/",
+        "emails": [
+            "mostra@bitozzi.it",
+            "magazzino@bitozzi.it"
+        ],
+        "phone_numbers": [
+            "+39 0587 642069",
+            "+39 0587 674003"
+        ],
+        "vat_number": null,
+        "address": "La Sterza",
+        "city": "Lajatico",
+        "postal_code": null,
+        "country": "Italy",
+        "description": "Vendita e esposizione di materiali edili, arredo bagno, arredo giardino, pavimenti, rivestimenti, caminetti e stufe per Pisa e provincia.",
+        "contact_person": null
+    },
+    {
+        "company_name": "Tecnomat Pisa - utensileria, edilizia, ristrutturazione casa",
+        "website": "https://www.tecnomat.it/it/n/pisa/",
+        "emails": [
+            "bricoman@pec.bricoman.it"
+        ],
+        "phone_numbers": [],
+        "vat_number": "05602670969",
+        "address": "Via G. Marconi, 24",
+        "city": "Rozzano (MI)",
+        "postal_code": "20089",
+        "country": "Italia",
+        "description": "Tecnomat: prodotti professionali per la ristrutturazione e costruzione della casa, focalizzato sulla vendita di prodotti tecnici per l'edilizia, idraulica, elettricità e falegnameria sia all'ingrosso che al dettaglio.",
+        "contact_person": null
+    },
+    {
+        "company_name": "GIESSEDI Srl",
+        "website": "https://www.giessediedilizia.com",
+        "emails": [],
+        "phone_numbers": [],
+        "vat_number": null,
+        "address": null,
+        "city": "Navacchio Pisa",
+        "postal_code": null,
+        "country": "Italy",
+        "description": "Tutto per l'edilizia a Navacchio Pisa",
+        "contact_person": null
+    },
+    {
+        "company_name": "RVF di Bitozzi SRL",
+        "website": "https://www.rvfbitozzi.it/materiale-edile/",
+        "emails": [
+            "mostra@bitozzi.it",
+            "magazzino@bitozzi.it"
+        ],
+        "phone_numbers": [
+            "+39 0587 642069",
+            "+39 0587 674003"
+        ],
+        "vat_number": null,
+        "address": null,
+        "city": "Pisa",
+        "postal_code": null,
+        "country": "Italy",
+        "description": "Vendita di materiale edile, autobloccanti, cartongesso, laterizi, legname, malte e cementi a Pisa e provincia.",
+        "contact_person": null
+    },
+    {
+        "company_name": "GIESSEDI Srl",
+        "website": "https://www.giessediedilizia.com/",
+        "emails": [],
+        "phone_numbers": [],
+        "vat_number": null,
+        "address": null,
+        "city": "Navacchio Pisa",
+        "postal_code": null,
+        "country": "Italy",
+        "description": "Tutto per l'edilizia a Navacchio Pisa",
+        "contact_person": null
+    },
+    {
+        "company_name": "IDEALCOMFORT S.p.A.",
+        "website": "https://www.idealcomfort.it/materiali-edili-pisa-lucca-livorno",
+        "emails": [
+            "info@servizi-edili.it",
+            "info@idealcomfort.it"
+        ],
+        "phone_numbers": [
+            "050 809141",
+            "366 6722480",
+            "+39 050 809111"
+        ],
+        "vat_number": "01426250500",
+        "address": "Via Antonio Meucci, 18",
+        "city": "Pisa",
+        "postal_code": "56121",
+        "country": "Italy",
+        "description": "IdealComfort si occupa di progettazione e distribuzione di materiale idraulico e caldaie, impianti di teleriscaldamento e condizionatori, materiale edile, sanitari e arredobagno.",
+        "contact_person": null
+    },
+    {
+        "company_name": "Scarpellini",
+        "website": "https://www.scarpelliniedilizia.com/",
+        "emails": [],
+        "phone_numbers": [],
+        "vat_number": null,
+        "address": null,
+        "city": "Pisa",
+        "postal_code": null,
+        "country": "Italy",
+        "description": "Forniture per edilizia",
+        "contact_person": null
+    }
+]
