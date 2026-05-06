@@ -1,23 +1,23 @@
-from fastapi import FastAPI, Query
-import json
+"""FastAPI application and API routes for AI Search Pipeline."""
 
-from .agent import run_agent
-from .logger import logger
+import json
+from fastapi import FastAPI, APIRouter, Query
+
+from backend.agent.agent import run_agent
+from backend.logger import logger
 
 app = FastAPI(title="AI Search Pipeline with LangGraph")
 
-@app.get("/")
+router = APIRouter()
+
+@router.get("/")
 def root():
+    """Health check endpoint."""
     return {"status": "ok", "agent": "LangGraph"}
 
-
-@app.get("/ask")
+@router.get("/ask")
 def ask(q: str = Query(...)):
-    """
-    Full AI pipeline using LangGraph:
-    search → scrape → extract → final_answer
-    """
-
+    """Full AI pipeline using LangGraph: search → scrape → extract → final_answer"""
     # Run the LangGraph agent
     result = run_agent(q)
 
@@ -40,3 +40,5 @@ def ask(q: str = Query(...)):
         "answer": answer,
         "error": error
     }
+
+app.include_router(router)

@@ -10,10 +10,12 @@ from langgraph.graph import StateGraph, END
 from langchain_core.runnables import RunnableConfig
 from langchain_ollama import ChatOllama
 
+
 from .search import search_web
-from .processor import scrape_company_website, is_valid_company_result
-from .llm import extract_company_data, build_company_prompt
-from .logger import logger
+from .scrape import scrape_company_website, is_valid_company_result
+from .extract import extract_company_data
+
+from backend.logger import logger
 
 
 # =========================================================

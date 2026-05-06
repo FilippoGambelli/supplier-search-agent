@@ -102,28 +102,3 @@ def extract_company_data(company: Dict) -> Dict:
             "error": "Invalid JSON returned by model",
             "raw_output": raw_output
         }
-
-
-def generate_answer(processed_results: List[Dict]) -> List[Dict]:
-    """
-    Extract structured company information
-    for all processed websites.
-    """
-
-    extracted = []
-
-    for company in processed_results:
-
-        try:
-            data = extract_company_data(company)
-            extracted.append(data)
-
-        except Exception as e:
-
-            extracted.append({
-                "company_name": company.get("title"),
-                "website": company.get("url"),
-                "error": str(e)
-            })
-
-    return extracted

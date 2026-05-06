@@ -23,5 +23,9 @@ docker compose up -d
 Start the FastAPI development server:
 
 ```bash
-uvicorn backend.app.main:app --reload --port 8000
+uvicorn backend.api.routes:app --reload --port 8000
+```
+
+```bash
+python .\backend\main.py
 ```

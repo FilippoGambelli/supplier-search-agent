@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-LOG_FILE = Path(__file__).parent.parent / "app.log"
+LOG_FILE = Path(__file__).parent / "app.log"
 
 logger = logging.getLogger("ai-search")
 logger.setLevel(logging.INFO)

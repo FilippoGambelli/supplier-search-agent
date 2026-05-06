@@ -1,6 +1,8 @@
 import requests
 
-from .config import SEARXNG_URL
+SEARXNG_URL = "http://localhost:8080"
+SEARCH_ENDPOINT = "/search"
+DEFAULT_FORMAT = "json"
 
 def search_web(query: str, limit: int = 15):
     """

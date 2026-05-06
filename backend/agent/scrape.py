@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from .logger import logger
+from backend.logger import logger
 
 
 # =========================================================
@@ -213,76 +213,3 @@ def scrape_company_website(url: str) -> Dict:
         "homepage_text": homepage_text,
         "contact_text": contact_text,
     }
-
-
-# =========================================================
-# MAIN PIPELINE
-# =========================================================
-def process_results(results: List[Dict]) -> List[Dict]:
-    """
-    Full scraping pipeline.
-    """
-
-    processed = []
-
-    logger.info(
-        f"[PIPELINE START] Processing {len(results)} search results"
-    )
-
-    for r in results:
-
-        title = r.get("title", "")
-        url = r.get("url", "")
-
-        logger.info("-" * 80)
-        logger.info(f"[PROCESSING COMPANY] {title}")
-        logger.info(f"[URL] {url}")
-
-        # Skip bad results
-        if not is_valid_company_result(title, url):
-
-            logger.warning(
-                f"[SKIPPED] Blacklisted website: {url}"
-            )
-
-            continue
-
-        # Scrape website
-        scraped = scrape_company_website(url)
-
-        homepage_text = scraped["homepage_text"]
-        contact_text = scraped["contact_text"]
-
-        # Log EXACT content sent to LLM
-        logger.info("[LLM INPUT START]")
-
-        logger.info(
-            f"""
-TITLE:
-{title}
-
-URL:
-{url}
-
-HOMEPAGE TEXT:
-{homepage_text[:3000] if homepage_text else "None"}
-
-CONTACT TEXT:
-{contact_text[:3000] if contact_text else "None"}
-"""
-        )
-
-        logger.info("[LLM INPUT END]")
-
-        processed.append({
-            "title": title,
-            "url": url,
-            "homepage_text": homepage_text,
-            "contact_text": contact_text,
-        })
-
-    logger.info(
-        f"[PIPELINE END] Processed {len(processed)} companies"
-    )
-
-    return processed
