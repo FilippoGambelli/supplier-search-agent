@@ -28,6 +28,8 @@ class InternalState(InputState, OutputState):
     pg_results: List[Dict]
     scraped_data: List[Dict]
     current_index: int
+    current_company: Dict
+    should_finish: bool
     extracted_results: List[Dict]
 
 
@@ -135,24 +137,50 @@ def scrape_node(state: InternalState) -> Dict:
     }
 
 
-def extract_data_llm_node(state: InternalState) -> Dict:
-    """Process one company at a time."""
+def extract_node(state: InternalState) -> Dict:
+
     index = state["current_index"]
-    company = state["scraped_data"][index]
+    companies = state["scraped_data"]
+
+    if index >= len(companies):
+        return {
+            "should_finish": True
+        }
+
+    current_company = companies[index]
+
+    return {
+        "current_company": current_company,
+        "should_finish": False
+    }
+
+
+def llm_node(state: InternalState) -> Dict:
+
+    company = state["current_company"]
 
     extracted_results = state.get("extracted_results", [])
 
     try:
         result = extract_data(company)
-        logger.info(f"[LLM EXTRACT NODE] Success: {company.get('url')}")
+
+        logger.info(
+            f"[LLM NODE] Success: {company.get('url')}"
+        )
+
         new_results = extracted_results + [result]
+
     except Exception as e:
-        logger.error(f"[LLM EXTRACT NODE] {company.get('url')} -> {e}")
+
+        logger.error(
+            f"[LLM NODE] {company.get('url')} -> {e}"
+        )
+
         new_results = extracted_results
-    
+
     return {
         "extracted_results": new_results,
-        "current_index": index + 1
+        "current_index": state["current_index"] + 1
     }
 
 
@@ -205,6 +233,13 @@ def loop_router(state: InternalState):
 
     return "end"
 
+def extract_router(state: InternalState):
+
+    if state.get("should_finish"):
+        return "end"
+
+    return "continue"
+
 
 # BUILD GRAPH
 graph = StateGraph(
@@ -217,7 +252,8 @@ graph = StateGraph(
 graph.add_node("search", search_node)
 graph.add_node("extract_pg", extract_pg_node)
 graph.add_node("scrape", scrape_node)
-graph.add_node("extract", extract_data_llm_node)
+graph.add_node("extract", extract_node)
+graph.add_node("llm", llm_node)
 graph.add_node("final_answer", final_answer_node)
 graph.add_node("error", error_node)
 
@@ -225,8 +261,8 @@ graph.add_node("error", error_node)
 graph.add_conditional_edges("search", route_after_search, {"extract_pg": "extract_pg", "scrape": "scrape", "error": "error"})
 graph.add_edge("extract_pg", "scrape") 
 graph.add_conditional_edges("scrape", should_continue, {"continue": "extract", "error": "error"})
-graph.add_conditional_edges("extract", loop_router, {"continue": "extract", "end": "final_answer"})
-
+graph.add_conditional_edges("extract", extract_router, {"continue": "llm", "end": "final_answer"})
+graph.add_edge("llm", "extract")
 graph.add_edge("final_answer", END)
 graph.add_edge("error", END)
 graph.set_entry_point("search")

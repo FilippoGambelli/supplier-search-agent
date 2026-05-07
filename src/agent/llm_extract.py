@@ -6,6 +6,14 @@ from langchain_ollama import ChatOllama
 OLLAMA_BASE_URL = "http://localhost:11434"
 MODEL = "gemma4:31b-cloud"
 
+# Initialize the ChatOllama client forcing JSON format
+LLM = ChatOllama(
+    base_url=OLLAMA_BASE_URL,
+    model=MODEL,
+    format="json",
+    temperature=0  # Recommended 0 for deterministic data extraction
+)
+
 
 def build_company_prompt(company: Dict) -> str:
     """
@@ -79,17 +87,9 @@ def extract_data(company: Dict) -> Dict:
     """
     prompt = build_company_prompt(company)
 
-    # Initialize the ChatOllama client forcing JSON format
-    llm = ChatOllama(
-        base_url=OLLAMA_BASE_URL,
-        model=MODEL,
-        format="json",
-        temperature=0  # Recommended 0 for deterministic data extraction
-    )
-
     try:
         # Use LangChain's invoke method
-        response = llm.invoke(prompt)
+        response = LLM.invoke(prompt)
         raw_output = response.content
         
         return json.loads(raw_output)
