@@ -6,7 +6,7 @@ from typing import TypedDict, List, Dict, Optional
 from langgraph.graph import StateGraph, END
 
 from agent.search import search_web
-from agent.scrape import scrape_company_website, is_valid_company_result
+from agent.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
 from agent.llm_extract import extract_data
 
 from src.logger import logger
@@ -25,6 +25,7 @@ class OutputState(TypedDict):
 
 class InternalState(InputState, OutputState):
     search_results: List[Dict]
+    pg_results: List[Dict]
     scraped_data: List[Dict]
     current_index: int
     extracted_results: List[Dict]
@@ -49,47 +50,83 @@ def search_node(state: InputState) -> Dict:
         }
 
 
-def scrape_node(state: InternalState) -> Dict:
-    """Scrape websites from search results."""
+def extract_pg_node(state: InternalState) -> Dict:
+    """
+    Dedicated node to handle PagineGialle links.
+    Extracts real company URLs and saves them separately in pg_results.
+    """
     search_results = state.get("search_results", [])
-    logger.info(f"[SCRAPE NODE] Processing {len(search_results)} URLs")
-    
-    scraped_data = []
+    pg_results = []
 
     for result in search_results:
+        url = result.get("url", "")
+        title = result.get("title", "")
+
+        if "paginegialle.it" in url.lower():
+            logger.info("=" * 80)
+            logger.info(f"[EXTRACT PG NODE] PagineGialle detected. Starting sub-task for: {url}")
+            
+            try:
+                discovered_urls = extract_paginegialle_websites(url)
+                for d_url in discovered_urls:
+                    pg_results.append({
+                        "title": f"{title} (via PG)",
+                        "url": d_url
+                    })
+                logger.info(f"[EXTRACT PG NODE] Added {len(discovered_urls)} new URLs from PagineGialle.")
+            except Exception as e:
+                logger.error(f"[EXTRACT PG NODE] Error extracting URL {url}: {e}")
+
+    return {"pg_results": pg_results}
+
+
+def scrape_node(state: InternalState) -> Dict:
+    """
+    Scrape websites from search results.
+    Combines search_results and pg_results, removes duplicates, applies blacklist, and runs the standard scrape flow.
+    """
+    search_results = state.get("search_results", [])
+    pg_results = state.get("pg_results", [])
+    scraped_data = []
+
+    combined_results = search_results + pg_results
+    logger.info(f"[SCRAPE NODE] Combining {len(search_results)} standard results with {len(pg_results)} PG results.")
+
+    # Delete duplicates
+    unique_urls = set()
+    deduplicated_results = []
+    duplicates_count = 0
+
+    for result in combined_results:
+        url = result.get("url", "")
+        if url in unique_urls:
+            duplicates_count += 1
+        else:
+            unique_urls.add(url)
+            deduplicated_results.append(result)
+
+    if duplicates_count > 0:
+        logger.info(f"[SCRAPE NODE] Removed {duplicates_count} duplicate URLs.")
+
+    # Standard blacklist check for other results
+    for result in deduplicated_results:
         title = result.get("title", "")
         url = result.get("url", "")
 
-        # Skip blacklisted sites
-        if not is_valid_company_result(title, url):
-            logger.warning(f"[SCRAPE NODE] Skipping blacklisted: {url}")
+        # Check the blacklist and make sure to skip paginegialle.it 
+        if "paginegialle.it" in url.lower() or not is_valid_company_result(title, url):
+            logger.warning(f"[SCRAPE NODE] Skipping blacklisted or directory: {url}")
             continue
 
         try:
-            scraped = scrape_company_website(url)
-            scraped["title"] = title
-            scraped["url"] = url
-            scraped_data.append(scraped)
-
+            data = scrape_company_website(url)
+            data.update({"title": title, "url": url})
+            scraped_data.append(data)
         except Exception as e:
             logger.error(f"[SCRAPE NODE] {url} -> {e}")
-            # scraped_data.append({
-            #     "title": title,
-            #     "url": url,
-            #     "homepage_text": None,
-            #     "contact_text": None,
-            #     "error": str(e)
-            # })
     
     if not scraped_data:
-        logger.error("[SCRAPE NODE] No valid websites scraped")
-
-        return {
-            "error": "No valid company data could be scraped from search results.",
-            "scraped_data": []
-        }
-
-    logger.info(f"[SCRAPE NODE] Successfully scraped {len(scraped_data)} websites")
+        return {"error": "No valid data scraped.", "scraped_data": []}
 
     return {
         "scraped_data": scraped_data,
@@ -100,7 +137,6 @@ def scrape_node(state: InternalState) -> Dict:
 
 def extract_data_llm_node(state: InternalState) -> Dict:
     """Process one company at a time."""
-
     index = state["current_index"]
     company = state["scraped_data"][index]
 
@@ -122,7 +158,6 @@ def extract_data_llm_node(state: InternalState) -> Dict:
 
 def final_answer_node(state: InternalState) -> Dict:
     """Return final aggregated results."""
-
     results = state.get("extracted_results", [])
 
     return {
@@ -132,7 +167,6 @@ def final_answer_node(state: InternalState) -> Dict:
 
 
 def error_node(state: InternalState):
-
     return {
         "final_answer": [],
         "error": state.get("error", "Unknown error")
@@ -141,6 +175,24 @@ def error_node(state: InternalState):
 
 # ROUTER FUNCTIONS
 
+def route_after_search(state: InternalState):
+    """
+    Route search results: 
+    If there is an error, go to error.
+    If PagineGialle is in the results, go to extract_pg node.
+    Otherwise, go directly to scrape.
+    """
+    if state.get("error"):
+        return "error"
+        
+    search_results = state.get("search_results", [])
+    has_pg = any("paginegialle.it" in r.get("url", "").lower() for r in search_results)
+    
+    if has_pg:
+        return "extract_pg"
+    return "scrape"
+
+
 def should_continue(state: InternalState):
     if state.get("error"):
         return "error"
@@ -148,7 +200,6 @@ def should_continue(state: InternalState):
 
 def loop_router(state: InternalState):
     """Decide if we continue looping."""
-
     if state["current_index"] < len(state["scraped_data"]):
         return "continue"
 
@@ -162,42 +213,22 @@ graph = StateGraph(
     output_schema=OutputState
 )
 
+# Nodes
 graph.add_node("search", search_node)
+graph.add_node("extract_pg", extract_pg_node)
 graph.add_node("scrape", scrape_node)
 graph.add_node("extract", extract_data_llm_node)
 graph.add_node("final_answer", final_answer_node)
 graph.add_node("error", error_node)
 
-graph.add_conditional_edges(
-    "search",
-    should_continue,
-    {
-        "continue": "scrape",
-        "error": "error"
-    }
-)
-
-graph.add_conditional_edges(
-    "scrape",
-    should_continue,
-    {
-        "continue": "extract",
-        "error": "error"
-    }
-)
-
-graph.add_conditional_edges(
-    "extract",
-    loop_router,
-    {
-        "continue": "extract",
-        "end": "final_answer"
-    }
-)
+# Edges & Conditional Edges
+graph.add_conditional_edges("search", route_after_search, {"extract_pg": "extract_pg", "scrape": "scrape", "error": "error"})
+graph.add_edge("extract_pg", "scrape") 
+graph.add_conditional_edges("scrape", should_continue, {"continue": "extract", "error": "error"})
+graph.add_conditional_edges("extract", loop_router, {"continue": "extract", "end": "final_answer"})
 
 graph.add_edge("final_answer", END)
 graph.add_edge("error", END)
-
 graph.set_entry_point("search")
 
 app = graph.compile()
@@ -206,11 +237,6 @@ logger.info("[GRAPH] compiled successfully")
 
 
 # RUNNER
-
 def run_agent(query: str):
-
-    initial_state = {
-        "query": query
-    }
-
+    initial_state = {"query": query}
     return app.invoke(initial_state)

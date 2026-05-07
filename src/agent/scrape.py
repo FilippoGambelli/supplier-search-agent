@@ -25,7 +25,6 @@ HEADERS = {
 # Ignore directories / aggregators
 # =========================================================
 BLACKLIST = [
-    "paginegialle",
     "pagine bianche",
     "paginebianche",
     "yelp",
@@ -155,6 +154,78 @@ def find_contact_page(base_url: str, html: str) -> Optional[str]:
     logger.warning(f"[CONTACT PAGE NOT FOUND] {base_url}")
 
     return None
+
+
+# =========================================================
+# EXTRACT PAGINEGIALLE
+# =========================================================
+def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[str]:
+    """
+    Sub-problem: PagineGialle Crawler
+    1. Scrapes the search result page.
+    2. Collects the first N company profile links.
+    3. Visits each profile to find the 'Sito Web' (Website) button.
+    """
+
+    logger.info(f"[PAGINEGIALLE] Processing directory: {pg_url}")
+    html = fetch_html(pg_url)
+    if not html:
+        logger.warning(f"[PAGINEGIALLE] Failed to fetch directory page: {pg_url}")
+        return []
+
+    soup = BeautifulSoup(html, "html.parser")
+    profile_links = []
+    
+    # Extract company profile links using common PagineGialle selectors
+    for a_tag in soup.select('div.search-itm__dx > div a.remove_blank_for_app'):
+        href = a_tag.get('href')
+
+        if href and "paginegialle.it" in href:
+            profile_links.append(href)
+
+        if len(profile_links) >= limit:
+            break
+
+    logger.info(f"[PAGINEGIALLE] Found {len(profile_links)} profiles to inspect.")
+    logger.info("=" * 80)
+
+    real_websites = []
+
+    for profile_url in profile_links:
+        logger.info(f"[PAGINEGIALLE] Checking profile: {profile_url}")
+        p_html = fetch_html(profile_url)
+        
+        if not p_html:
+            logger.warning(f"[PAGINEGIALLE] Could not fetch HTML for profile.")
+            continue
+        
+        logger.info(f"[PAGINEGIALLE] HTML fetched successfully. Searching for 'Sito Web' button...")
+        p_soup = BeautifulSoup(p_html, "html.parser")
+        
+        website_found = False
+
+        # Cerca direttamente il bottone del sito web
+        website_button = p_soup.select_one(
+            'a[data-tr="scheda_azienda__cta_sitoweb"]'
+        )
+
+        if website_button:
+            web_url = website_button.get("href")
+
+            if (web_url and web_url.startswith("http") and "paginegialle" not in web_url):
+                logger.info(f"[PAGINEGIALLE] SUCCESS: Found real website -> {web_url}")
+
+                real_websites.append(web_url)
+                website_found = True
+
+        if not website_found: 
+            logger.info(f"[PAGINEGIALLE] No website found in this profile.")
+            
+        logger.info("=" * 80)
+
+    logger.info(f"[PAGINEGIALLE] Extraction complete. Found {len(real_websites)} real websites.")
+    logger.info("=" * 80)
+    return real_websites
 
 
 # =========================================================
