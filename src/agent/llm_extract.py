@@ -1,6 +1,7 @@
 import json
 from typing import Dict
 from langchain_ollama import ChatOllama
+from src.logger import logger
 
 # Note: for LangChain we pass the base_url instead of the full /api/generate endpoint
 OLLAMA_BASE_URL = "http://localhost:11434"
@@ -25,10 +26,6 @@ def build_company_prompt(company: Dict) -> str:
 
     homepage_text = company.get("homepage_text", "") or ""
     contact_text = company.get("contact_text", "") or ""
-
-    # Limit text size to avoid LLM overload
-    homepage_text = homepage_text[:12000]           # TODO
-    contact_text = contact_text[:8000]              # TODO
 
     prompt = f"""
 You are an expert business information extraction system.

@@ -1,0 +1,396 @@
+{
+    "query": "aziende piastrelle matera",
+    "answer": [
+        {
+            "company_name": "Edil Mea Srl by Azzone",
+            "website": "https://edilmea.com/",
+            "emails": [
+                "info@edilmea.com"
+            ],
+            "phone_numbers": [
+                "0835 261715"
+            ],
+            "vat_number": null,
+            "address": "Via dell’Artigianato, 45",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Pavimenti, rivestimenti, arredo bagno, infissi, porte, parquet, edilizia, accessori per il bagno, prodotti per l’arredo giardino, sistemi di climatizzazione, prodotti professionali e tecnici per il restauro e risanamento strutturale",
+            "contact_person": null
+        },
+        {
+            "company_name": "Lea Ceramiche",
+            "website": "https://www.leaceramiche.it/punti-vendita/italia/matera",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "Via Durini 3",
+            "city": "Milano",
+            "postal_code": null,
+            "country": "Italia",
+            "description": "Brand di design specializzato in superfici di gres porcellanato e ceramiche di fascia alta e lusso, parte di Panariagroup.",
+            "contact_person": null
+        },
+        {
+            "company_name": "D'Ercole Design",
+            "website": "https://www.designdercole.it/ceramiche",
+            "emails": [
+                "dercoledesign@gmail.com"
+            ],
+            "phone_numbers": [
+                "+39 388 0509753",
+                "+39 0835 1651158"
+            ],
+            "vat_number": "01293150775",
+            "address": "Via la Martella, 9",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "D'Ercole Design è una ditta leader nel settore dell'arredamento di design a Matera, specializzata nella fornitura e posa in opera di ceramiche per rivestimenti interni, pavimenti, parquet, sanitari e rubinetteria.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Attivissimo Srl",
+            "website": "https://www.attivissimosrl.it/",
+            "emails": [
+                "info@attivissimosrl.it"
+            ],
+            "phone_numbers": [
+                "+39 0835 346744"
+            ],
+            "vat_number": null,
+            "address": "Via Giuseppe Quinto, Zona Industriale JESCE",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Produzione di pavimenti e rivestimenti in Graniglia, Pastina e Cementina, con servizi di restauro e creazioni su misura.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Attivissimo srl",
+            "website": "www.attivissimosrl.it",
+            "emails": [],
+            "phone_numbers": [
+                "0835 346744"
+            ],
+            "vat_number": null,
+            "address": "Via Giuseppe Quinto - Zona Industriale Jesce",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italia",
+            "description": "L’azienda, nasce nel 1950 da Filippo Attivissimo, maestro e profondo conoscitore della tecnica dell’intarsio, del decoro e della produzione di mattonelle in pastina e graniglia. Specializzata in pavimenti e rivestimenti in Graniglia, Restauro di pavimenti in Cementina, e fornitura di top e lavandini in Graniglia o Pastina.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Bertolani Store",
+            "website": "https://bertolanistore.it/",
+            "emails": [
+                "info@bertolanistore.it"
+            ],
+            "phone_numbers": [
+                "+39.335.6552885"
+            ],
+            "vat_number": null,
+            "address": "Via Caduti sul Lavoro, 32",
+            "city": "Salvaterra di Casalgrande (RE)",
+            "postal_code": "42013",
+            "country": "Italy",
+            "description": "Specialized in the sale and installation of porcelain stoneware floors, wall coverings, wood, laminate, PVC, terracotta, and natural stone, as well as bathroom furniture.",
+            "contact_person": null
+        },
+        {
+            "error": "Invalid JSON returned by model or connection error: Expecting value: line 1 column 1 (char 0)",
+            "raw_output": "```json\n{\n  \"company_name\": \"Instapro\",\n  \"website\": \"https://www.instapro.it\",\n  \"emails\": [],\n  \"phone_numbers\": [],\n  \"vat_number\": null,\n  \"address\": null,\n  \"city\": \"Amsterdam\",\n  \"postal_code\": null,\n  \"country\": \"Paesi Bassi\",\n  \"description\": \"Piattaforma che mette in contatto persone che devono eseguire lavori in casa con professionisti qualificati della zona.\",\n  \"contact_person\": \"Gianmarco Sessa\"\n}\n```"
+        },
+        {
+            "company_name": "Edil Mea Srl by Azzone",
+            "website": "https://www.edilmea.com/pavimenti-e-rivestimenti/",
+            "emails": [
+                "info@edilmea.com"
+            ],
+            "phone_numbers": [
+                "0835 261715"
+            ],
+            "vat_number": null,
+            "address": "Via dell’Artigianato, 45",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Punto di riferimento a Matera e in Basilicata per la vendita di pavimenti e rivestimenti di alta qualità e made in Italy, arredo bagno, infissi, porte, parquet, edilizia e sistemi di climatizzazione.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Edil Mea Srl by Azzone",
+            "website": "https://edilmea.com/pavimenti-e-rivestimenti/",
+            "emails": [
+                "info@edilmea.com"
+            ],
+            "phone_numbers": [
+                "0835 261715"
+            ],
+            "vat_number": null,
+            "address": "Via dell’Artigianato, 45",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Edil Mea è il punto di riferimento a Matera e in Basilicata per la vendita di pavimenti e rivestimenti di alta qualità e made in Italy dei marchi più rinomati del panorama italiano.",
+            "contact_person": null
+        },
+        {
+            "error": "Invalid JSON returned by model or connection error: Expecting value: line 1 column 1 (char 0)",
+            "raw_output": "```json\n{\n  \"company_name\": \"Archisio\",\n  \"website\": \"https://www.archisio.it\",\n  \"emails\": [],\n  \"phone_numbers\": [],\n  \"vat_number\": null,\n  \"address\": null,\n  \"city\": null,\n  \"postal_code\": null,\n  \"country\": \"Italy\",\n  \"description\": \"Platform for finding construction and design professionals, including architects, interior designers, and specialized craftsmen like tilers.\",\n  \"contact_person\": null\n}\n```"
+        },
+        {
+            "company_name": "Matera Giuseppe",
+            "website": "https://www.pavimentirivestimentimatera.com/",
+            "emails": [
+                "info@materagiuseppesrl.it"
+            ],
+            "phone_numbers": [
+                "+39 080 5355576",
+                "+39 080 4113886"
+            ],
+            "vat_number": "05794300722",
+            "address": "Via Cosenza 23",
+            "city": "Modugno (BA)",
+            "postal_code": "70026",
+            "country": "Italy",
+            "description": "Specialized company in the sale and installation of civil and industrial flooring, including PVC, rubber, linoleum, parquet, synthetic grass, and wall coverings.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Edilprogress SRL",
+            "website": "https://www.edilprogressmatera.com",
+            "emails": [
+                "edilprog@alice.it"
+            ],
+            "phone_numbers": [
+                "+39 0835 383421",
+                "+39 388 0727248"
+            ],
+            "vat_number": "01164490771",
+            "address": "Via Dante Alighieri, 67",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Impresa di costruzioni civili specializzata in edifici residenziali, opere pubbliche, edilizia industriale, impianti tecnologici e opere infrastrutturali.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Cave e Cantieri",
+            "website": "https://www.caveecantieri.it",
+            "emails": [
+                "caveecantierisrl@gmail.com"
+            ],
+            "phone_numbers": [
+                "+39 0835 261493"
+            ],
+            "vat_number": "01086920772",
+            "address": "Via Giardinelle 3",
+            "city": "MATERA",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Impresa specializzata in estrazioni minerarie, lavori stradali, movimento terra, riqualificazione urbana, demolizioni e opere nel sottosuolo.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Toma Abele Trivellazioni S.r.l.",
+            "website": "https://www.tomaabeletrivellazioni.com",
+            "emails": [
+                "toma.abele@tomaabele.com"
+            ],
+            "phone_numbers": [
+                "+39 0835 261746",
+                "+39 0835 381960"
+            ],
+            "vat_number": "00657550778",
+            "address": "Via La Martella 126",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Operative since 1960, the company specializes in environmental characterizations, drilling services, geognostic and geophysical investigations, and the installation of vertical electrical dispersers.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Fiumano Toma Trivellazioni S.R.L.",
+            "website": "https://www.fiumanotomatrivellazioni.com",
+            "emails": [
+                "tomafi@libero.it"
+            ],
+            "phone_numbers": [
+                "+39 0835 268092"
+            ],
+            "vat_number": "00458540770",
+            "address": "Via degli Aragonesi, 34",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "A company specialized in consolidations, geognostic surveys, drilling, and piling in Puglia, Basilicata, and throughout Italy, offering services such as environmental characterization and ordnance clearance.",
+            "contact_person": null
+        },
+        {
+            "company_name": "De.Fo.Costruzioni",
+            "website": "https://www.defocostruzioni.com",
+            "emails": [
+                "defocostruzionisrl@gmail.com"
+            ],
+            "phone_numbers": [
+                "+39 329 5714954"
+            ],
+            "vat_number": "01401230774",
+            "address": "Via Dell' Artigianato, 26",
+            "city": "MATERA",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "La De. Fo. Costruzioni Srl si occupa di ristrutturazioni interne ed esterne di appartamenti, locali commerciali ed artigianali, immobili di vario tipo, riconversioni, frazionamenti e cambi di destinazione d'uso, oltre a servizi di cartongesso e pitturazioni.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Ruggieri Costruzioni",
+            "website": "https://www.ruggiericostruzioni.it",
+            "emails": [
+                "ruggieri.costruzioni@gmail.com"
+            ],
+            "phone_numbers": [
+                "+39 0835 385675",
+                "+39 335 6292291"
+            ],
+            "vat_number": "00519220776",
+            "address": "Via La Martella, 106",
+            "city": "MATERA",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Impresa edile specializzata in costruzioni industriali e civili, restauri di edifici storici e ristrutturazioni chiavi in mano.",
+            "contact_person": null
+        },
+        {
+            "company_name": "EdilPepe",
+            "website": "http://www.edilpepe.com",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": null,
+            "description": null,
+            "contact_person": null
+        },
+        {
+            "company_name": "Essedi sas",
+            "website": "https://www.costruzioniessedi.it",
+            "emails": [
+                "santeramoessedi@gmail.com",
+                "santeramoessedi@gmail.it"
+            ],
+            "phone_numbers": [
+                "327 7809524",
+                "329 6365642"
+            ],
+            "vat_number": "01288420779",
+            "address": "Via Francesco Paolo Loperfido, 40",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Impresa edile specializzata nella realizzazione di costruzioni e ristrutturazioni edili, risanamento conservativo e consolidamento strutturale di immobili residenziali, commerciali e industriali.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Top Edil S.r.l.",
+            "website": "https://www.topedilmt.it",
+            "emails": [
+                "top.edil@gmail.com"
+            ],
+            "phone_numbers": [
+                "+39 0835 381745",
+                "+39 393 9294621"
+            ],
+            "vat_number": "01345630774",
+            "address": "Via Giardinelle 32",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "Azienda specializzata nella produzione e fornitura di materiali tecnici per l’edilizia, tra cui cartongesso, pitture, isolamenti termoacustici, pavimenti e utensili professionali.",
+            "contact_person": null
+        },
+        {
+            "company_name": "La ModernaEdilizia",
+            "website": "http://www.lamodernaedilizia.com",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": null,
+            "description": null,
+            "contact_person": null
+        },
+        {
+            "company_name": "Euroedil srl",
+            "website": "https://www.euroedilmt.com/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Matera",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Soluzioni d'interni - Arredo Bagno | Pavimenti",
+            "contact_person": null
+        },
+        {
+            "company_name": "D'Ercole Design",
+            "website": "https://www.designdercole.it",
+            "emails": [
+                "dercoledesign@gmail.com"
+            ],
+            "phone_numbers": [
+                "+39 388 0509753",
+                "+39 0835 1651158"
+            ],
+            "vat_number": "01293150775",
+            "address": "Via la Martella, 9",
+            "city": "Matera",
+            "postal_code": "75100",
+            "country": "Italy",
+            "description": "A prestigious company in Matera specialized in the sale of high-quality design furniture, ceramics, flooring, and bathroom fixtures, offering personalized interior design services.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Loperfido Project",
+            "website": "http://loperfidoproject.com/",
+            "emails": [
+                "info@loperfidoproject.com"
+            ],
+            "phone_numbers": [
+                "0835 384417"
+            ],
+            "vat_number": null,
+            "address": "Via Nenni 14",
+            "city": "Matera",
+            "postal_code": null,
+            "country": null,
+            "description": "Loperfido Project supporta le figure tecniche del settore edile e dell'arredamento d'interni nella realizzazione di ambienti di prestigio, offrendo soluzioni per rivestimenti di pavimenti e pareti, bagni componibili e rifiniture d'interni di alta qualità.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Gabriele Parquet dal 1986",
+            "website": "https://gabrieleparquet.it/",
+            "emails": [
+                "gabrieleparquet@gmail.com"
+            ],
+            "phone_numbers": [
+                "+39 339 5381547"
+            ],
+            "vat_number": null,
+            "address": null,
+            "city": "Matera",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "A company specializing in the construction sector, specifically in conservative recovery building and the supply and installation of wooden parquet flooring.",
+            "contact_person": null
+        }
+    ],
+    "error": null
+}

@@ -70,10 +70,10 @@ def extract_pg_node(state: InternalState) -> Dict:
             
             try:
                 discovered_urls = extract_paginegialle_websites(url)
-                for d_url in discovered_urls:
+                for item in discovered_urls:
                     pg_results.append({
-                        "title": f"{title} (via PG)",
-                        "url": d_url
+                        "title": item["name"],
+                        "url": item["website"]
                     })
                 logger.info(f"[EXTRACT PG NODE] Added {len(discovered_urls)} new URLs from PagineGialle.")
             except Exception as e:
@@ -122,6 +122,9 @@ def scrape_node(state: InternalState) -> Dict:
 
         try:
             data = scrape_company_website(url)
+            if data is None:
+                logger.warning(f"[SCRAPE NODE] No data returned for: {url}")
+                continue
             data.update({"title": title, "url": url})
             scraped_data.append(data)
         except Exception as e:

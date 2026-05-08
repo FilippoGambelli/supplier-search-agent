@@ -159,12 +159,13 @@ def find_contact_page(base_url: str, html: str) -> Optional[str]:
 # =========================================================
 # EXTRACT PAGINEGIALLE
 # =========================================================
-def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[str]:
+def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str, str]]:
     """
     Sub-problem: PagineGialle Crawler
     1. Scrapes the search result page.
-    2. Collects the first N company profile links.
+    2. Collects the first N company profile links and their names.
     3. Visits each profile to find the 'Sito Web' (Website) button.
+    4. Returns a list of dictionaries with company names and websites.
     """
 
     logger.info(f"[PAGINEGIALLE] Processing directory: {pg_url}")
@@ -174,25 +175,38 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[str]:
         return []
 
     soup = BeautifulSoup(html, "html.parser")
-    profile_links = []
+    
+    # company_name and href paginegialle
+    profiles_data = [] 
     
     # Extract company profile links using common PagineGialle selectors
     for a_tag in soup.select('div.search-itm__dx > div a.remove_blank_for_app'):
-        href = a_tag.get('href')
+        href_pg = a_tag.get('href')
+        
+        # FInd h2 tag
+        h2_tag = a_tag.select_one('h2')
+        company_name = h2_tag.get_text(strip=True) if h2_tag else "Unknown name"
 
-        if href and "paginegialle.it" in href:
-            profile_links.append(href)
+        if href_pg and "paginegialle.it" in href_pg:
+            profiles_data.append({
+                "name": company_name,
+                "url": href_pg
+            })
 
-        if len(profile_links) >= limit:
+        if len(profiles_data) >= limit:
             break
 
-    logger.info(f"[PAGINEGIALLE] Found {len(profile_links)} profiles to inspect.")
+    logger.info(f"[PAGINEGIALLE] Found {len(profiles_data)} profiles to inspect.")
     logger.info("=" * 80)
 
+    # company_name and website
     real_websites = []
 
-    for profile_url in profile_links:
-        logger.info(f"[PAGINEGIALLE] Checking profile: {profile_url}")
+    for profile in profiles_data:
+        profile_url = profile["url"]
+        company_name = profile["name"]
+        
+        logger.info(f"[PAGINEGIALLE] Checking profile: {profile_url} for '{company_name}'")
         p_html = fetch_html(profile_url)
         
         if not p_html:
@@ -204,7 +218,6 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[str]:
         
         website_found = False
 
-        # Cerca direttamente il bottone del sito web
         website_button = p_soup.select_one(
             'a[data-tr="scheda_azienda__cta_sitoweb"]'
         )
@@ -215,7 +228,10 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[str]:
             if (web_url and web_url.startswith("http") and "paginegialle" not in web_url):
                 logger.info(f"[PAGINEGIALLE] SUCCESS: Found real website -> {web_url}")
 
-                real_websites.append(web_url)
+                real_websites.append({
+                    "name": company_name,
+                    "website": web_url
+                })
                 website_found = True
 
         if not website_found: 
@@ -225,6 +241,7 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[str]:
 
     logger.info(f"[PAGINEGIALLE] Extraction complete. Found {len(real_websites)} real websites.")
     logger.info("=" * 80)
+    
     return real_websites
 
 
@@ -242,13 +259,8 @@ def scrape_company_website(url: str) -> Dict:
     homepage_html = fetch_html(url)
 
     if not homepage_html:
-
         logger.warning(f"[SCRAPING FAILED] Could not fetch homepage: {url}")
-
-        return {
-            "homepage_text": None,
-            "contact_text": None,
-        }
+        return None
 
     # Homepage text
     homepage_text = html_to_text(homepage_html)
