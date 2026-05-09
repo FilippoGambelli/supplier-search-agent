@@ -1,5 +1,120 @@
 {
-    "query": "Fornitori materiali edili pisa",
-    "answer": null,
-    "error": "Internal Server Error (ref: 16af70e2-2219-4ef7-830d-10f9cbae5106) (status code: 500)"
+    "query": "aziende piastrelle pisa",
+    "answer": [
+        {
+            "company_name": "Laboratorio Marmi Michele Grassi",
+            "website": "https://www.grassimichelemarmi.com",
+            "email_addresses": [
+                "mikegras@libero.it"
+            ],
+            "phone_numbers": [
+                "+39 050 984251"
+            ],
+            "vat_number": "01989470503",
+            "address": "Via di Capiteta, 3/B",
+            "city": "Pisa",
+            "postal_code": "56121"
+        },
+        {
+            "company_name": "RELÙ Pisa",
+            "website": "https://www.relupisa.it/prodotti/pavimenti-e-rivestimenti/",
+            "email_addresses": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "via di Pratale",
+            "city": "Pisa",
+            "postal_code": null
+        },
+        {
+            "company_name": "Cioni Multicentro",
+            "website": "https://www.cioniedilizia.it/showroom/soluzioni-per-la-casa/pavimenti-e-rivestimenti/",
+            "email_addresses": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Pisa",
+            "postal_code": null
+        },
+        {
+            "company_name": "ABK Group Industrie Ceramiche S.p.A. (Flaviker)",
+            "website": "https://www.flavikerpisa.it/it/",
+            "email_addresses": [
+                "info@abkgroup.it"
+            ],
+            "phone_numbers": [
+                "+39 0536 849611",
+                "+39 0535 761311",
+                "+39 059 9752011",
+                "+39 0536 070800",
+                "+39 059 9752211",
+                "+33 03 27685404",
+                "+39 02 74237002",
+                "+39 380 2858432"
+            ],
+            "vat_number": "IT 02097380360",
+            "address": [
+                "Via del Crociale, 69",
+                "Via S.Lorenzo, 24/A",
+                "S.S. per Vignola 569, 226",
+                "Via Ghiarola Nuova, 142",
+                "Via Tiepido 10",
+                "S/Bois – Accès par la D121, Rue Du Dispatching",
+                "Via Fernanda Wittgens, 12",
+                "Viale 1° Maggio, 2"
+            ],
+            "city": [
+                "Fiorano Modenese",
+                "Finale Emilia",
+                "Solignano",
+                "Louvroil",
+                "Milano",
+                "Camporengo"
+            ],
+            "postal_code": [
+                "41042",
+                "41034",
+                "41014",
+                "41017",
+                "59720",
+                "20123",
+                "37010"
+            ]
+        },
+        {
+            "company_name": "Arte Pietra Srl",
+            "website": "https://www.rivestimentiinpietra.biz/",
+            "email_addresses": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null
+        },
+        {
+            "company_name": "Lea Ceramiche",
+            "website": "https://www.leaceramiche.it/punti-vendita/italia/pisa",
+            "email_addresses": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "Via Durini 3",
+            "city": "Milano",
+            "postal_code": null
+        },
+        {
+            "company_name": "Ditta Edilizia Artigiana Belotti Francesco",
+            "website": "https://www.ediliziabelotti.it",
+            "email_addresses": [
+                "impresabelottifrancesco@gmail.com"
+            ],
+            "phone_numbers": [
+                "0584 341128",
+                "348 0913590"
+            ],
+            "vat_number": "01047060460",
+            "address": "Via Dei Martiri Di Sant'Anna, 30",
+            "city": "Viareggio",
+            "postal_code": "55049"
+        }
+    ],
+    "error": null
 }

@@ -1,8 +1,93 @@
 {
-    "query": "Fornitori materiali edili Pisa",
+    "query": "aziende piastrelle pisa",
     "answer": [
         {
-            "company_name": "Tecnomat Pisa",
+            "company_name": "RELÙ Pisa",
+            "website": "https://www.relupisa.it/prodotti/pavimenti-e-rivestimenti/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "via di Pratale",
+            "city": "Pisa",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Showroom specializing in interior design, flooring, and wall coverings, offering a wide range of high-end brands and professional consultancy for residential and commercial construction.",
+            "contact_person": "Mauro Lupetti"
+        },
+        {
+            "company_name": "Arte Pietra Srl",
+            "website": "https://www.rivestimentiinpietra.biz/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": "Italia",
+            "description": "Azienda specializzata in pavimenti e rivestimenti in pietra naturale per interni ed esterni, arredo urbano e prodotti per la manutenzione della pietra.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Lea Ceramiche",
+            "website": "https://www.leaceramiche.it/punti-vendita/italia/pisa",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "Via Durini 3",
+            "city": "Milano",
+            "postal_code": null,
+            "country": "Italia",
+            "description": "Brand di superfici ceramiche di fascia alta e di lusso, specializzato in gres porcellanato e design d'interni, parte di Panariagroup.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Floor Design Srl",
+            "website": "www.floordesignsrl.it",
+            "emails": [],
+            "phone_numbers": [
+                "+39 0509913559",
+                "050 991 3559"
+            ],
+            "vat_number": null,
+            "address": "Via Antonio Meucci, 1",
+            "city": "Pisa",
+            "postal_code": "56121",
+            "country": "Italia",
+            "description": "Piastrelle per Rivestimenti e Pavimenti",
+            "contact_person": null
+        },
+        {
+            "company_name": "Archisio",
+            "website": "https://www.archisio.it",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": "Italy",
+            "description": "A platform that connects users with professionals in the architecture, design, and construction sectors, specifically providing a directory of flooring and cladding retailers in Pisa.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Cioni Multicentro",
+            "website": "https://www.cioniedilizia.it/showroom/soluzioni-per-la-casa/pavimenti-e-rivestimenti/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Pisa",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "A reference point in Tuscany since 1963 for designing, building, renovating, furnishing and decorating private homes, public buildings and business structures, specializing in flooring, coverings, hardware and construction materials.",
+            "contact_person": null
+        },
+        {
+            "error": "Invalid JSON returned by model or connection error: Expecting value: line 1 column 1 (char 0)",
+            "raw_output": "```json\n{\n  \"company_name\": \"Archisio\",\n  \"website\": \"https://www.archisio.it/piastrellisti/pisa\",\n  \"emails\": [],\n  \"phone_numbers\": [],\n  \"vat_number\": null,\n  \"address\": null,\n  \"city\": null,\n  \"postal_code\": null,\n  \"country\": \"Italy\",\n  \"description\": \"A portal that connects users with professional tilers and other construction and design professionals, offering the possibility to request free quotes.\",\n  \"contact_person\": null\n}\n```"
+        },
+        {
+            "company_name": "Tecnomat Pisa - utensileria, edilizia, ristrutturazione casa",
             "website": "https://www.tecnomat.it/it/n/pisa/",
             "emails": [
                 "bricoman@pec.bricoman.it"
@@ -13,91 +98,85 @@
             "city": "Rozzano (MI)",
             "postal_code": "20089",
             "country": "Italia",
-            "description": "Tecnomat (formerly Bricoman) offers professional products for home renovation and construction, specializing in technical materials for professionals and private customers across departments such as plumbing, electricity, building, and carpentry.",
+            "description": "Tecnomat (formerly Bricoman) offers professional technical products for construction, renovation, and home finishing, serving both professionals and the general public with a wholesale and retail model.",
             "contact_person": null
         },
         {
-            "company_name": "RVF BITOZZI",
-            "website": "https://www.rvfbitozzi.it/",
-            "emails": [
-                "mostra@bitozzi.it",
-                "magazzino@bitozzi.it"
-            ],
-            "phone_numbers": [
-                "+39 0587 642069",
-                "+39 0587 674003"
-            ],
-            "vat_number": null,
-            "address": "La Sterza",
-            "city": "Lajatico",
-            "postal_code": null,
-            "country": "Italy",
-            "description": "Vendita ed esposizione di materiali edili, arredo bagno, arredo giardino, pavimenti, rivestimenti, caminetti e stufe a pellet per Pisa e provincia.",
-            "contact_person": null
-        },
-        {
-            "company_name": "Renato Lupetti",
-            "website": "https://www.renatolupetti.it/",
-            "emails": [],
-            "phone_numbers": [
-                "050 817025",
-                "050 571234"
-            ],
-            "vat_number": null,
-            "address": "Via Marino, 5; Via Guidiccioni, 2/4",
-            "city": "Pisa",
-            "postal_code": null,
-            "country": "Italy",
-            "description": "Offre la sicurezza di un’ampia gamma dei migliori materiali e prodotti per l’edilizia, in pronta consegna.",
-            "contact_person": null
-        },
-        {
-            "company_name": "Edilcomes Commerciale Srl",
-            "website": "https://edilcomes.gruppomade.com/",
-            "emails": [
-                "[email protected]",
-                "[email protected]"
-            ],
-            "phone_numbers": [
-                "050982228"
-            ],
-            "vat_number": "01264010503",
-            "address": "Via Emilia, 349/A – Km 43",
-            "city": "Loc. Ospedaletto PI",
-            "postal_code": "56121",
-            "country": "Italy",
-            "description": "Rivendita a Pisa di Gruppo Made specializzata in materiali edili, finiture, showroom e soluzioni di ristrutturazione.",
-            "contact_person": null
-        },
-        {
-            "company_name": "Tecnomat Pisa",
-            "website": "https://negozi.tecnomat.it/toscana/tecnomat-pisa-28",
+            "company_name": "Houzz",
+            "website": "https://www.houzz.it",
             "emails": [],
             "phone_numbers": [],
             "vat_number": null,
-            "address": "Via Aurelia Sud Angolo Via Delle Colombaie",
-            "city": "Pisa",
-            "postal_code": "56121",
-            "country": "Italy",
-            "description": "Il negozio Tecnomat di Pisa offre prodotti tecnici per costruire e ristrutturare casa a prezzi convenienti, in stock o da ordinare su misura: dalle piastrelle ai sanitari, fino a porte e finestre.",
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": "Italia",
+            "description": "Houzz is an all-in-one project management and design software for industry professionals and a platform for homeowners to update their homes, connecting homeowners and home professionals with resources and vendors.",
             "contact_person": null
         },
         {
-            "company_name": "Magazzino Edile F.lli Nardi sas",
-            "website": "https://www.magazzinoedilefratellinardi.it/",
+            "company_name": "Berni Store",
+            "website": "https://www.bernistore.it/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": null,
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Il maggiore centro di distribuzione in Toscana e nel Centro Italia di prodotti di alta qualità nel campo dei pavimenti, rivestimenti, arredo bagno, rubinetteria, sanitari, porte, infissi, camini e complementi d’arredo.",
+            "contact_person": null
+        },
+        {
+            "company_name": "San Miniato - Ulivieri: Pavimenti e rivstimenti",
+            "website": "https://www.ulivierifratelli.it/",
             "emails": [
-                "flli.nardi@libero.it",
-                "fratellinardisas@pec.it"
+                "info@ulivierifratelli.it"
             ],
             "phone_numbers": [
-                "+39 0588 23015"
+                "+39 329 6510730"
             ],
-            "vat_number": "01491870505",
-            "address": "LOCALITA' LA COLOMBAIA SR 439",
-            "city": "CASTELNUOVO DI VAL DI CECINA (PI)",
-            "postal_code": "56041",
+            "vat_number": "00114180508",
+            "address": "Viale Guglielmo Marconi, 115",
+            "city": "SAN MINIATO (PI)",
+            "postal_code": "56028",
             "country": "Italy",
-            "description": "Vendita al dettaglio e all’ingrosso di materiali per l’edilizia, inclusi malte, laterizi, coperture, isolanti, impermeabilizzanti, inerti, ferramenta, utensileria, ceramiche, articoli idrotermosanitari e legname.",
+            "description": "La ditta Ulivieri di San Miniato Basso offre una vasta gamma di materiali da costruzione e articoli per l'edilizia con esposizione permanente di pavimenti, rivestimenti, parquet, arredo bagno, rubinetterie, sanitari, cucine in muratura, stufe, barbecue e camini.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Laboratorio Marmi Michele Grassi",
+            "website": "https://www.grassimichelemarmi.com",
+            "emails": [
+                "mikegras@libero.it"
+            ],
+            "phone_numbers": [
+                "+39 050 984251"
+            ],
+            "vat_number": "01989470503",
+            "address": "Via di Capiteta, 3/B",
+            "city": "Pisa",
+            "postal_code": "56121",
+            "country": "Italy",
+            "description": "Laboratorio marmi specializzato nella lavorazione del marmo per la realizzazione di rivestimenti per cucine e bagni, scale, lavabi e altri complementi d’arredo, offrendo servizi di lavorazioni su misura, restauro marmo e arte funeraria.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Ditta Edilizia Artigiana Belotti Francesco",
+            "website": "https://www.ediliziabelotti.it",
+            "emails": [
+                "impresabelottifrancesco@gmail.com"
+            ],
+            "phone_numbers": [
+                "0584 341128",
+                "348 0913590"
+            ],
+            "vat_number": "01047060460",
+            "address": "Via Dei Martiri Di Sant'Anna, 30",
+            "city": "Viareggio",
+            "postal_code": "55049",
+            "country": "Italy",
+            "description": "Impresa edile specializzata in costruzioni, ristrutturazioni, manutenzione condomini, coibentazione, rifacimento tetti, restauro facciate ed edifici antichi.",
             "contact_person": null
         }
     ],

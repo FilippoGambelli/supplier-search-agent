@@ -21,7 +21,7 @@ def main():
             data = response.json()
 
             print("\nANSWER:\n")
-            print(data["answer"])
+            print(data["data"])
 
             print("\n" + "-" * 50 + "\n")
 
