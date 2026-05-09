@@ -5,11 +5,11 @@ from typing import TypedDict, List, Dict, Optional
 
 from langgraph.graph import StateGraph, END
 
-from agent.search import search_web
-from agent.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
-from agent.llm_extract import extract_data
+from agent_pipeline.agent.search import search_web
+from agent_pipeline.agent.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
+from agent_pipeline.agent.llm_extract import extract_data
 
-from src.logger import logger
+from agent_pipeline.logger import logger
 
 
 # STATES

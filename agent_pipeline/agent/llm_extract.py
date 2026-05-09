@@ -1,7 +1,6 @@
 import json
 from typing import Dict
 from langchain_ollama import ChatOllama
-from src.logger import logger
 
 # Note: for LangChain we pass the base_url instead of the full /api/generate endpoint
 OLLAMA_BASE_URL = "http://localhost:11434"

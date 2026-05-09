@@ -1,0 +1,105 @@
+{
+    "query": "Fornitori materiali edili Pisa",
+    "answer": [
+        {
+            "company_name": "Tecnomat Pisa",
+            "website": "https://www.tecnomat.it/it/n/pisa/",
+            "emails": [
+                "bricoman@pec.bricoman.it"
+            ],
+            "phone_numbers": [],
+            "vat_number": "05602670969",
+            "address": "Via G. Marconi, 24",
+            "city": "Rozzano (MI)",
+            "postal_code": "20089",
+            "country": "Italia",
+            "description": "Tecnomat (formerly Bricoman) offers professional products for home renovation and construction, specializing in technical materials for professionals and private customers across departments such as plumbing, electricity, building, and carpentry.",
+            "contact_person": null
+        },
+        {
+            "company_name": "RVF BITOZZI",
+            "website": "https://www.rvfbitozzi.it/",
+            "emails": [
+                "mostra@bitozzi.it",
+                "magazzino@bitozzi.it"
+            ],
+            "phone_numbers": [
+                "+39 0587 642069",
+                "+39 0587 674003"
+            ],
+            "vat_number": null,
+            "address": "La Sterza",
+            "city": "Lajatico",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Vendita ed esposizione di materiali edili, arredo bagno, arredo giardino, pavimenti, rivestimenti, caminetti e stufe a pellet per Pisa e provincia.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Renato Lupetti",
+            "website": "https://www.renatolupetti.it/",
+            "emails": [],
+            "phone_numbers": [
+                "050 817025",
+                "050 571234"
+            ],
+            "vat_number": null,
+            "address": "Via Marino, 5; Via Guidiccioni, 2/4",
+            "city": "Pisa",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Offre la sicurezza di un’ampia gamma dei migliori materiali e prodotti per l’edilizia, in pronta consegna.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Edilcomes Commerciale Srl",
+            "website": "https://edilcomes.gruppomade.com/",
+            "emails": [
+                "[email protected]",
+                "[email protected]"
+            ],
+            "phone_numbers": [
+                "050982228"
+            ],
+            "vat_number": "01264010503",
+            "address": "Via Emilia, 349/A – Km 43",
+            "city": "Loc. Ospedaletto PI",
+            "postal_code": "56121",
+            "country": "Italy",
+            "description": "Rivendita a Pisa di Gruppo Made specializzata in materiali edili, finiture, showroom e soluzioni di ristrutturazione.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Tecnomat Pisa",
+            "website": "https://negozi.tecnomat.it/toscana/tecnomat-pisa-28",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "Via Aurelia Sud Angolo Via Delle Colombaie",
+            "city": "Pisa",
+            "postal_code": "56121",
+            "country": "Italy",
+            "description": "Il negozio Tecnomat di Pisa offre prodotti tecnici per costruire e ristrutturare casa a prezzi convenienti, in stock o da ordinare su misura: dalle piastrelle ai sanitari, fino a porte e finestre.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Magazzino Edile F.lli Nardi sas",
+            "website": "https://www.magazzinoedilefratellinardi.it/",
+            "emails": [
+                "flli.nardi@libero.it",
+                "fratellinardisas@pec.it"
+            ],
+            "phone_numbers": [
+                "+39 0588 23015"
+            ],
+            "vat_number": "01491870505",
+            "address": "LOCALITA' LA COLOMBAIA SR 439",
+            "city": "CASTELNUOVO DI VAL DI CECINA (PI)",
+            "postal_code": "56041",
+            "country": "Italy",
+            "description": "Vendita al dettaglio e all’ingrosso di materiali per l’edilizia, inclusi malte, laterizi, coperture, isolanti, impermeabilizzanti, inerti, ferramenta, utensileria, ceramiche, articoli idrotermosanitari e legname.",
+            "contact_person": null
+        }
+    ],
+    "error": null
+}

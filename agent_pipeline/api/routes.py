@@ -3,8 +3,8 @@
 import json
 from fastapi import FastAPI, APIRouter, Query
 
-from src.agent.graph import run_agent
-from src.logger import logger
+from ..agent.graph import run_agent
+from ..logger import logger
 
 app = FastAPI(title="AI Search Pipeline with LangGraph")
 
@@ -26,7 +26,7 @@ def ask(q: str = Query(...)):
     error = result.get("error")
 
     # Save to output file
-    with open("output.json", "w", encoding="utf-8") as f:
+    with open("agent_pipeline/output.json", "w", encoding="utf-8") as f:
         json.dump({
             "query": q,
             "answer": answer,
