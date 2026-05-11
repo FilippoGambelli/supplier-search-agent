@@ -11,7 +11,7 @@ timestamp = datetime.now().strftime("%Y%m%d_%H-%M")
 
 LOG_FILE = LOG_DIR / f"app_{timestamp}.log"
 
-logger = logging.getLogger("ai-search")
+logger = logging.getLogger("ai-search-pipeline")
 logger.setLevel(logging.INFO)
 
 if not logger.handlers:

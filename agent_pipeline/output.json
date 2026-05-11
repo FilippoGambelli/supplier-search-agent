@@ -11,8 +11,42 @@
             "city": "Pisa",
             "postal_code": null,
             "country": "Italy",
-            "description": "Showroom specializing in interior design, flooring, and wall coverings, offering a wide range of high-end brands and professional consultancy for residential and commercial construction.",
+            "description": "Showroom specializing in interior design, flooring, and wall coverings, offering a range of high-end brands and professional consultancy for residential and commercial construction.",
             "contact_person": "Mauro Lupetti"
+        },
+        {
+            "error": "Invalid JSON returned by model or connection error: Expecting value: line 1 column 1 (char 0)",
+            "raw_output": "```json\n{\n  \"company_name\": \"Archisio\",\n  \"website\": \"https://www.archisio.it\",\n  \"emails\": [],\n  \"phone_numbers\": [],\n  \"vat_number\": null,\n  \"address\": null,\n  \"city\": null,\n  \"postal_code\": null,\n  \"country\": \"Italy\",\n  \"description\": \"A platform that connects users with professionals in the architecture, design, and construction sectors, specifically providing a directory of flooring and cladding retailers in Pisa.\",\n  \"contact_person\": null\n}\n```"
+        },
+        {
+            "company_name": "Lea Ceramiche",
+            "website": "https://www.leaceramiche.it",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": "Via Durini 3",
+            "city": "Milano",
+            "postal_code": null,
+            "country": "Italia",
+            "description": "Un brand di superfici ceramiche di fascia alta e di lusso, parte di Panariagroup, specializzato in gres porcellanato e design d'interni.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Cioni Multicentro",
+            "website": "https://www.cioniedilizia.it/showroom/soluzioni-per-la-casa/pavimenti-e-rivestimenti/",
+            "emails": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Pisa",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "A reference point in Tuscany since 1963 specializing in the design, construction, renovation, and furnishing of private homes, public buildings, and business structures, offering a wide range of building materials, hardware, and interior design solutions including flooring and wall coverings.",
+            "contact_person": null
+        },
+        {
+            "error": "Invalid JSON returned by model or connection error: Expecting value: line 1 column 1 (char 0)",
+            "raw_output": "```json\n{\n  \"company_name\": \"Archisio\",\n  \"website\": \"https://www.archisio.it/piastrellisti/pisa\",\n  \"emails\": [],\n  \"phone_numbers\": [],\n  \"vat_number\": null,\n  \"address\": null,\n  \"city\": null,\n  \"postal_code\": null,\n  \"country\": null,\n  \"description\": \"A portal that connects users with professional tilers and other construction and design professionals, specifically providing a service to receive free quotes from selected professionals.\",\n  \"contact_person\": null\n}\n```"
         },
         {
             "company_name": "Arte Pietra Srl",
@@ -26,65 +60,6 @@
             "country": "Italia",
             "description": "Azienda specializzata in pavimenti e rivestimenti in pietra naturale per interni ed esterni, arredo urbano e prodotti per la manutenzione della pietra.",
             "contact_person": null
-        },
-        {
-            "company_name": "Lea Ceramiche",
-            "website": "https://www.leaceramiche.it/punti-vendita/italia/pisa",
-            "emails": [],
-            "phone_numbers": [],
-            "vat_number": null,
-            "address": "Via Durini 3",
-            "city": "Milano",
-            "postal_code": null,
-            "country": "Italia",
-            "description": "Brand di superfici ceramiche di fascia alta e di lusso, specializzato in gres porcellanato e design d'interni, parte di Panariagroup.",
-            "contact_person": null
-        },
-        {
-            "company_name": "Floor Design Srl",
-            "website": "www.floordesignsrl.it",
-            "emails": [],
-            "phone_numbers": [
-                "+39 0509913559",
-                "050 991 3559"
-            ],
-            "vat_number": null,
-            "address": "Via Antonio Meucci, 1",
-            "city": "Pisa",
-            "postal_code": "56121",
-            "country": "Italia",
-            "description": "Piastrelle per Rivestimenti e Pavimenti",
-            "contact_person": null
-        },
-        {
-            "company_name": "Archisio",
-            "website": "https://www.archisio.it",
-            "emails": [],
-            "phone_numbers": [],
-            "vat_number": null,
-            "address": null,
-            "city": null,
-            "postal_code": null,
-            "country": "Italy",
-            "description": "A platform that connects users with professionals in the architecture, design, and construction sectors, specifically providing a directory of flooring and cladding retailers in Pisa.",
-            "contact_person": null
-        },
-        {
-            "company_name": "Cioni Multicentro",
-            "website": "https://www.cioniedilizia.it/showroom/soluzioni-per-la-casa/pavimenti-e-rivestimenti/",
-            "emails": [],
-            "phone_numbers": [],
-            "vat_number": null,
-            "address": null,
-            "city": "Pisa",
-            "postal_code": null,
-            "country": "Italy",
-            "description": "A reference point in Tuscany since 1963 for designing, building, renovating, furnishing and decorating private homes, public buildings and business structures, specializing in flooring, coverings, hardware and construction materials.",
-            "contact_person": null
-        },
-        {
-            "error": "Invalid JSON returned by model or connection error: Expecting value: line 1 column 1 (char 0)",
-            "raw_output": "```json\n{\n  \"company_name\": \"Archisio\",\n  \"website\": \"https://www.archisio.it/piastrellisti/pisa\",\n  \"emails\": [],\n  \"phone_numbers\": [],\n  \"vat_number\": null,\n  \"address\": null,\n  \"city\": null,\n  \"postal_code\": null,\n  \"country\": \"Italy\",\n  \"description\": \"A portal that connects users with professional tilers and other construction and design professionals, offering the possibility to request free quotes.\",\n  \"contact_person\": null\n}\n```"
         },
         {
             "company_name": "Tecnomat Pisa - utensileria, edilizia, ristrutturazione casa",
@@ -102,50 +77,129 @@
             "contact_person": null
         },
         {
-            "company_name": "Houzz",
-            "website": "https://www.houzz.it",
+            "company_name": "Floor Design Srl",
+            "website": "www.floordesignsrl.it",
             "emails": [],
-            "phone_numbers": [],
+            "phone_numbers": [
+                "+39 0509913559",
+                "050 991 3559"
+            ],
             "vat_number": null,
-            "address": null,
-            "city": null,
-            "postal_code": null,
+            "address": "Via Antonio Meucci 1",
+            "city": "Pisa",
+            "postal_code": "56121",
             "country": "Italia",
-            "description": "Houzz is an all-in-one project management and design software for industry professionals and a platform for homeowners to update their homes, connecting homeowners and home professionals with resources and vendors.",
+            "description": "Piastrelle per Rivestimenti e Pavimenti",
             "contact_person": null
         },
         {
-            "company_name": "Berni Store",
-            "website": "https://www.bernistore.it/",
-            "emails": [],
-            "phone_numbers": [],
-            "vat_number": null,
-            "address": null,
-            "city": null,
-            "postal_code": null,
-            "country": "Italy",
-            "description": "Il maggiore centro di distribuzione in Toscana e nel Centro Italia di prodotti di alta qualità nel campo dei pavimenti, rivestimenti, arredo bagno, rubinetteria, sanitari, porte, infissi, camini e complementi d’arredo.",
-            "contact_person": null
-        },
-        {
-            "company_name": "San Miniato - Ulivieri: Pavimenti e rivstimenti",
-            "website": "https://www.ulivierifratelli.it/",
+            "company_name": "IDROPLAST S.n.c",
+            "website": "https://www.idroplastitalia.com",
             "emails": [
-                "info@ulivierifratelli.it"
+                "info@idroplast.net"
             ],
             "phone_numbers": [
-                "+39 329 6510730"
+                "+39 050 540289",
+                "+39 050 525451",
+                "+39 0586 863585"
             ],
-            "vat_number": "00114180508",
-            "address": "Viale Guglielmo Marconi, 115",
-            "city": "SAN MINIATO (PI)",
-            "postal_code": "56028",
+            "vat_number": null,
+            "address": "Via Luigi Bianchi, 86",
+            "city": "Pisa",
+            "postal_code": "56123",
             "country": "Italy",
-            "description": "La ditta Ulivieri di San Miniato Basso offre una vasta gamma di materiali da costruzione e articoli per l'edilizia con esposizione permanente di pavimenti, rivestimenti, parquet, arredo bagno, rubinetterie, sanitari, cucine in muratura, stufe, barbecue e camini.",
+            "description": "Rivendita ingrosso e dettaglio materiale idraulico e arredo bagno, specializzata in distribuzione di materiale termosanitario, caldaie, condizionatori e progettazione impianti.",
             "contact_person": null
         },
         {
-            "company_name": "Laboratorio Marmi Michele Grassi",
+            "company_name": "BigMat Fontana Serafino & Figlio",
+            "website": "https://fontanaserafino.bigmat.it/",
+            "emails": [
+                "info@fontanaserafino.com"
+            ],
+            "phone_numbers": [
+                "0587-707085"
+            ],
+            "vat_number": null,
+            "address": "Via Francesca Sud 384",
+            "city": "Santa Maria a Monte (Pisa)",
+            "postal_code": null,
+            "country": "Italy",
+            "description": "Negozio di edilizia e interior design che offre materiali per costruire e ristrutturare, con un ampio reparto edilizia e uno showroom di pavimenti, rivestimenti, caminetti e arredo bagno.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Agenzia ImmobiliareBendinelli",
+            "website": "http://www.agenziaimmobiliareponsacco.it/",
+            "emails": [
+                "info@agenziaimmobiliareponsacco.it"
+            ],
+            "phone_numbers": [
+                "+39 347.4216815",
+                "+39 0587.732509"
+            ],
+            "vat_number": "00992800508",
+            "address": "via dei mille, 22",
+            "city": "Ponsacco",
+            "postal_code": "56038",
+            "country": "Italy",
+            "description": "Agenzia immobiliare per compravendita ed affitti di immobili e terreni",
+            "contact_person": "Bendinelli Massimo"
+        },
+        {
+            "company_name": "Edil 2 ImpresaEdile",
+            "website": "https://www.edildueimpresaedilepisa.it",
+            "emails": [
+                "edil2tirrenia@yahoo.it"
+            ],
+            "phone_numbers": [
+                "+39 3497871112"
+            ],
+            "vat_number": "02299790507",
+            "address": "VIA GALLETTI, 10",
+            "city": "PISA - TIRRENIA",
+            "postal_code": "56122",
+            "country": "Italy",
+            "description": "Impresa edile specializzata in ristrutturazioni, rifacimenti interni ed esterni, rifacimento tetti, posa pavimentazioni, intonacature e restauro edifici a Pisa e Livorno.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Altemura Giovanni & C. srl",
+            "website": "https://altemurasrl.com/",
+            "emails": [
+                "info@altemurasrl.com",
+                "info@altemuragiovanni.com"
+            ],
+            "phone_numbers": [
+                "+39 0584 989135",
+                "0584 984875"
+            ],
+            "vat_number": null,
+            "address": "Via Dello Stadio, 34",
+            "city": "Camaiore (LU)",
+            "postal_code": "55041",
+            "country": "Italy",
+            "description": "A company with a multi-decade history in the sale of building materials, specializing in flooring, wall coverings, sanitary ware, and bathroom furnishings.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Lia Grossi Arredamenti",
+            "website": "http://www.liagrossi.com/",
+            "emails": [],
+            "phone_numbers": [
+                "0583 62102",
+                "328 689 8940"
+            ],
+            "vat_number": "00207680463",
+            "address": "via G. Pascoli, 32",
+            "city": "Castelnuovo di Garfagnana",
+            "postal_code": "55032",
+            "country": "Italy",
+            "description": "Lia Grossi Arredamenti offers furniture for kitchens, bathrooms, and living rooms, including brands like Scavolini and Adriatica Mobili, as well as home textiles, lighting, and home renovation services.",
+            "contact_person": null
+        },
+        {
+            "company_name": "Laboratorio Marmi MicheleGrassi",
             "website": "https://www.grassimichelemarmi.com",
             "emails": [
                 "mikegras@libero.it"

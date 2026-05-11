@@ -18,6 +18,7 @@ from agent_tool.config import *
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
+    format="json",
     temperature=0
 )
 

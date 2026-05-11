@@ -1,82 +1,55 @@
 {
-    "query": "aziende piastrelle pescara",
+    "query": "aziende piastrelle pisa",
     "answer": [
         {
-            "company_name": "Casa Lab Srl",
-            "website": "https://www.casalab.net/",
+            "company_name": "Laboratorio Marmi Michele Grassi",
+            "website": "https://www.grassimichelemarmi.com",
             "email_addresses": [
-                "info@casalab.net"
+                "mikegras@libero.it"
             ],
             "phone_numbers": [
-                "085.4461305"
+                "+39 050 984251"
             ],
+            "vat_number": "01989470503",
+            "address": "Via di Capiteta, 3/B",
+            "city": "Pisa",
+            "postal_code": "56121"
+        },
+        {
+            "company_name": "RELÙ Pisa",
+            "website": "https://www.relupisa.it/prodotti/pavimenti-e-rivestimenti/",
+            "email_addresses": [],
+            "phone_numbers": [],
             "vat_number": null,
-            "address": "Via Pietro Nenni, 300",
-            "city": "San Giovanni Teatino (CH)",
-            "postal_code": "66020"
+            "address": "via di Pratale",
+            "city": "Pisa",
+            "postal_code": null
         },
         {
-            "company_name": "Globo Ceramiche",
-            "website": "https://www.gruppoe.com/globo-ceramiche-pescara-san-giovanni-teatino",
+            "company_name": "Cioni Multicentro",
+            "website": "https://www.cioniedilizia.it/showroom/soluzioni-per-la-casa/pavimenti-e-rivestimenti/",
+            "email_addresses": [],
+            "phone_numbers": [],
+            "vat_number": null,
+            "address": null,
+            "city": "Pisa",
+            "postal_code": null
+        },
+        {
+            "company_name": "Tecnomat (Bricoman Italia S.r.L.)",
+            "website": "https://www.tecnomat.it/it/n/pisa/",
             "email_addresses": [
-                "info@gruppoe.com",
-                "info@globoceramiche.com"
+                "bricoman@pec.bricoman.it"
             ],
-            "phone_numbers": [
-                "+39 06529961",
-                "085444451"
-            ],
-            "vat_number": "14104801007",
-            "address": "Via Po, 2",
-            "city": "San Giovanni Teatino",
-            "postal_code": "66020"
+            "phone_numbers": [],
+            "vat_number": "05602670969",
+            "address": "Via G. Marconi, 24",
+            "city": "Rozzano (MI)",
+            "postal_code": "20089"
         },
         {
-            "company_name": "CER@CO Ceramiche",
-            "website": "https://www.cer-co.eu/",
-            "email_addresses": [
-                "cer@cer.co.it"
-            ],
-            "phone_numbers": [
-                "+39 377 3968885"
-            ],
-            "vat_number": "02342250681",
-            "address": "Via Tommaso da Celano, 32",
-            "city": "Pescara",
-            "postal_code": "65127"
-        },
-        {
-            "company_name": "Edil Class SRL",
-            "website": "https://www.edilclasssrl.net",
-            "email_addresses": [
-                "info@edilclasssrl.net"
-            ],
-            "phone_numbers": [
-                "+39 334 3658525",
-                "+39 347 7889426"
-            ],
-            "vat_number": "01822700686",
-            "address": "Via Orazio 118/124",
-            "city": "Pescara",
-            "postal_code": "65128"
-        },
-        {
-            "company_name": "Conti Marmi (Ascanio Conti & Carlo Srl)",
-            "website": "https://www.contimarmi-pescara.it",
-            "email_addresses": [
-                "contiascaniomarmi@hotmail.it"
-            ],
-            "phone_numbers": [
-                "+39 085 413690"
-            ],
-            "vat_number": "02034170684",
-            "address": "Strada Colle Mezzo, 22",
-            "city": "Pescara",
-            "postal_code": "65125"
-        },
-        {
-            "company_name": "Aqva Ceramiche",
-            "website": "https://aqva.it/",
+            "company_name": "Arte Pietra Srl",
+            "website": "https://www.rivestimentiinpietra.biz/",
             "email_addresses": [],
             "phone_numbers": [],
             "vat_number": null,
@@ -85,14 +58,29 @@
             "postal_code": null
         },
         {
-            "company_name": "Ucci Antonio",
-            "website": "https://ucciantonio.it/chi-siamo/",
+            "company_name": "Lea Ceramiche",
+            "website": "https://www.leaceramiche.it/punti-vendita/italia/pisa",
             "email_addresses": [],
             "phone_numbers": [],
             "vat_number": null,
-            "address": null,
-            "city": "Pescara",
+            "address": "Via Durini 3",
+            "city": "Milano",
             "postal_code": null
+        },
+        {
+            "company_name": "Ditta Edilizia Artigiana Belotti Francesco",
+            "website": "https://www.ediliziabelotti.it",
+            "email_addresses": [
+                "impresabelottifrancesco@gmail.com"
+            ],
+            "phone_numbers": [
+                "0584 341128",
+                "348 0913590"
+            ],
+            "vat_number": "01047060460",
+            "address": "Via Dei Martiri Di Sant'Anna, 30",
+            "city": "Viareggio (LU)",
+            "postal_code": "55049"
         }
     ],
     "error": null
