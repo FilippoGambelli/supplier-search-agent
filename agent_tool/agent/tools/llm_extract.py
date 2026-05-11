@@ -3,14 +3,12 @@ import re
 import time
 from typing import Dict
 from langchain_ollama import ChatOllama
-from ..logger import logger
-
-OLLAMA_BASE_URL = "http://localhost:11434"
-MODEL_EXTRACT = "gemma4:31b-cloud"
+from agent_tool.logger import logger
+from agent_tool.config import *
 
 LLM_EXTRACT = ChatOllama(
     base_url=OLLAMA_BASE_URL,
-    model=MODEL_EXTRACT,
+    model=MODEL,
     temperature=0.1
 )
 

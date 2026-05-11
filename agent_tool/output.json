@@ -1,88 +1,82 @@
 {
-    "query": "aziende piastrelle pisa",
+    "query": "aziende piastrelle pescara",
     "answer": [
         {
-            "company_name": "Laboratorio Marmi Michele Grassi",
-            "website": "https://www.grassimichelemarmi.com",
+            "company_name": "Casa Lab Srl",
+            "website": "https://www.casalab.net/",
             "email_addresses": [
-                "mikegras@libero.it"
+                "info@casalab.net"
             ],
             "phone_numbers": [
-                "+39 050 984251"
+                "085.4461305"
             ],
-            "vat_number": "01989470503",
-            "address": "Via di Capiteta, 3/B",
-            "city": "Pisa",
-            "postal_code": "56121"
-        },
-        {
-            "company_name": "RELÙ Pisa",
-            "website": "https://www.relupisa.it/prodotti/pavimenti-e-rivestimenti/",
-            "email_addresses": [],
-            "phone_numbers": [],
             "vat_number": null,
-            "address": "via di Pratale",
-            "city": "Pisa",
-            "postal_code": null
+            "address": "Via Pietro Nenni, 300",
+            "city": "San Giovanni Teatino (CH)",
+            "postal_code": "66020"
         },
         {
-            "company_name": "Cioni Multicentro",
-            "website": "https://www.cioniedilizia.it/showroom/soluzioni-per-la-casa/pavimenti-e-rivestimenti/",
-            "email_addresses": [],
-            "phone_numbers": [],
-            "vat_number": null,
-            "address": null,
-            "city": "Pisa",
-            "postal_code": null
-        },
-        {
-            "company_name": "ABK Group Industrie Ceramiche S.p.A. (Flaviker)",
-            "website": "https://www.flavikerpisa.it/it/",
+            "company_name": "Globo Ceramiche",
+            "website": "https://www.gruppoe.com/globo-ceramiche-pescara-san-giovanni-teatino",
             "email_addresses": [
-                "info@abkgroup.it"
+                "info@gruppoe.com",
+                "info@globoceramiche.com"
             ],
             "phone_numbers": [
-                "+39 0536 849611",
-                "+39 0535 761311",
-                "+39 059 9752011",
-                "+39 0536 070800",
-                "+39 059 9752211",
-                "+33 03 27685404",
-                "+39 02 74237002",
-                "+39 380 2858432"
+                "+39 06529961",
+                "085444451"
             ],
-            "vat_number": "IT 02097380360",
-            "address": [
-                "Via del Crociale, 69",
-                "Via S.Lorenzo, 24/A",
-                "S.S. per Vignola 569, 226",
-                "Via Ghiarola Nuova, 142",
-                "Via Tiepido 10",
-                "S/Bois – Accès par la D121, Rue Du Dispatching",
-                "Via Fernanda Wittgens, 12",
-                "Viale 1° Maggio, 2"
-            ],
-            "city": [
-                "Fiorano Modenese",
-                "Finale Emilia",
-                "Solignano",
-                "Louvroil",
-                "Milano",
-                "Camporengo"
-            ],
-            "postal_code": [
-                "41042",
-                "41034",
-                "41014",
-                "41017",
-                "59720",
-                "20123",
-                "37010"
-            ]
+            "vat_number": "14104801007",
+            "address": "Via Po, 2",
+            "city": "San Giovanni Teatino",
+            "postal_code": "66020"
         },
         {
-            "company_name": "Arte Pietra Srl",
-            "website": "https://www.rivestimentiinpietra.biz/",
+            "company_name": "CER@CO Ceramiche",
+            "website": "https://www.cer-co.eu/",
+            "email_addresses": [
+                "cer@cer.co.it"
+            ],
+            "phone_numbers": [
+                "+39 377 3968885"
+            ],
+            "vat_number": "02342250681",
+            "address": "Via Tommaso da Celano, 32",
+            "city": "Pescara",
+            "postal_code": "65127"
+        },
+        {
+            "company_name": "Edil Class SRL",
+            "website": "https://www.edilclasssrl.net",
+            "email_addresses": [
+                "info@edilclasssrl.net"
+            ],
+            "phone_numbers": [
+                "+39 334 3658525",
+                "+39 347 7889426"
+            ],
+            "vat_number": "01822700686",
+            "address": "Via Orazio 118/124",
+            "city": "Pescara",
+            "postal_code": "65128"
+        },
+        {
+            "company_name": "Conti Marmi (Ascanio Conti & Carlo Srl)",
+            "website": "https://www.contimarmi-pescara.it",
+            "email_addresses": [
+                "contiascaniomarmi@hotmail.it"
+            ],
+            "phone_numbers": [
+                "+39 085 413690"
+            ],
+            "vat_number": "02034170684",
+            "address": "Strada Colle Mezzo, 22",
+            "city": "Pescara",
+            "postal_code": "65125"
+        },
+        {
+            "company_name": "Aqva Ceramiche",
+            "website": "https://aqva.it/",
             "email_addresses": [],
             "phone_numbers": [],
             "vat_number": null,
@@ -91,29 +85,14 @@
             "postal_code": null
         },
         {
-            "company_name": "Lea Ceramiche",
-            "website": "https://www.leaceramiche.it/punti-vendita/italia/pisa",
+            "company_name": "Ucci Antonio",
+            "website": "https://ucciantonio.it/chi-siamo/",
             "email_addresses": [],
             "phone_numbers": [],
             "vat_number": null,
-            "address": "Via Durini 3",
-            "city": "Milano",
+            "address": null,
+            "city": "Pescara",
             "postal_code": null
-        },
-        {
-            "company_name": "Ditta Edilizia Artigiana Belotti Francesco",
-            "website": "https://www.ediliziabelotti.it",
-            "email_addresses": [
-                "impresabelottifrancesco@gmail.com"
-            ],
-            "phone_numbers": [
-                "0584 341128",
-                "348 0913590"
-            ],
-            "vat_number": "01047060460",
-            "address": "Via Dei Martiri Di Sant'Anna, 30",
-            "city": "Viareggio",
-            "postal_code": "55049"
         }
     ],
     "error": null

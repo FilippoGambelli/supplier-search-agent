@@ -1,10 +1,7 @@
 import json
 from typing import Dict
 from langchain_ollama import ChatOllama
-
-# Note: for LangChain we pass the base_url instead of the full /api/generate endpoint
-OLLAMA_BASE_URL = "http://localhost:11434"
-MODEL = "gemma4:31b-cloud"
+from agent_pipeline.config import *
 
 # Initialize the ChatOllama client forcing JSON format
 LLM = ChatOllama(

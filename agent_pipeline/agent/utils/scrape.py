@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from ..logger import logger
+from agent_pipeline.logger import logger
 
 
 # =========================================================
@@ -229,8 +229,8 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
                 logger.info(f"[PAGINEGIALLE] SUCCESS: Found real website -> {web_url}")
 
                 real_websites.append({
-                    "name": company_name,
-                    "website": web_url
+                    "title": company_name,
+                    "url": web_url
                 })
                 website_found = True
 

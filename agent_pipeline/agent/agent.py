@@ -1,13 +1,10 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 from typing import TypedDict, List, Dict, Optional
 
 from langgraph.graph import StateGraph, END
 
-from agent_pipeline.agent.search import search_web
-from agent_pipeline.agent.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
-from agent_pipeline.agent.llm_extract import extract_data
+from agent_pipeline.agent.utils.search import search_web
+from agent_pipeline.agent.utils.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
+from agent_pipeline.agent.utils.llm_extract import extract_data
 
 from agent_pipeline.logger import logger
 
@@ -72,8 +69,8 @@ def extract_pg_node(state: InternalState) -> Dict:
                 discovered_urls = extract_paginegialle_websites(url)
                 for item in discovered_urls:
                     pg_results.append({
-                        "title": item["name"],
-                        "url": item["website"]
+                        "title": item["title"],
+                        "url": item["url"]
                     })
                 logger.info(f"[EXTRACT PG NODE] Added {len(discovered_urls)} new URLs from PagineGialle.")
             except Exception as e:

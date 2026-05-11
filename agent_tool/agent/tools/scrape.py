@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from agent_pipeline.logger import logger
+from agent_tool.logger import logger
 
 
 # =========================================================
@@ -189,7 +189,7 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
 
         if href_pg and "paginegialle.it" in href_pg:
             profiles_data.append({
-                "name": company_name,
+                "title": company_name,
                 "url": href_pg
             })
 
@@ -204,7 +204,7 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
 
     for profile in profiles_data:
         profile_url = profile["url"]
-        company_name = profile["name"]
+        company_name = profile["title"]
         
         logger.info(f"[PAGINEGIALLE] Checking profile: {profile_url} for '{company_name}'")
         p_html = fetch_html(profile_url)
@@ -229,8 +229,8 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
                 logger.info(f"[PAGINEGIALLE] SUCCESS: Found real website -> {web_url}")
 
                 real_websites.append({
-                    "name": company_name,
-                    "website": web_url
+                    "title": company_name,
+                    "url": web_url
                 })
                 website_found = True
 
