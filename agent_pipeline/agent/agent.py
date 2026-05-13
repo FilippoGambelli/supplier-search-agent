@@ -35,10 +35,13 @@ class InternalState(InputState, OutputState):
 def search_node(state: InputState) -> Dict:
     """Search the web using SearXNG."""
     query = state["query"]
-    logger.info(f"[SEARCH NODE] Query: {query}")
+
+    logger.info("=" * 80)
+    logger.info(f"[SEARCH] Starting web search with query: {query}")
     try:
         results = search_web(query)
-        logger.info(f"[SEARCH NODE] Found {len(results)} results")
+        logger.info(f"[SEARCH] Found {len(results)} search results")
+        logger.info("=" * 80)
         return {"search_results": results}
 
     except Exception as e:
@@ -63,8 +66,9 @@ def extract_pg_node(state: InternalState) -> Dict:
 
         if "paginegialle.it" in url.lower():
             logger.info("=" * 80)
-            logger.info(f"[EXTRACT PG NODE] PagineGialle detected. Starting sub-task for: {url}")
-            
+            logger.info(f"[EXTRACT PG] PagineGialle directory detected, extracting real websites from: {url}")
+            logger.info("=" * 80)
+
             try:
                 discovered_urls = extract_paginegialle_websites(url)
                 for item in discovered_urls:
@@ -72,7 +76,8 @@ def extract_pg_node(state: InternalState) -> Dict:
                         "title": item["title"],
                         "url": item["url"]
                     })
-                logger.info(f"[EXTRACT PG NODE] Added {len(discovered_urls)} new URLs from PagineGialle.")
+                logger.info(f"[EXTRACT PG] Extracted {len(discovered_urls)} real company websites from PagineGialle")
+                logger.info("=" * 80)
             except Exception as e:
                 logger.error(f"[EXTRACT PG NODE] Error extracting URL {url}: {e}")
 
@@ -89,7 +94,9 @@ def scrape_node(state: InternalState) -> Dict:
     scraped_data = []
 
     combined_results = search_results + pg_results
-    logger.info(f"[SCRAPE NODE] Combining {len(search_results)} standard results with {len(pg_results)} PG results.")
+    logger.info("=" * 80)
+    logger.info(f"[SCRAPE] Combining {len(search_results)} search results with {len(pg_results)} PagineGialle results")
+    logger.info("=" * 80)    
 
     # Delete duplicates
     unique_urls = set()
@@ -105,7 +112,7 @@ def scrape_node(state: InternalState) -> Dict:
             deduplicated_results.append(result)
 
     if duplicates_count > 0:
-        logger.info(f"[SCRAPE NODE] Removed {duplicates_count} duplicate URLs.")
+        logger.info(f"[SCRAPE] Removed {duplicates_count} duplicate URLs")
 
     # Standard blacklist check for other results
     for result in deduplicated_results:
@@ -115,18 +122,20 @@ def scrape_node(state: InternalState) -> Dict:
         # Check the blacklist and make sure to skip paginegialle.it 
         if "paginegialle.it" in url.lower() or not is_valid_company_result(title, url):
             logger.warning(f"[SCRAPE NODE] Skipping blacklisted or directory: {url}")
+            logger.info("=" * 80)
             continue
 
         try:
             data = scrape_company_website(url)
             if data is None:
-                logger.warning(f"[SCRAPE NODE] No data returned for: {url}")
                 continue
             data.update({"title": title, "url": url})
             scraped_data.append(data)
         except Exception as e:
             logger.error(f"[SCRAPE NODE] {url} -> {e}")
     
+    logger.info("=" * 80)
+
     if not scraped_data:
         return {"error": "No valid data scraped.", "scraped_data": []}
 
@@ -165,7 +174,7 @@ def llm_node(state: InternalState) -> Dict:
         result = extract_data(company)
 
         logger.info(
-            f"[LLM NODE] Success: {company.get('url')}"
+            f"[EXTRACT] Data successfully extracted by LLM from: {company.get('url')}"
         )
 
         new_results = extracted_results + [result]
@@ -269,7 +278,8 @@ graph.set_entry_point("search")
 
 app = graph.compile()
 
-logger.info("[GRAPH] compiled successfully")
+logger.info("[GRAPH] Pipeline compiled successfully")
+logger.info("=" * 80)
 
 
 # RUNNER

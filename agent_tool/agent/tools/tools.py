@@ -15,9 +15,9 @@ def search_suppliers(query: str) -> str:
     Use this first to find potential companies.
     Returns a string containing a list of titles and URLs.
     """
-    logger.info(f"[TOOL] search_suppliers - Query: {query}")
+    logger.info(f"[TOOL] search_suppliers called with query: {query}")
     try:
-        results = search_web(query, limit=15)
+        results = search_web(query)
         formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
         return f"Found {len(results)} results:\n{formatted}"
     except Exception as e:
@@ -29,7 +29,7 @@ def is_valid_company(title: str, url: str) -> str:
     Check if a search result is a valid company website.
     Returns a string with instructions on how to proceed.
     """
-    logger.info(f"[TOOL] is_valid_company - URL: {url}")
+    logger.info(f"[TOOL] is_valid_company called for URL: {url}")
     try:
         url_lower = url.lower()
         
@@ -52,7 +52,7 @@ def extract_from_paginegialle(pg_url: str) -> str:
     Extract real company websites from a PagineGialle directory page.
     Use this ONLY when you find a PagineGialle link in your search results.
     """
-    logger.info(f"[TOOL] extract_from_paginegialle - URL: {pg_url}")
+    logger.info(f"[TOOL] extract_from_paginegialle called for URL: {pg_url}")
     try:
         results = extract_paginegialle_websites(pg_url, limit=10)
         if not results:
@@ -69,7 +69,7 @@ def research_and_extract_company(url: str, title: str = "") -> str:
     Use this tool on valid company URLs to extract structured business information.
     It automatically scrapes the website and extracts the data.
     """
-    logger.info(f"[TOOL] research_and_extract_company - URL: {url}")
+    logger.info(f"[TOOL] research_and_extract_company called for URL: {url}")
     try:
         data = scrape_company_website(url)
         if not data:

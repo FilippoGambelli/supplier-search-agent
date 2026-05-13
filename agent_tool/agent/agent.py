@@ -115,7 +115,7 @@ graph.add_edge("tools", "agent")
 app = graph.compile()
 
 def run_agent(query: str):
-    logger.info(f"[AGENT START] Query: {query}")
+    logger.info(f"[AGENT] Starting agent with query: {query}")
     
     try:
         result = app.invoke({"query": query})

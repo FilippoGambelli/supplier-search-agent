@@ -82,13 +82,13 @@ def extract_data(company: Dict) -> Dict:
     """Send the scraped content to the model and extract structured business information."""
     prompt = build_company_prompt(company)
     
-    logger.info(f"[EXTRACT_DATA] Extracting from: {company.get('url', 'unknown')}")
+    logger.info(f"[EXTRACT] Starting data extraction from: {company.get('url', 'unknown')}")
 
     try:
         response = LLM_EXTRACT.invoke(prompt)
         raw_output = response.content if hasattr(response, 'content') else str(response)
         
-        logger.info(f"[EXTRACT_DATA] Raw response: {raw_output[:300]}...")
+        logger.info("[EXTRACT] Data successfully extracted by LLM.")
         
         result = parse_json_response(raw_output)
         
