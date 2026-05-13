@@ -2,13 +2,14 @@ import json
 from typing import Dict
 from langchain_ollama import ChatOllama
 from agent_pipeline.config import *
+from stats import get_stats
+from agent_pipeline.logger import logger
 
-# Initialize the ChatOllama client forcing JSON format
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
     format="json",
-    temperature=0  # Recommended 0 for deterministic data extraction
+    temperature=0
 )
 
 
@@ -78,16 +79,24 @@ def extract_data(company: Dict) -> Dict:
     Send the scraped content to the model using ChatOllama
     and extract structured business information.
     """
+    stats = get_stats()
     prompt = build_company_prompt(company)
 
     try:
-        # Use LangChain's invoke method
         response = LLM.invoke(prompt)
         raw_output = response.content
-        
+
+        # Update stats
+        usage = response.usage_metadata or {}
+        prompt_tokens = usage.get("input_tokens", 0)
+        generated_tokens = usage.get("output_tokens", 0)
+        stats.add_request(prompt_tokens, generated_tokens)
+
         return json.loads(raw_output)
 
     except Exception as e:
+        stats.add_error()
+        logger.error(f"[LLM EXTRACTION ERROR] {e}")
         return {
             "error": f"Invalid JSON returned by model or connection error: {str(e)}",
             "raw_output": raw_output if 'raw_output' in locals() else None

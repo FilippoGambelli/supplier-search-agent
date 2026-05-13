@@ -5,6 +5,7 @@ from typing import Dict
 from langchain_ollama import ChatOllama
 from agent_tool.logger import logger
 from agent_tool.config import *
+from stats import get_stats
 
 LLM_EXTRACT = ChatOllama(
     base_url=OLLAMA_BASE_URL,
@@ -80,12 +81,21 @@ def parse_json_response(raw_output: str) -> Dict:
 
 def extract_data(company: Dict) -> Dict:
     """Send the scraped content to the model and extract structured business information."""
+    
+    stats = get_stats()
     prompt = build_company_prompt(company)
     
     logger.info(f"[EXTRACT] Starting data extraction from: {company.get('url', 'unknown')}")
 
     try:
         response = LLM_EXTRACT.invoke(prompt)
+
+        # Update stats
+        usage = response.usage_metadata or {}
+        prompt_tokens = usage.get("input_tokens", 0)
+        generated_tokens = usage.get("output_tokens", 0)
+        stats.add_request(prompt_tokens, generated_tokens)        
+
         raw_output = response.content if hasattr(response, 'content') else str(response)
         
         logger.info("[EXTRACT] Data successfully extracted by LLM.")

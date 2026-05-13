@@ -4,7 +4,7 @@ SEARXNG_URL = "http://localhost:8080"
 SEARCH_ENDPOINT = "/search"
 DEFAULT_FORMAT = "json"
 
-def search_web(query: str, limit: int = 10):
+def search_web(query: str, limit: int = 3):
     """
     Query SearXNG and return only title + url.
     """

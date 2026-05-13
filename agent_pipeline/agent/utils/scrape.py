@@ -252,6 +252,7 @@ def scrape_company_website(url: str) -> Dict:
 
     if not homepage_html:
         logger.warning(f"[SCRAPING FAILED] Could not fetch homepage: {url}")
+        logger.info("=" * 80)
         return None
 
     # Homepage text

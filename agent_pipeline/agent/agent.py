@@ -7,6 +7,7 @@ from agent_pipeline.agent.utils.scrape import scrape_company_website, is_valid_c
 from agent_pipeline.agent.utils.llm_extract import extract_data
 
 from agent_pipeline.logger import logger
+from stats import get_stats, reset_stats
 
 
 # STATES
@@ -165,7 +166,6 @@ def extract_node(state: InternalState) -> Dict:
 
 
 def llm_node(state: InternalState) -> Dict:
-
     company = state["current_company"]
 
     extracted_results = state.get("extracted_results", [])
@@ -180,7 +180,6 @@ def llm_node(state: InternalState) -> Dict:
         new_results = extracted_results + [result]
 
     except Exception as e:
-
         logger.error(
             f"[LLM NODE] {company.get('url')} -> {e}"
         )
@@ -284,5 +283,19 @@ logger.info("=" * 80)
 
 # RUNNER
 def run_agent(query: str):
+    reset_stats()               # Reset stats at the beginning of each run
+    stats = get_stats()         # Get stats instance
+
+    stats.start()               # Start timing the execution
+
     initial_state = {"query": query}
-    return app.invoke(initial_state)
+
+    try:
+        result = app.invoke(initial_state)
+        stats.stop()            # Stop timing after execution finishes
+    except Exception as e:
+        stats.add_error()
+        stats.stop()
+        result = {"final_answer": [], "error": str(e)}
+
+    return result
