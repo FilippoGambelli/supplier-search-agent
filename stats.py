@@ -1,6 +1,9 @@
 import time
+import threading
 from dataclasses import dataclass, field
 from typing import Optional
+
+_lock = threading.Lock()
 
 @dataclass
 class AgentStats:
@@ -10,7 +13,6 @@ class AgentStats:
     generated_tokens: int = 0
     total_execution_time: float = 0.0
     tool_calls: int = 0
-    errors: int = 0
     start_time: Optional[float] = None
     end_time: Optional[float] = None
 
@@ -23,26 +25,24 @@ class AgentStats:
             self.total_execution_time = self.end_time - self.start_time
 
     def add_request(self, prompt_tokens: int = 0, generated_tokens: int = 0):
-        self.total_LLM_requests += 1
-        self.prompt_tokens += prompt_tokens
-        self.generated_tokens += generated_tokens
-        self.total_tokens += prompt_tokens + generated_tokens
+        with _lock:
+            self.total_LLM_requests += 1
+            self.prompt_tokens += prompt_tokens
+            self.generated_tokens += generated_tokens
+            self.total_tokens += prompt_tokens + generated_tokens
 
     def add_tool_call(self):
-        self.tool_calls += 1
-
-    def add_error(self):
-        self.errors += 1
+        with _lock:
+            self.tool_calls += 1
 
     def to_dict(self):
         return {
             "total_LLM_requests": self.total_LLM_requests,
-            "total_tokens": self.total_tokens,
             "prompt_tokens": self.prompt_tokens,
             "generated_tokens": self.generated_tokens,
+            "total_tokens": self.total_tokens,
             "total_execution_time_seconds": round(self.total_execution_time, 1),
-            "tool_calls": self.tool_calls,
-            "errors": self.errors
+            "tool_calls": self.tool_calls
         }
 
 

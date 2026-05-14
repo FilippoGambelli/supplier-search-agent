@@ -294,7 +294,6 @@ def run_agent(query: str):
         result = app.invoke(initial_state)
         stats.stop()            # Stop timing after execution finishes
     except Exception as e:
-        stats.add_error()
         stats.stop()
         result = {"final_answer": [], "error": str(e)}
 

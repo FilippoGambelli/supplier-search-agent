@@ -79,8 +79,6 @@ def fetch_html(url: str) -> Optional[str]:
 
         response.raise_for_status()
 
-        logger.info(f"[FETCH] Successfully downloaded: {url}")
-
         return response.text
 
     except Exception as e:
@@ -144,8 +142,6 @@ def find_contact_page(base_url: str, html: str) -> Optional[str]:
 
             full_url = urljoin(base_url, href)
 
-            logger.info(f"[CONTACT] Found contact page: {full_url}")
-
             return full_url
 
     logger.warning(f"[CONTACT PAGE NOT FOUND] {base_url}")
@@ -165,11 +161,13 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
     4. Returns a list of dictionaries with company names and websites.
     """
 
-    logger.info(f"[PAGINEGIALLE] Processing directory: {pg_url}")
     html = fetch_html(pg_url)
     if not html:
         logger.warning(f"[PAGINEGIALLE] Failed to fetch directory page: {pg_url}")
         return []
+
+    logger.info("=" * 80)
+    logger.info(f"[PAGINEGIALLE] Processing directory: {pg_url}")
 
     soup = BeautifulSoup(html, "html.parser")
     
@@ -194,7 +192,6 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
             break
 
     logger.info(f"[PAGINEGIALLE] Found {len(profiles_data)} profiles to inspect.")
-    logger.info("=" * 80)
 
     # company_name and website
     real_websites = []
@@ -203,6 +200,7 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
         profile_url = profile["url"]
         company_name = profile["title"]
         
+        logger.info("=" * 80)
         logger.info(f"[PAGINEGIALLE] Checking profile: {profile_url} for '{company_name}'")
         p_html = fetch_html(profile_url)
         
@@ -232,9 +230,7 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
 
         if not website_found: 
             logger.info(f"[PAGINEGIALLE] No website found in this profile.")
-            
-        logger.info("=" * 80)
-    
+                
     return real_websites
 
 
@@ -245,8 +241,6 @@ def scrape_company_website(url: str) -> Dict:
     """
     Scrape homepage + contact page.
     """
-    logger.info(f"[COMPANY SCRAPING START] {url}")
-
     homepage_html = fetch_html(url)
 
     if not homepage_html:
@@ -256,10 +250,6 @@ def scrape_company_website(url: str) -> Dict:
 
     # Homepage text
     homepage_text = html_to_text(homepage_html)
-
-    logger.info(
-        f"[SCRAPE] Homepage text extracted: {len(homepage_text)} characters"
-    )
 
     # Find contact page
     contact_page = find_contact_page(url, homepage_html)
@@ -274,12 +264,6 @@ def scrape_company_website(url: str) -> Dict:
         if contact_html:
 
             contact_text = html_to_text(contact_html)
-
-            logger.info(
-                f"[SCRAPE] Contact page text extracted: {len(contact_text)} characters"
-            )
-
-    logger.info("=" * 80)
 
     return {
         "homepage_text": homepage_text,

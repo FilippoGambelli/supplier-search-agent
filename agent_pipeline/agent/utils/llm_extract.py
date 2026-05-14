@@ -9,6 +9,7 @@ LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
     format="json",
+    reasoning=False,
     temperature=0
 )
 
@@ -95,7 +96,6 @@ def extract_data(company: Dict) -> Dict:
         return json.loads(raw_output)
 
     except Exception as e:
-        stats.add_error()
         logger.error(f"[LLM EXTRACTION ERROR] {e}")
         return {
             "error": f"Invalid JSON returned by model or connection error: {str(e)}",

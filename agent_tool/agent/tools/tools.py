@@ -16,6 +16,7 @@ def search_suppliers(query: str) -> str:
     Returns a string containing a list of titles and URLs.
     """
     logger.info(f"[TOOL] search_suppliers called with query: {query}")
+    logger.info("="*80)
     try:
         results = search_web(query)
         formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])

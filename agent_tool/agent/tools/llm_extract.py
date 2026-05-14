@@ -11,6 +11,7 @@ LLM_EXTRACT = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
     format="json",
+    reasoning=False,
     temperature=0.1
 )
 
@@ -94,11 +95,11 @@ def extract_data(company: Dict) -> Dict:
         usage = response.usage_metadata or {}
         prompt_tokens = usage.get("input_tokens", 0)
         generated_tokens = usage.get("output_tokens", 0)
-        stats.add_request(prompt_tokens, generated_tokens)        
+        stats.add_request(prompt_tokens, generated_tokens)
 
         raw_output = response.content if hasattr(response, 'content') else str(response)
         
-        logger.info("[EXTRACT] Data successfully extracted by LLM.")
+        logger.info(f"[EXTRACT] Data successfully extracted by LLM from {company.get('url', 'unknown')}")
         
         result = parse_json_response(raw_output)
         

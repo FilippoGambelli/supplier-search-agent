@@ -21,6 +21,7 @@ LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
     format="json",
+    reasoning=True,
     temperature=0
 )
 
@@ -76,6 +77,9 @@ def agent_node(state: OverallState):
     """
     stats = get_stats()
 
+    logger.info("="*80)
+    logger.info("[AGENT] Executing agent node")
+
     messages = state.get("messages", [])
     messages_with_system = [SystemMessage(content=SYSTEM_PROMPT)] + messages
 
@@ -117,7 +121,7 @@ graph.add_edge("tools", "agent")
 app = graph.compile()
 
 def run_agent(query: str):
-    logger.info(f"[AGENT] Starting agent with query: {query}")
+    logger.info(f"[AGENT-TOOL] Starting agent with query: {query}")
     reset_stats()
     stats = get_stats()
     stats.start()
@@ -130,7 +134,6 @@ def run_agent(query: str):
         return raw_answer, None
 
     except Exception as e:
-        stats.add_error()
         stats.stop()
         logger.error(f"[AGENT FATAL ERROR] {e}")
         return None, str(e)

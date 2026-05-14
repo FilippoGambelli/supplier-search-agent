@@ -1,87 +1,110 @@
 {
-    "query": "aziende piastrelle pisa",
+    "query": "aziende piastrelle agrigento",
     "answer": [
         {
-            "company_name": "Laboratorio Marmi Michele Grassi",
-            "website": "https://www.grassimichelemarmi.com",
+            "company_name": "GL Ceramiche",
+            "website": "https://www.glceramiche.com/",
             "email_addresses": [
-                "mikegras@libero.it"
+                "ceramichegl@gmail.com"
             ],
             "phone_numbers": [
-                "+39 050 984251"
+                "+39 3710170979",
+                "+39 3286382398",
+                "+39 0922 663599"
             ],
-            "vat_number": "01989470503",
-            "address": "Via di Capiteta, 3/B",
-            "city": "Pisa",
-            "postal_code": "56121"
+            "vat_number": "03098930849",
+            "address": "Contrada Zunica, 7",
+            "city": "Agrigento",
+            "postal_code": "92100"
         },
         {
-            "company_name": "RELÙ Pisa",
-            "website": "https://www.relupisa.it/prodotti/pavimenti-e-rivestimenti/",
-            "email_addresses": [],
-            "phone_numbers": [],
-            "vat_number": null,
-            "address": "via di Pratale",
-            "city": "Pisa",
-            "postal_code": null
+            "company_name": "Cipolla Ceramiche",
+            "website": "https://www.cipollaceramiche.it/",
+            "email_addresses": [
+                "cipollaceramiche@libero.it"
+            ],
+            "phone_numbers": [
+                "+39 0922 38233"
+            ],
+            "vat_number": "02758960849",
+            "address": "Via Borsellino 59/G",
+            "city": "Aragona",
+            "postal_code": "92021"
         },
         {
-            "company_name": "Cioni Multicentro",
-            "website": "https://www.cioniedilizia.it/showroom/soluzioni-per-la-casa/pavimenti-e-rivestimenti/",
+            "company_name": "Butticè Ceramiche",
+            "website": "https://www.butticeceramiche.it/",
+            "email_addresses": [
+                "butticeramiche@libero.it"
+            ],
+            "phone_numbers": [
+                "0922 418080"
+            ],
+            "vat_number": "01569520842",
+            "address": "S.S. 118 - Contrada Borsellino",
+            "city": "Joppolo Giancaxio",
+            "postal_code": "92010"
+        },
+        {
+            "company_name": "Ceramiche La Russa",
+            "website": "https://www.ceramichelarussa.com/",
             "email_addresses": [],
             "phone_numbers": [],
             "vat_number": null,
             "address": null,
-            "city": "Pisa",
+            "city": "Agrigento",
             "postal_code": null
         },
         {
-            "company_name": "Tecnomat (Bricoman Italia S.r.L.)",
-            "website": "https://www.tecnomat.it/it/n/pisa/",
-            "email_addresses": [
-                "bricoman@pec.bricoman.it"
+            "company_name": "IPERCERAMICA Agrigento",
+            "website": "https://www.iperceramica.it/it/ita/negozi/iperceramica-agrigento",
+            "email_addresses": [],
+            "phone_numbers": [
+                "0536 1846486"
             ],
-            "phone_numbers": [],
-            "vat_number": "05602670969",
-            "address": "Via G. Marconi, 24",
-            "city": "Rozzano (MI)",
-            "postal_code": "20089"
-        },
-        {
-            "company_name": "Arte Pietra Srl",
-            "website": "https://www.rivestimentiinpietra.biz/",
-            "email_addresses": [],
-            "phone_numbers": [],
-            "vat_number": null,
+            "vat_number": "IT02732900366",
             "address": null,
-            "city": null,
+            "city": "Agrigento",
             "postal_code": null
         },
         {
-            "company_name": "Lea Ceramiche",
-            "website": "https://www.leaceramiche.it/punti-vendita/italia/pisa",
-            "email_addresses": [],
-            "phone_numbers": [],
-            "vat_number": null,
-            "address": "Via Durini 3",
-            "city": "Milano",
-            "postal_code": null
-        },
-        {
-            "company_name": "Ditta Edilizia Artigiana Belotti Francesco",
-            "website": "https://www.ediliziabelotti.it",
+            "company_name": "Nino Parquet – Pianeta del Parquet di Antonio Pizzitola",
+            "website": "https://www.ninoparquet.com",
             "email_addresses": [
-                "impresabelottifrancesco@gmail.com"
+                "antonio3972@libero.it"
             ],
             "phone_numbers": [
-                "0584 341128",
-                "348 0913590"
+                "+39 329 0109193"
             ],
-            "vat_number": "01047060460",
-            "address": "Via Dei Martiri Di Sant'Anna, 30",
-            "city": "Viareggio (LU)",
-            "postal_code": "55049"
+            "vat_number": "03025980842",
+            "address": "Via Imera, 97",
+            "city": "Agrigento",
+            "postal_code": "92100"
+        },
+        {
+            "company_name": "Ellegi Costruzioni",
+            "website": "https://www.ellegicostruzionisrl.com",
+            "email_addresses": [
+                "info@ellegicostruzionisrl.it"
+            ],
+            "phone_numbers": [
+                "+39 095 575154",
+                "+39 392 4162033",
+                "339 3510470"
+            ],
+            "vat_number": "04785120876",
+            "address": "Via Dei Sanguinelli, 38",
+            "city": "Catania",
+            "postal_code": "95121"
         }
     ],
+    "stats": {
+        "total_LLM_requests": 12,
+        "prompt_tokens": 27807,
+        "output_tokens": 3948,
+        "total_tokens": 31755,
+        "total_execution_time_seconds": 75.1,
+        "tool_calls": 16
+    },
     "error": null
 }
