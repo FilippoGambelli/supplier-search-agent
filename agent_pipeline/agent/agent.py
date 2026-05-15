@@ -9,6 +9,7 @@ from agent_pipeline.agent.utils.llm_extract import extract_data
 from agent_pipeline.logger import logger
 from stats import get_stats, reset_stats
 
+from langsmith import traceable
 
 # STATES
 
@@ -32,7 +33,7 @@ class InternalState(InputState, OutputState):
 
 
 # NODES
-
+@traceable(name="search_node")
 def search_node(state: InputState) -> Dict:
     """Search the web using SearXNG."""
     query = state["query"]
@@ -52,7 +53,7 @@ def search_node(state: InputState) -> Dict:
             "search_results": []
         }
 
-
+@traceable(name="extract_pg_node")
 def extract_pg_node(state: InternalState) -> Dict:
     """
     Dedicated node to handle PagineGialle links.
@@ -84,7 +85,7 @@ def extract_pg_node(state: InternalState) -> Dict:
 
     return {"pg_results": pg_results}
 
-
+@traceable(name="scrape_node")
 def scrape_node(state: InternalState) -> Dict:
     """
     Scrape websites from search results.
@@ -146,7 +147,7 @@ def scrape_node(state: InternalState) -> Dict:
         "extracted_results": []
     }
 
-
+@traceable(name="extract_node")
 def extract_node(state: InternalState) -> Dict:
 
     index = state["current_index"]
@@ -164,7 +165,7 @@ def extract_node(state: InternalState) -> Dict:
         "should_finish": False
     }
 
-
+@traceable(name="llm_extract_node")
 def llm_node(state: InternalState) -> Dict:
     company = state["current_company"]
 
@@ -282,6 +283,7 @@ logger.info("=" * 80)
 
 
 # RUNNER
+@traceable(name="pipeline_run_agent")
 def run_agent(query: str):
     reset_stats()               # Reset stats at the beginning of each run
     stats = get_stats()         # Get stats instance

@@ -17,6 +17,8 @@ from agent_tool.logger import logger
 from agent_tool.config import *
 from stats import get_stats, reset_stats
 
+from langsmith import traceable
+
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
@@ -62,6 +64,7 @@ class OverallState(InputState, OutputState):
     messages: Annotated[list, add_messages]
 
 # NODE
+@traceable(name="init_node")
 def init_node(state: InputState):
     """
     Prende la query testuale passata dall'utente (o da LangSmith)
@@ -70,6 +73,7 @@ def init_node(state: InputState):
     user_query = state["query"]
     return {"messages": [HumanMessage(content=user_query)]}
 
+@traceable(name="agent_node")
 def agent_node(state: OverallState):
     """
     The Agent node. It represents the "brain" of the graph where the LLM thinks
@@ -120,6 +124,7 @@ graph.add_edge("tools", "agent")
 
 app = graph.compile()
 
+@traceable(name="run_agent")
 def run_agent(query: str):
     logger.info(f"[AGENT-TOOL] Starting agent with query: {query}")
     reset_stats()
