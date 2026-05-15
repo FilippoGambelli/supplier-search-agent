@@ -22,7 +22,6 @@ from langsmith import traceable
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
-    format="json",
     reasoning=True,
     temperature=0
 )
@@ -124,7 +123,6 @@ graph.add_edge("tools", "agent")
 
 app = graph.compile()
 
-@traceable(name="run_agent")
 def run_agent(query: str):
     logger.info(f"[AGENT-TOOL] Starting agent with query: {query}")
     reset_stats()
