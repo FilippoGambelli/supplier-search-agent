@@ -39,4 +39,35 @@ pip install -e .
 langgraph dev
 ```
 
+Ecco una versione **breve, pulita e in inglese** da incollare nel tuo `README.md`:
 
+---
+
+## Database (PostgreSQL + pgAdmin)
+
+The project uses PostgreSQL with a web UI via pgAdmin.
+
+## pgAdmin UI
+
+Open:
+
+```
+http://localhost:5050
+```
+
+Login:
+
+* Email: `admin@admin.com`
+* Password: `admin`
+
+---
+
+## Connect database
+
+In pgAdmin → Register Server:
+
+* Host: `postgres`
+* Port: `5432`
+* DB: `suppliersearchagentdb`
+* User: `admin`
+* Password: `admin`
