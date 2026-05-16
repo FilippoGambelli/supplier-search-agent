@@ -93,9 +93,9 @@ def extract_data(company: Dict) -> Dict:
 
         # Update stats
         usage = response.usage_metadata or {}
-        prompt_tokens = usage.get("input_tokens", 0)
+        input_tokens = usage.get("input_tokens", 0)
         generated_tokens = usage.get("output_tokens", 0)
-        stats.add_request(prompt_tokens, generated_tokens)
+        stats.add_request(input_tokens, generated_tokens)
 
         raw_output = response.content if hasattr(response, 'content') else str(response)
         
