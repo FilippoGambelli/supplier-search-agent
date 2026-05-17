@@ -1,7 +1,5 @@
-import json
-import re
-import time
 from typing import Annotated, TypedDict, List
+from urllib.parse import urlparse
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
@@ -43,7 +41,7 @@ CRITICAL WORKFLOW RULES - YOU MUST FOLLOW THESE:
 1. Search: Start by using `search_suppliers`.
 2. PagineGialle Handling: If ANY URL contains "paginegialle.it", you MUST use the `extract_from_paginegialle` tool on that URL immediately.
 3. Validation: For standard URLs, use `is_valid_company`.
-4. Deduplication: Keep track of websites you have already processed in the chat history. Skip duplicates.
+4. Deduplication: When checking URLs, compare only the hostname (base domain), not the full URL. For example, "https://www.example.com/page1" and "https://example.com/page2" are duplicates because they have the same hostname "www.example.com". Skip URLs with duplicate hostnames.
 5. Extraction: For every valid company URL, use `research_and_extract_company`.
 
 NO PREMATURE STOPPING:

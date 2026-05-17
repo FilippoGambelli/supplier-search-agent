@@ -1,4 +1,5 @@
 from typing import TypedDict, List, Dict, Optional
+from urllib.parse import urlparse
 
 from langgraph.graph import StateGraph, END
 
@@ -100,17 +101,24 @@ def scrape_node(state: InternalState) -> Dict:
     logger.info(f"[SCRAPE] Combining {len(search_results)} search results with {len(pg_results)} PagineGialle results")
     logger.info("=" * 80)    
 
-    # Delete duplicates
-    unique_urls = set()
+    # Delete duplicates based on hostname
+    unique_hostnames = set()
     deduplicated_results = []
     duplicates_count = 0
 
     for result in combined_results:
         url = result.get("url", "")
-        if url in unique_urls:
+
+        try:
+            parsed = urlparse(url)
+            hostname = parsed.netloc.lower()
+        except Exception:
+            hostname = url.lower()
+
+        if hostname in unique_hostnames:
             duplicates_count += 1
         else:
-            unique_urls.add(url)
+            unique_hostnames.add(hostname)
             deduplicated_results.append(result)
 
     if duplicates_count > 0:
