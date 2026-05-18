@@ -71,3 +71,6 @@ In pgAdmin → Register Server:
 * DB: `suppliersearchagentdb`
 * User: `admin`
 * Password: `admin`
+
+`docker compose down`
+`docker volume rm postgres_data`
