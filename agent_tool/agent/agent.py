@@ -20,7 +20,6 @@ from langsmith import traceable
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
-    reasoning=True,
     temperature=0
 )
 

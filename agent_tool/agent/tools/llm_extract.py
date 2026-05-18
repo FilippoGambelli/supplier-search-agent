@@ -1,11 +1,11 @@
 import json
 import re
-import time
 from typing import Dict
 from langchain_ollama import ChatOllama
 from agent_tool.logger import logger
 from agent_tool.config import *
 from stats import get_stats
+from agent_tool.agent.tools.db.db import save_supplier_to_db
 
 LLM_EXTRACT = ChatOllama(
     base_url=OLLAMA_BASE_URL,
@@ -17,32 +17,80 @@ LLM_EXTRACT = ChatOllama(
 
 
 def build_company_prompt(company: Dict) -> str:
-    """Build extraction prompt for a single company."""
     title = company.get("title", "")
     url = company.get("url", "")
 
     homepage_text = company.get("homepage_text", "") or ""
     contact_text = company.get("contact_text", "") or ""
 
-    combined_text = f"HOMEPAGE:\n{homepage_text}\n\nCONTACT PAGE:\n{contact_text}"
+    combined_text = f"""
+HOMEPAGE:
+{homepage_text}
 
-    prompt = f"""Extract company information from the text below. 
-Look for: company name, website, email addresses, phone numbers, VAT number (partita IVA), address, city, postal code.
+CONTACT PAGE:
+{contact_text}
+"""
 
-Website: {url}
-Title: {title}
+    prompt = f"""
+You are an information extraction system.
 
-Text:
+Extract ONLY factual company information from the provided text.
+
+Return ONLY valid JSON matching EXACTLY this schema:
+
+{{
+  "name": "string",
+  "website": "string",
+  "description": "string",
+
+  "email": ["string"],
+  "phone": ["string"],
+
+  "vat_number": "string",
+
+  "locations": [
+    {{
+      "country": "string",
+      "city": "string",
+      "address": "string"
+    }}
+  ]
+}}
+
+RULES:
+- Output ONLY JSON
+- No markdown
+- No explanations
+- No comments
+- Use empty arrays [] when data is missing
+- Use empty string "" for missing strings
+- Do not invent data
+- Extract ALL emails found
+- Extract ALL phone numbers found
+- VAT number may appear as:
+  - VAT
+  - Partita IVA
+  - P.IVA
+  - IVA
+  - ITXXXXXXXXXXX
+- Locations must contain:
+  - country
+  - city
+  - full address if available
+- If multiple locations exist, include all of them
+- Description must be a short factual summary of the company
+
+COMPANY WEBSITE:
+{url}
+
+COMPANY TITLE:
+{title}
+
+TEXT:
 {combined_text}
 
-Search carefully for ANY email addresses (patterns like @ and .com, .it)
-Search for ANY phone numbers (patterns like +39, 0XX, XXX-XXXXXXX)
-Search for ANY VAT numbers (patterns like ITXXXXXXXXX)
-Search for addresses with street names and city names
-
-Output ONLY valid JSON, no explanation. Use empty array [] for missing lists, null for missing strings.
-
-JSON:"""
+JSON:
+"""
 
     return prompt
 
@@ -102,6 +150,17 @@ def extract_data(company: Dict) -> Dict:
         logger.info(f"[EXTRACT] Data successfully extracted by LLM from {company.get('url', 'unknown')}")
         
         result = parse_json_response(raw_output)
+
+        # fallback website
+        if not result.get("website"):
+            result["website"] = company.get("url", "")
+
+        # fallback name
+        if not result.get("name"):
+            result["name"] = company.get("title", "Unknown")
+
+        # save into db
+        save_supplier_to_db(result)
         
         # Validate result has at least some data
         has_data = any([

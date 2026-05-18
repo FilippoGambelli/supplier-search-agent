@@ -1,0 +1,56 @@
+from sqlalchemy import Column, Integer, Text, ForeignKey, TIMESTAMP, func
+
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import declarative_base, relationship
+
+Base = declarative_base()
+
+
+class Supplier(Base):
+    __tablename__ = "suppliers"
+
+    id = Column(Integer, primary_key=True)
+
+    name = Column(Text, nullable=False)
+    website = Column(Text)
+
+    description = Column(Text)
+
+    email = Column(ARRAY(Text))
+    phone = Column(ARRAY(Text))
+
+    vat_number = Column(Text)
+
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(
+        TIMESTAMP,
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    locations = relationship(
+        "SupplierLocation",
+        back_populates="supplier",
+        cascade="all, delete-orphan"
+    )
+
+
+class SupplierLocation(Base):
+    __tablename__ = "supplier_locations"
+
+    id = Column(Integer, primary_key=True)
+
+    supplier_id = Column(
+        Integer,
+        ForeignKey("suppliers.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    country = Column(Text, nullable=False)
+    city = Column(Text, nullable=False)
+    address = Column(Text)
+
+    supplier = relationship(
+        "Supplier",
+        back_populates="locations"
+    )
