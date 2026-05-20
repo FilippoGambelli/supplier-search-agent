@@ -2,17 +2,18 @@ import json
 import re
 from typing import Dict
 from langchain_ollama import ChatOllama
-from agent_tool.logger import logger
+from logger import logger
 from agent_tool.config import *
 from stats import get_stats
-from agent_tool.agent.tools.db.db import save_supplier_to_db
+# from agent_tool.agent.tools.db.db import save_supplier_to_db
 
 LLM_EXTRACT = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
     format="json",
     reasoning=False,
-    temperature=0.1
+    temperature=0.1,
+    timeout=300
 )
 
 
@@ -134,7 +135,7 @@ def extract_data(company: Dict) -> Dict:
     stats = get_stats()
     prompt = build_company_prompt(company)
     
-    logger.info(f"[EXTRACT] Starting data extraction from: {company.get('url', 'unknown')}")
+    logger.info(f"[AGENT-TOOL] Starting data extraction from: {company.get('url', 'unknown')}")
 
     try:
         response = LLM_EXTRACT.invoke(prompt)
@@ -147,7 +148,7 @@ def extract_data(company: Dict) -> Dict:
 
         raw_output = response.content if hasattr(response, 'content') else str(response)
         
-        logger.info(f"[EXTRACT] Data successfully extracted by LLM from {company.get('url', 'unknown')}")
+        logger.info(f"[AGENT-TOOL] Data successfully extracted by LLM from {company.get('url', 'unknown')}")
         
         result = parse_json_response(raw_output)
 
@@ -158,30 +159,27 @@ def extract_data(company: Dict) -> Dict:
         # fallback name
         if not result.get("name"):
             result["name"] = company.get("title", "Unknown")
-
-        # save into db
-        save_supplier_to_db(result)
         
         # Validate result has at least some data
         has_data = any([
-            result.get("company_name"),
-            result.get("emails") and len(result.get("emails", [])) > 0,
-            result.get("phone_numbers") and len(result.get("phone_numbers", [])) > 0,
-            result.get("address")
+            result.get("name"),
+            result.get("email") and len(result.get("email", [])) > 0,
+            result.get("phone") and len(result.get("phone", [])) > 0,
+            result.get("locations") and len(result.get("locations", [])) > 0
         ])
         
         if not has_data and "error" not in result:
-            logger.warning("[EXTRACT_DATA] Model returned empty result, adding URL as fallback")
+            logger.warning(f"[AGENT-TOOL] LLM did not extract any useful data")
             result["website"] = company.get("url", "")
-            if not result.get("company_name"):
-                result["company_name"] = company.get("title", "Unknown")
+            if not result.get("name"):
+                result["name"] = company.get("title", "Unknown")
         
         return result
 
     except Exception as e:
-        logger.error(f"[EXTRACT_DATA] Error: {e}")
+        logger.error(f"[AGENT-TOOL] Error: {e}")
         return {
             "error": str(e),
-            "company_name": company.get("title", "Unknown"),
+            "name": company.get("title", "Unknown"),
             "website": company.get("url", "")
         }

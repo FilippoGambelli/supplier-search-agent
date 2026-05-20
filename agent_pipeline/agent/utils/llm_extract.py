@@ -3,14 +3,15 @@ from typing import Dict
 from langchain_ollama import ChatOllama
 from agent_pipeline.config import *
 from stats import get_stats
-from agent_pipeline.logger import logger
+from logger import logger
 
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
     format="json",
     reasoning=False,
-    temperature=0
+    temperature=0,
+    timeout=300
 )
 
 

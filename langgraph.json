@@ -2,7 +2,8 @@
   "dependencies": ["."],
   "graphs": {
     "agent_pipeline": "./agent_pipeline/agent/agent.py:graph",
-    "agent_tool": "./agent_tool/agent/agent.py:graph"
+    "agent_tool": "./agent_tool/agent/agent.py:graph",
+    "agent_orchestrator": "./agent_orchestrator/agent/agent.py:graph"
   },
   "env": ".env"
 }

@@ -1,3 +1,7 @@
+"""
+Unified logging configuration for the entire application.
+All agents use this single logger to write to a common log file.
+"""
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -11,11 +15,10 @@ timestamp = datetime.now().strftime("%Y%m%d_%H-%M")
 
 LOG_FILE = LOG_DIR / f"app_{timestamp}.log"
 
-logger = logging.getLogger("ai-search-tool")
+logger = logging.getLogger("supplier-search-agent")
 logger.setLevel(logging.INFO)
 
 if not logger.handlers:
-
     formatter = logging.Formatter(
         "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",

@@ -5,7 +5,7 @@ from agent_tool.agent.tools.search import search_web
 from agent_tool.agent.tools.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
 from agent_tool.agent.tools.llm_extract import extract_data
 
-from agent_tool.logger import logger
+from logger import logger
 
 
 @tool
@@ -15,7 +15,7 @@ def search_suppliers(query: str) -> str:
     Use this first to find potential companies.
     Returns a string containing a list of titles and URLs.
     """
-    logger.info(f"[TOOL] search_suppliers called with query: {query}")
+    logger.info(f"[AGENT-TOOL] Tool search_suppliers called with query: {query}")
     logger.info("="*80)
     try:
         results = search_web(query)
@@ -30,7 +30,7 @@ def is_valid_company(title: str, url: str) -> str:
     Check if a search result is a valid company website.
     Returns a string with instructions on how to proceed.
     """
-    logger.info(f"[TOOL] is_valid_company called for URL: {url}")
+    logger.info(f"[AGENT-TOOL] Tool is_valid_company called for URL: {url}")
     try:
         url_lower = url.lower()
         
@@ -53,7 +53,7 @@ def extract_from_paginegialle(pg_url: str) -> str:
     Extract real company websites from a PagineGialle directory page.
     Use this ONLY when you find a PagineGialle link in your search results.
     """
-    logger.info(f"[TOOL] extract_from_paginegialle called for URL: {pg_url}")
+    logger.info(f"[AGENT-TOOL] Tool extract_from_paginegialle called for URL: {pg_url}")
     try:
         results = extract_paginegialle_websites(pg_url, limit=10)
         if not results:
@@ -70,7 +70,7 @@ def research_and_extract_company(url: str, title: str = "") -> str:
     Use this tool on valid company URLs to extract structured business information.
     It automatically scrapes the website and extracts the data.
     """
-    logger.info(f"[TOOL] research_and_extract_company called for URL: {url}")
+    logger.info(f"[AGENT-TOOL] Tool research_and_extract_company called for URL: {url}")
     try:
         data = scrape_company_website(url)
         if not data:

@@ -7,7 +7,7 @@ Base = declarative_base()
 
 
 class Supplier(Base):
-    __tablename__ = "suppliers"
+    __tablename__ = "supplier"
 
     id = Column(Integer, primary_key=True)
 
@@ -42,7 +42,7 @@ class SupplierLocation(Base):
 
     supplier_id = Column(
         Integer,
-        ForeignKey("suppliers.id", ondelete="CASCADE"),
+        ForeignKey("supplier.id", ondelete="CASCADE"),
         nullable=False
     )
 

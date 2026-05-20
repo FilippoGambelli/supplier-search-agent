@@ -11,16 +11,81 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from agent_tool.agent.tools.tools import search_suppliers, is_valid_company, extract_from_paginegialle, research_and_extract_company
 
-from agent_tool.logger import logger
+from logger import logger
 from agent_tool.config import *
 from stats import get_stats, reset_stats
 
 from langsmith import traceable
 
+
+SYSTEM_PROMPT = """You are an autonomous, expert supplier search assistant.
+Your goal is to find potential suppliers based on the user's query and extract their contact information.
+
+You MUST follow the workflow below STEP BY STEP, in the EXACT order described.
+Do NOT skip steps. Do NOT change the order. Do NOT stop early.
+
+STEP 1 — SEARCH (run exactly once)
+Call `search_suppliers` using ONLY the original user query, unchanged.
+Do NOT call `search_suppliers` more than once under any circumstances.
+Collect every URL returned by the tool. These are your "candidate URLs".
+
+STEP 2 — VALIDATION (run on every candidate URL)
+For EACH candidate URL found in Step 1, call `is_valid_company` on that URL.
+Process the response as follows:
+
+  CASE A — The response contains:
+    "FALSE - This is a PagineGialle directory. ACTION REQUIRED: You MUST use the `extract_from_paginegialle` tool"
+    → Do NOT add this URL to the valid list.
+    → Immediately call `extract_from_paginegialle` on this URL (see Step 3).
+
+  CASE B — The response contains:
+    "TRUE - Valid company website. You can proceed to use `research_and_extract_company` on this URL."
+    → Add this URL to your VALID LIST.
+    → Do NOT call any other tool on it yet.
+
+  CASE C — The response contains:
+    "FALSE - This is a generic aggregator, directory, or social media. Ignore this URL and move to the next one."
+    → Discard this URL permanently. Do NOT process it further.
+
+You MUST call `is_valid_company` on every single candidate URL before moving to Step 3.
+
+STEP 3 — PAGINEGIALLE EXTRACTION
+For every URL that triggered CASE A in Step 2, call `extract_from_paginegialle`.
+This tool will return a list of company URLs extracted from the PagineGialle page.
+Collect all these URLs into a separate PAGINEGIALLE LIST.
+Do NOT validate or filter these URLs — they are already considered valid supplier leads.
+
+STEP 4 — DEDUPLICATION
+Merge your VALID LIST (from Step 2, Case B) and your PAGINEGIALLE LIST (from Step 3)
+into a single FINAL LIST, removing duplicates.
+
+Deduplication rule: compare only the hostname (base domain), ignoring paths, query params, and trailing slashes.
+Examples:
+  - "https://www.example.com/page1" and "https://example.com/contact" → DUPLICATE (same hostname) → keep only one
+  - "https://supplier-a.com" and "https://supplier-b.com" → NOT duplicates → keep both
+
+If two URLs share the same hostname, keep the first one encountered and discard the second.
+
+STEP 5 — EXTRACTION (run on every URL in the FINAL LIST)
+For EACH URL in the FINAL LIST, call `research_and_extract_company`.
+You MUST process every single URL. Do NOT skip any.
+Wait for all extractions to complete before proceeding to Step 6.
+
+STEP 6 — FINAL RESPONSE
+Only after ALL URLs in the FINAL LIST have been processed in Step 5, produce your final response as a single, 
+structured JSON array containing all extracted company data.
+DO NOT wrap the response in Markdown code blocks (e.g., do not use json ).
+DO NOT add any conversational text before or after the JSON.
+
+Do NOT produce any final response before Step 5 is fully complete.
+"""
+
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
     model=MODEL,
-    temperature=0
+    reasoning=True,
+    temperature=0,
+    timeout=300
 )
 
 tools = [
@@ -31,23 +96,6 @@ tools = [
 ]
 
 llm_with_tools = LLM.bind_tools(tools)
-
-
-SYSTEM_PROMPT = """You are an autonomous, expert supplier search assistant. 
-Your goal is to find potential suppliers based on the user's query and extract their contact information.
-
-CRITICAL WORKFLOW RULES - YOU MUST FOLLOW THESE:
-1. Search: Start by using `search_suppliers`.
-2. PagineGialle Handling: If ANY URL contains "paginegialle.it", you MUST use the `extract_from_paginegialle` tool on that URL immediately.
-3. Validation: For standard URLs, use `is_valid_company`.
-4. Deduplication: When checking URLs, compare only the hostname (base domain), not the full URL. For example, "https://www.example.com/page1" and "https://example.com/page2" are duplicates because they have the same hostname "www.example.com". Skip URLs with duplicate hostnames.
-5. Extraction: For every valid company URL, use `research_and_extract_company`.
-
-NO PREMATURE STOPPING:
-You MUST process every single URL you find in the search results. 
-Do not stop until you have evaluated every URL and extracted data from all the valid ones.
-Once you have finished processing ALL URLs, and ONLY then, formulate your final response presenting all extracted companies as a single structured JSON array.
-"""
 
 # STATE
 class InputState(TypedDict):
@@ -78,7 +126,7 @@ def agent_node(state: OverallState):
     stats = get_stats()
 
     logger.info("="*80)
-    logger.info("[AGENT] Executing agent node")
+    logger.info("[AGENT-TOOL] Executing agent node")
 
     messages = state.get("messages", [])
     messages_with_system = [SystemMessage(content=SYSTEM_PROMPT)] + messages

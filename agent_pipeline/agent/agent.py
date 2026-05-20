@@ -7,13 +7,12 @@ from agent_pipeline.agent.utils.search import search_web
 from agent_pipeline.agent.utils.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
 from agent_pipeline.agent.utils.llm_extract import extract_data
 
-from agent_pipeline.logger import logger
+from logger import logger
 from stats import get_stats, reset_stats
 
 from langsmith import traceable
 
 # STATES
-
 class InputState(TypedDict):
     query: str
 
@@ -182,9 +181,7 @@ def llm_node(state: InternalState) -> Dict:
     try:
         result = extract_data(company)
 
-        logger.info(
-            f"[EXTRACT] Data successfully extracted by LLM from: {company.get('url')}"
-        )
+        logger.info(f"[AGENT-TOOL] Data successfully extracted by LLM from: {company.get('url')}")
 
         new_results = extracted_results + [result]
 

@@ -2,9 +2,10 @@ import json
 import sys
 import re
 from stats import get_stats
+from logger import logger
 
 
-def _run_cli(mode: str, run_agent, logger, output_path: str) -> None:
+def _run_cli(mode: str, run_agent, output_path: str) -> None:
     print(f"\nLocal AI Search CLI ({mode} Mode)")
     print("Type 'exit' to quit\n")
 
@@ -38,7 +39,7 @@ def _run_cli(mode: str, run_agent, logger, output_path: str) -> None:
 
             logger.info(f"[CLI SUCCESS] Query processed successfully.")
             logger.info(f"[STATS] {stats}")
-            
+
             print(f"\nANSWER:\n\n{answer}\n")
             print(f"STATS: {stats}\n")
             print("-" * 50 + "\n")
@@ -49,7 +50,7 @@ def _run_cli(mode: str, run_agent, logger, output_path: str) -> None:
 
 
 def main_tool():
-    from agent_tool.logger import logger as logger_tool
+    """Run the Tool agent mode."""
     from agent_tool.agent.agent import run_agent as run_agent_tool
 
     def run_agent(query):
@@ -66,38 +67,67 @@ def main_tool():
             parsed_json = json.loads(cleaned_text)
             return parsed_json, None
         except json.JSONDecodeError as e:
-            logger_tool.error(f"[AGENT PARSE ERROR] {str(e)}\nReceived string: {raw_answer}")
+            logger.error(f"[AGENT PARSE ERROR] {str(e)}\nReceived string: {raw_answer}")
             return None, f"JSON Decode Error: {str(e)}"
 
-    _run_cli("Tool", run_agent, logger_tool, "agent_tool/output.json")
+    _run_cli("Tool", run_agent, "agent_tool/output.json")
 
 
 def main_pipeline():
+    """Run the Pipeline agent mode."""
     from agent_pipeline.agent.agent import run_agent as run_agent_pipeline
-    from agent_pipeline.logger import logger as logger_pipeline
 
     def run_agent(query):
         result = run_agent_pipeline(query)
         return result.get("final_answer"), result.get("error")
 
-    _run_cli("Pipeline", run_agent, logger_pipeline, "agent_pipeline/output.json")
+    _run_cli("Pipeline", run_agent, "agent_pipeline/output.json")
+
+
+def main_orchestrator():
+    """Run the Orchestrator agent mode."""
+    from agent_orchestrator.agent.agent import run_orchestrator
+    from agent_dbmanager.agent.agent import init_database
+
+    def run_agent(query):
+        raw_answer, error = run_orchestrator(query)
+
+        if error or raw_answer is None:
+            return None, error
+
+        cleaned_text = raw_answer.strip()
+        match = re.search(r'```(?:json)?(.*?)```', cleaned_text, re.DOTALL | re.IGNORECASE)
+        if match:
+            cleaned_text = match.group(1).strip()
+
+        try:
+            parsed_json = json.loads(cleaned_text)
+            return parsed_json, None
+        except json.JSONDecodeError as e:
+            logger.error(f"[AGENT PARSE ERROR] {str(e)}\nReceived string: {raw_answer}")
+            return None, f"JSON Decode Error: {str(e)}"
+
+    _run_cli("Orchestrator", run_agent, "agent_orchestrator/output.json")
 
 
 if __name__ == "__main__":
     print("\n--- Setup CLI ---")
     print("Choose which version of the program you want to run:")
-    print("1. Tool")
-    print("2. Pipeline")
+    print("1. Tool - Autonomous LLM-driven supplier search")
+    print("2. Pipeline - Structured multi-step search")
+    print("3. Orchestrator - Coordinates Tool and DB agents")
 
     try:
         choice = ""
-        while choice not in {"1", "2"}:
-            choice = input("Enter 1 or 2: ").strip()
+        while choice not in {"1", "2", "3"}:
+            choice = input("Enter 1, 2 or 3: ").strip()
 
         if choice == "1":
             main_tool()
         elif choice == "2":
             main_pipeline()
+        elif choice == "3":
+            main_orchestrator()
 
     except KeyboardInterrupt:
         print("\nProgram interrupted. Goodbye!")
