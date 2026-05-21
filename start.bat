@@ -36,14 +36,14 @@ if errorlevel 1 (
 )
 
 echo Choose mode:
-echo 1 - python main.py
+echo 1 - python src/main.py
 echo 2 - langgraph dev
 echo.
 
 set /p choice=Select (1/2): 
 
 if "%choice%"=="1" (
-    python main.py
+    python src/main.py
 )
 
 if "%choice%"=="2" (

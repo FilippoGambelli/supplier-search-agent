@@ -3,9 +3,9 @@ from urllib.parse import urlparse
 
 from langgraph.graph import StateGraph, END
 
-from agent_pipeline.agent.utils.search import search_web
-from agent_pipeline.agent.utils.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
-from agent_pipeline.agent.utils.llm_extract import extract_data
+from agent_pipeline.utils.search import search_web
+from agent_pipeline.utils.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
+from agent_pipeline.utils.llm_extract import extract_data
 
 from logger import logger
 from stats import get_stats, reset_stats

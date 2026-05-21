@@ -1,13 +1,13 @@
 import json
 from typing import Dict
 from langchain_ollama import ChatOllama
-from agent_pipeline.config import *
+from config import *
 from stats import get_stats
 from logger import logger
 
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
-    model=MODEL,
+    model=AGENT_PIPELINE_MODEL,
     format="json",
     reasoning=False,
     temperature=0,

@@ -12,18 +12,8 @@ AI-powered supplier discovery and contact extraction tool for construction and p
 
 2. Run Services
 
-Start Docker containers:
-
 ```bash
 docker compose up -d
-```
-
-3. Run the Backend
-
-Start the FastAPI development server:
-
-```bash
-uvicorn src.api.routes:app --reload --port 8000
 ```
 
 ```bash
@@ -31,17 +21,8 @@ python .\src\main.py
 ```
 
 ```bash
-pip install -e .
-```
-
-
-```bash
 langgraph dev
 ```
-
-Ecco una versione **breve, pulita e in inglese** da incollare nel tuo `README.md`:
-
----
 
 ## Database (PostgreSQL + pgAdmin)
 
@@ -73,4 +54,4 @@ In pgAdmin → Register Server:
 * Password: `admin`
 
 `docker compose down`
-`docker volume rm postgres_data`
+`docker volume rm supplier-search-agent_postgres_data`

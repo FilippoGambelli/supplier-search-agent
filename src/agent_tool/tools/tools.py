@@ -1,9 +1,9 @@
 import json
 from langchain_core.tools import tool
 
-from agent_tool.agent.tools.search import search_web
-from agent_tool.agent.tools.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
-from agent_tool.agent.tools.llm_extract import extract_data
+from agent_tool.tools.search import search_web
+from agent_tool.tools.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
+from agent_tool.tools.llm_extract import extract_data
 
 from logger import logger
 

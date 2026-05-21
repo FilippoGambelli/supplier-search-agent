@@ -51,7 +51,7 @@ def _run_cli(mode: str, run_agent, output_path: str) -> None:
 
 def main_tool():
     """Run the Tool agent mode."""
-    from agent_tool.agent.agent import run_agent as run_agent_tool
+    from agent_tool.agent import run_agent as run_agent_tool
 
     def run_agent(query):
         raw_answer, error = run_agent_tool(query)
@@ -70,24 +70,24 @@ def main_tool():
             logger.error(f"[AGENT PARSE ERROR] {str(e)}\nReceived string: {raw_answer}")
             return None, f"JSON Decode Error: {str(e)}"
 
-    _run_cli("Tool", run_agent, "agent_tool/output.json")
+    _run_cli("Tool", run_agent, "src/agent_tool/output.json")
 
 
 def main_pipeline():
     """Run the Pipeline agent mode."""
-    from agent_pipeline.agent.agent import run_agent as run_agent_pipeline
+    from agent_pipeline.agent import run_agent as run_agent_pipeline
 
     def run_agent(query):
         result = run_agent_pipeline(query)
         return result.get("final_answer"), result.get("error")
 
-    _run_cli("Pipeline", run_agent, "agent_pipeline/output.json")
+    _run_cli("Pipeline", run_agent, "src/agent_pipeline/output.json")
 
 
 def main_orchestrator():
     """Run the Orchestrator agent mode."""
-    from agent_orchestrator.agent.agent import run_orchestrator
-    from agent_dbmanager.agent.agent import init_database
+    from agent_orchestrator.agent import run_orchestrator
+    from agent_dbmanager.agent import init_database
 
     def run_agent(query):
         raw_answer, error = run_orchestrator(query)
@@ -107,7 +107,7 @@ def main_orchestrator():
             logger.error(f"[AGENT PARSE ERROR] {str(e)}\nReceived string: {raw_answer}")
             return None, f"JSON Decode Error: {str(e)}"
 
-    _run_cli("Orchestrator", run_agent, "agent_orchestrator/output.json")
+    _run_cli("Orchestrator", run_agent, "src/agent_orchestrator/output.json")
 
 
 if __name__ == "__main__":

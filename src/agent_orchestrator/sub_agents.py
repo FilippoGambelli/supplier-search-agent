@@ -18,7 +18,7 @@ def run_search_agent(query: str) -> str:
     """
     try:
         # Dynamic import to avoid circular dependencies if agents share modules
-        from agent_tool.agent.agent import run_agent
+        from agent_tool.agent import run_agent
         
         logger.info(f"[ORCHESTRATOR] Delegating to agent_tool with query: {query}")
         result, error = run_agent(query)
@@ -47,7 +47,7 @@ def run_dbmanager_agent(query: str) -> str:
         String confirming the database operation result or the fetched data.
     """
     try:
-        from agent_dbmanager.agent.agent import run_dbmanager
+        from agent_dbmanager.agent import run_dbmanager
         
         logger.info(f"[ORCHESTRATOR] Delegating to agent_dbmanager with query: {query}")
         result, error = run_dbmanager(query)

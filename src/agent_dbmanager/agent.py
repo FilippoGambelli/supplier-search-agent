@@ -5,12 +5,12 @@ from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from agent_dbmanager.config import *
+from config import *
 from logger import logger
 import json
 
 # Import the final tools
-from agent_dbmanager.agent.tools import save_suppliers, semantic_search_suppliers
+from agent_dbmanager.tools import save_suppliers, semantic_search_suppliers
 
 SYSTEM_PROMPT = """
 You are a Database Manager Agent specialized in managing supplier data in PostgreSQL.
@@ -27,7 +27,7 @@ CRITICAL INSTRUCTIONS:
 
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
-    model=MODEL,
+    model=AGENT_DBMANAGER_MODEL,
     temperature=0,
     timeout=300
 )
@@ -89,7 +89,7 @@ graph.add_edge("tools", "agent")
 app = graph.compile()
 
 def init_database():
-    from agent_dbmanager.agent.db.db_manager import init_db
+    from agent_dbmanager.db.db_manager import init_db
     init_db()
     logger.info("[AGENT-DBMANAGER] Database initialized")
 

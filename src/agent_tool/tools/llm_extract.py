@@ -3,13 +3,13 @@ import re
 from typing import Dict
 from langchain_ollama import ChatOllama
 from logger import logger
-from agent_tool.config import *
+from config import *
 from stats import get_stats
 # from agent_tool.agent.tools.db.db import save_supplier_to_db
 
 LLM_EXTRACT = ChatOllama(
     base_url=OLLAMA_BASE_URL,
-    model=MODEL,
+    model=AGENT_TOOL_MODEL,
     format="json",
     reasoning=False,
     temperature=0.1,

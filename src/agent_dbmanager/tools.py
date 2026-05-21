@@ -5,7 +5,7 @@ import json
 from logger import logger
 
 # Import the updated db functions
-from agent_dbmanager.agent.db.db_manager import save_supplier_to_db, execute_search_query
+from agent_dbmanager.db.db_manager import save_supplier_to_db, execute_search_query
 
 @tool
 def save_suppliers(suppliers_data: Union[List[Dict[str, Any]], Dict[str, Any]]) -> str:

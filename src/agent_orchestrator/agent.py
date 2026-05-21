@@ -8,11 +8,11 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from agent_orchestrator.config import *
+from config import *
 from logger import logger
 
-from agent_dbmanager.agent.agent import init_database
-from agent_orchestrator.agent.sub_agents import run_search_agent, run_dbmanager_agent
+from agent_dbmanager.agent import init_database
+from agent_orchestrator.sub_agents import run_search_agent, run_dbmanager_agent
 
 # System prompt defining the orchestrator's behavior
 # System prompt defining the orchestrator's behavior with strict workflow and deduplication rules
@@ -48,7 +48,7 @@ STEP 4: FINAL RESPONSE
 
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
-    model=MODEL,
+    model=AGENT_ORCHESTRATOR_MODEL,
     reasoning=True,
     temperature=0,
     timeout=300

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from agent_dbmanager.agent.db.models import Base, Supplier, SupplierLocation
+from agent_dbmanager.db.models import Base, Supplier, SupplierLocation
 from logger import logger
 
 DATABASE_URL = "postgresql+psycopg2://admin:admin@localhost:5432/suppliersearchagentdb"

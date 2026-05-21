@@ -9,10 +9,10 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from agent_tool.agent.tools.tools import search_suppliers, is_valid_company, extract_from_paginegialle, research_and_extract_company
+from agent_tool.tools.tools import search_suppliers, is_valid_company, extract_from_paginegialle, research_and_extract_company
 
 from logger import logger
-from agent_tool.config import *
+from config import *
 from stats import get_stats, reset_stats
 
 from langsmith import traceable
@@ -82,7 +82,7 @@ Do NOT produce any final response before Step 5 is fully complete.
 
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
-    model=MODEL,
+    model=AGENT_TOOL_MODEL,
     reasoning=True,
     temperature=0,
     timeout=300
