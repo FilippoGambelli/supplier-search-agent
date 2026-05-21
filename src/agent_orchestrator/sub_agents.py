@@ -1,7 +1,4 @@
-import json
-from logger import logger   
-from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
+from logger import logger
 from langchain_core.tools import tool
 
 @tool("run_search_agent", description="Searches the web for external data and new suppliers.")
@@ -18,7 +15,7 @@ def run_search_agent(query: str) -> str:
     """
     try:
         # Dynamic import to avoid circular dependencies if agents share modules
-        from agent_tool.agent import run_agent
+        from agent_websearch.agent_tool import run_agent
         
         logger.info(f"[ORCHESTRATOR] Delegating to agent_tool with query: {query}")
         result, error = run_agent(query)

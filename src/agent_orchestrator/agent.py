@@ -1,20 +1,14 @@
-from typing import Annotated, TypedDict, List, Dict
-
+from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
-from langchain_core.tools import tool
-
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
-
 from config import *
 from logger import logger
-
 from agent_dbmanager.agent import init_database
 from agent_orchestrator.sub_agents import run_search_agent, run_dbmanager_agent
 
-# System prompt defining the orchestrator's behavior
 # System prompt defining the orchestrator's behavior with strict workflow and deduplication rules
 SYSTEM_PROMPT = """You are an Orchestrator Agent specialized in data retrieval, deduplication, and database synchronization.
 
@@ -81,15 +75,13 @@ class OverallState(InputState, OutputState):
     messages: Annotated[list, add_messages]
 
 
-
 def init_node(state: InputState) -> OverallState:
     """
     Initialize the agent state with the user's query.
     Converts the input query into a HumanMessage for the LLM.
     """
     user_query = state["query"]
-    logger.info("[ORCHESTRATOR] Executing init node")
-    logger.info(f"[ORCHESTRATOR] Received query: {user_query}")
+    logger.info(f"[ORCHESTRATOR - INIT NODE] Executing init node. Received query: {user_query}")
     return {"messages": [HumanMessage(content=user_query)]}
 
 
@@ -100,7 +92,7 @@ def agent_node(state: OverallState) -> OverallState:
     Invokes the LLM with the system prompt and message history,
     then returns the response for tool execution or final answer.
     """
-    logger.info("[ORCHESTRATOR] Executing agent node")
+    logger.info("[ORCHESTRATOR - AGENT NODE] Executing agent node")
 
     messages = state.get("messages", [])
     messages_with_system = [SystemMessage(content=SYSTEM_PROMPT)] + messages

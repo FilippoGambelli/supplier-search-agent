@@ -1,13 +1,13 @@
 import json
 from typing import Dict
 from langchain_ollama import ChatOllama
+from logger import logger
 from config import *
 from stats import get_stats
-from logger import logger
 
 LLM = ChatOllama(
     base_url=OLLAMA_BASE_URL,
-    model=AGENT_PIPELINE_MODEL,
+    model=AGENT_TOOL_MODEL,
     format="json",
     reasoning=False,
     temperature=0,
@@ -26,51 +26,73 @@ def build_company_prompt(company: Dict) -> str:
     homepage_text = company.get("homepage_text", "") or ""
     contact_text = company.get("contact_text", "") or ""
 
+    combined_text = f"""
+HOMEPAGE:
+{homepage_text}
+
+CONTACT PAGE:
+{contact_text}
+"""
+
     prompt = f"""
-You are an expert business information extraction system.
+You are an information extraction system.
 
-Your task is to extract company contact information
-from the provided website content.
+Extract ONLY factual company information from the provided text.
 
-IMPORTANT RULES:
-- Return ONLY valid JSON
-- Do NOT explain anything
-- Do NOT use markdown
-- If information is missing, use null
-- Emails must be returned as a list
-- Phone numbers must be returned as a list
-- Be precise and conservative
-- Extract only information clearly present in the text
+Return ONLY valid JSON matching EXACTLY this schema:
 
-TARGET WEBSITE:
+{{
+  "name": "string",
+  "website": "string",
+  "description": "string",
+
+  "email": ["string"],
+  "phone": ["string"],
+
+  "vat_number": "string",
+
+  "locations": [
+    {{
+      "country": "string",
+      "city": "string",
+      "address": "string"
+    }}
+  ]
+}}
+
+RULES:
+- Output ONLY JSON
+- No markdown
+- No explanations
+- No comments
+- Use empty arrays [] when data is missing
+- Use empty string "" for missing strings
+- Do not invent data
+- Extract ALL emails found
+- Extract ALL phone numbers found
+- VAT number may appear as:
+  - VAT
+  - Partita IVA
+  - P.IVA
+  - IVA
+  - ITXXXXXXXXXXX
+- Locations must contain:
+  - country
+  - city
+  - full address if available
+- If multiple locations exist, include all of them
+- Description must be a short factual summary of the company
+
+COMPANY WEBSITE:
 {url}
 
 COMPANY TITLE:
 {title}
 
-HOMEPAGE CONTENT:
-{homepage_text}
+TEXT:
+{combined_text}
 
-CONTACT PAGE CONTENT:
-{contact_text}
-
-Extract the following information:
-
-{{
-  "company_name": string | null,
-  "website": string | null,
-  "emails": [string],
-  "phone_numbers": [string],
-  "vat_number": string | null,
-  "address": string | null,
-  "city": string | null,
-  "postal_code": string | null,
-  "country": string | null,
-  "description": string | null,
-  "contact_person": string | null
-}}
-
-Return ONLY valid JSON.
+JSON:
 """
 
     return prompt
@@ -91,8 +113,8 @@ def extract_data(company: Dict) -> Dict:
         # Update stats
         usage = response.usage_metadata or {}
         input_tokens = usage.get("input_tokens", 0)
-        generated_tokens = usage.get("output_tokens", 0)
-        stats.add_request(input_tokens, generated_tokens)
+        output_tokens = usage.get("output_tokens", 0)
+        stats.add_request(input_tokens, output_tokens)
 
         return json.loads(raw_output)
 

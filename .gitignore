@@ -6,3 +6,5 @@ __pycache__/
 .langgraph_api
 agent.egg-info
 *.log
+
+src/outputs/*.json

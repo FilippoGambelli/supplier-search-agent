@@ -1,7 +1,3 @@
-"""
-Unified logging configuration for the entire application.
-All agents use this single logger to write to a common log file.
-"""
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -20,7 +16,7 @@ logger.setLevel(logging.INFO)
 
 if not logger.handlers:
     formatter = logging.Formatter(
-        "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+        "%(asctime)s | %(levelname)-8s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 

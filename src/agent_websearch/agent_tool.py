@@ -1,20 +1,13 @@
-from typing import Annotated, TypedDict, List
-from urllib.parse import urlparse
-
+from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
-from langchain_core.tools import tool
-
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
-
-from agent_tool.tools.tools import search_suppliers, is_valid_company, extract_from_paginegialle, research_and_extract_company
-
+from agent_websearch.tools import search_suppliers, is_valid_company, extract_from_paginegialle, research_and_extract_company
 from logger import logger
 from config import *
 from stats import get_stats, reset_stats
-
 from langsmith import traceable
 
 
@@ -97,7 +90,7 @@ tools = [
 
 llm_with_tools = LLM.bind_tools(tools)
 
-# STATE
+
 class InputState(TypedDict):
     query: str
 
@@ -107,12 +100,12 @@ class OutputState(TypedDict):
 class OverallState(InputState, OutputState):
     messages: Annotated[list, add_messages]
 
-# NODE
+
 @traceable(name="init_node")
 def init_node(state: InputState):
     """
-    Prende la query testuale passata dall'utente (o da LangSmith)
-    e la converte nel formato `messages` richiesto dall'LLM.
+    Takes the user input query (or the query received from LangSmith)
+    and converts it into the `messages` format required by the LLM.
     """
     user_query = state["query"]
     return {"messages": [HumanMessage(content=user_query)]}
@@ -123,10 +116,8 @@ def agent_node(state: OverallState):
     The Agent node. It represents the "brain" of the graph where the LLM thinks
     and decides whether to call a tool or provide the final answer.
     """
+    logger.info("[AGENT NODE] Executing agent node")
     stats = get_stats()
-
-    logger.info("="*80)
-    logger.info("[AGENT-TOOL] Executing agent node")
 
     messages = state.get("messages", [])
     messages_with_system = [SystemMessage(content=SYSTEM_PROMPT)] + messages
@@ -136,9 +127,8 @@ def agent_node(state: OverallState):
     # Update stats
     usage = response.usage_metadata or {}
     input_tokens = usage.get("input_tokens", 0)
-    generated_tokens = usage.get("output_tokens", 0)
-    stats.add_request(input_tokens, generated_tokens)
-
+    output_tokens = usage.get("output_tokens", 0)
+    stats.add_request(input_tokens, output_tokens)
 
     state_update = {"messages": [response]}
 
@@ -150,7 +140,7 @@ def agent_node(state: OverallState):
 
     return state_update
 
-# BUILD GRAPH
+
 graph = StateGraph(
     OverallState,
     input_schema=InputState,
@@ -169,7 +159,6 @@ graph.add_edge("tools", "agent")
 app = graph.compile()
 
 def run_agent(query: str):
-    logger.info(f"[AGENT-TOOL] Starting agent with query: {query}")
     reset_stats()
     stats = get_stats()
     stats.start()

@@ -1,6 +1,6 @@
 import time
 import threading
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 _lock = threading.Lock()
@@ -10,26 +10,28 @@ class AgentStats:
     total_LLM_requests: int = 0
     total_tokens: int = 0
     input_tokens: int = 0
-    generated_tokens: int = 0
+    output_tokens: int = 0
     total_execution_time: float = 0.0
     tool_calls: int = 0
     start_time: Optional[float] = None
     end_time: Optional[float] = None
 
     def start(self):
-        self.start_time = time.time()
+        with _lock:
+            self.start_time = time.time()
 
     def stop(self):
-        self.end_time = time.time()
-        if self.start_time:
-            self.total_execution_time = self.end_time - self.start_time
+        with _lock:
+            self.end_time = time.time()
+            if self.start_time:
+                self.total_execution_time = self.end_time - self.start_time
 
-    def add_request(self, input_tokens: int = 0, generated_tokens: int = 0):
+    def add_request(self, input_tokens: int = 0, output_tokens: int = 0):
         with _lock:
             self.total_LLM_requests += 1
             self.input_tokens += input_tokens
-            self.generated_tokens += generated_tokens
-            self.total_tokens += input_tokens + generated_tokens
+            self.output_tokens += output_tokens
+            self.total_tokens += input_tokens + output_tokens
 
     def add_tool_call(self):
         with _lock:
@@ -39,18 +41,25 @@ class AgentStats:
         return {
             "total_LLM_requests": self.total_LLM_requests,
             "input_tokens": self.input_tokens,
-            "generated_tokens": self.generated_tokens,
+            "output_tokens": self.output_tokens,
             "total_tokens": self.total_tokens,
             "total_execution_time_seconds": round(self.total_execution_time, 1),
             "tool_calls": self.tool_calls
         }
 
 
-_global_stats = AgentStats()
+global_stats = AgentStats()
 
 def get_stats() -> AgentStats:
-    return _global_stats
+    return global_stats
 
 def reset_stats():
-    global _global_stats            # Global variable to hold the stats instance
-    _global_stats = AgentStats()    # Reset the stats by creating a new instance
+    with _lock:
+        global_stats.total_LLM_requests = 0
+        global_stats.total_tokens = 0
+        global_stats.input_tokens = 0
+        global_stats.output_tokens = 0
+        global_stats.total_execution_time = 0.0
+        global_stats.tool_calls = 0
+        global_stats.start_time = None
+        global_stats.end_time = None

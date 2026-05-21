@@ -1,8 +1,8 @@
 {
-  "dependencies": ["."],
+  "dependencies": [".", "./src"],
   "graphs": {
-    "agent_pipeline": "./src/agent_pipeline/agent.py:graph",
-    "agent_tool": "./src/agent_tool/agent.py:graph",
+    "agent_pipeline": "./src/agent_websearch/agent_pipeline.py:graph",
+    "agent_tool": "./src/agent_websearch/agent_tool.py:graph",
     "agent_orchestrator": "./src/agent_orchestrator/agent.py:graph"
   },
   "env": ".env"
