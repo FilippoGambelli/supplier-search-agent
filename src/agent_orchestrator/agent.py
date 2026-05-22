@@ -1,3 +1,5 @@
+import json
+from langchain_core.tools import tool
 from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
@@ -8,36 +10,121 @@ from config import *
 from logger import logger
 from agent_dbmanager.agent import init_database
 from agent_orchestrator.sub_agents import run_search_agent, run_dbmanager_agent
+from artifact_store import artifact_store
 
 # System prompt defining the orchestrator's behavior with strict workflow and deduplication rules
-SYSTEM_PROMPT = """You are an Orchestrator Agent specialized in data retrieval, deduplication, and database synchronization.
+SYSTEM_PROMPT = """
+You are an Orchestrator Agent.
+Your responsibility is ONLY to coordinate subagents and move data through artifacts.
 
-Your available tools:
-1. run_search_agent(query): Searches the web for external data or suppliers. Returns a JSON array.
-2. run_dbmanager_agent(query): Searches the internal database OR inserts new data. Returns a JSON array or a status message.
+You never search the web directly.
+You never access the database directly.
+You never transform, summarize, interpret, filter, merge, or modify data.
 
-CRITICAL WORKFLOW INSTRUCTIONS:
-You must strictly follow these sequential steps for every user request:
+Your only responsibility is executing tools in the correct order.
 
-STEP 1: FETCH DATA
-- You MUST ALWAYS invoke BOTH `run_search_agent` and `run_dbmanager_agent` using the user's exact query.
+MANDATORY WORKFLOW:
 
-STEP 2: IDENTIFY DUPLICATES AND MERGE
-- Analyze the JSON results returned by both tools.
-- Compare the web results against the database results to find duplicates.
-- DEFINITION OF A DUPLICATE: Two records are considered the same entity if they share informations likes same phone number OR if their website hostnames match (e.g., 'example.com' matches 'www.example.com'). They do not need to be 100% identical JSON objects.
-- Create a master list merging database suppliers and newly found web suppliers, ensuring NO duplicates exist in this final list.
+STEP 1 — SEARCH FOR SUPPLIERS
 
-STEP 3: INSERT NEW SUPPLIERS
-- Identify "new" suppliers (those found by `run_search_agent` that are NOT present in the database results).
-- If there are new suppliers, you MUST call `run_dbmanager_agent` again to save them.
-- Format the query for this tool call exactly as: "insert [JSON array containing ONLY the new suppliers]".
-- Wait for the tool to confirm the insertion.
+Call:
 
-STEP 4: FINAL RESPONSE
-- Once the new suppliers have been inserted (or if there were no new suppliers), you must return the final merged and deduplicated list of all companies.
-- CRITICAL: Your final answer MUST be a single, strict JSON string containing the array of all unique companies.
-- DO NOT use conversational text, explanations, or markdown code blocks (such as ```json). Output only the raw JSON array.
+run_search_agent(USER_REQUEST)
+
+Purpose:
+- Search external sources for suppliers matching the user request.
+
+Example user request:
+"fornitori materiali edili Pisa"
+
+Result:
+SEARCH_ARTIFACT_ID
+
+If an error is returned:
+- Stop immediately
+- Return the error message
+- Do not execute additional tools
+
+STEP 2 — STORE SEARCH RESULTS
+
+Call run_dbmanager_agent with a NATURAL LANGUAGE instruction.
+
+Example:
+
+"Insert new supplier data from artifact SEARCH_ARTIFACT_ID"
+
+Purpose:
+- Persist newly discovered suppliers into the database.
+
+IMPORTANT:
+- Never load the artifact yourself.
+- Never include JSON in the instruction.
+- The dbmanager is responsible for reading the artifact.
+
+Wait for completion.
+
+If insertion fails:
+- Stop immediately
+- Return the error
+
+STEP 3 — RETRIEVE FINAL DATA FROM DATABASE
+
+Call run_dbmanager_agent again.
+
+Input:
+A natural language retrieval request.
+
+Example:
+
+"Retrieve all supplier data related to: USER_REQUEST"
+
+Purpose:
+- Retrieve the complete database view for the requested suppliers.
+
+IMPORTANT:
+- Retrieval MUST happen through dbmanager.
+- The dbmanager decides how to build queries internally.
+
+Expected result:
+FINAL_ARTIFACT_ID
+
+If retrieval fails:
+- Stop immediately
+- Return the error
+
+STEP 4 — LOAD FINAL RESULT
+
+Call:
+
+load_artifact(FINAL_ARTIFACT_ID)
+
+Purpose:
+- Retrieve the final JSON payload.
+
+STEP 5 — RETURN RESULT
+
+Return ONLY the JSON content returned by load_artifact.
+
+Do not:
+- modify it
+- summarize it
+- explain it
+- reorder fields
+- filter records
+- wrap it in markdown
+- generate additional text
+
+----------------------------------------------------------------------
+HARD RULES
+- Never process data yourself
+- Never inspect artifacts unless using load_artifact
+- Never pass structured payloads between agents
+- Always exchange data using artifact_id
+- Never generate database queries
+- Never search outside run_search_agent
+- Never bypass dbmanager
+- Never invent supplier data
+- Follow the workflow exactly
 """
 
 LLM = ChatOllama(
@@ -48,11 +135,67 @@ LLM = ChatOllama(
     timeout=300
 )
 
+@tool("load_artifact")
+def load_artifact(artifact_id: str) -> str:
+    """
+    Load the content of an artifact from the artifact store.
+
+    This tool is intended to be used to retrieve data
+    that was previously persisted by other agents or tools.
+
+    The tool accepts only an `artifact_id` and returns the complete artifact
+    content serialized as a raw JSON string.
+
+    This tool does not:
+    - Execute business logic
+    - Perform database operations
+    - Modify artifact contents
+    - Interpret or validate the stored data
+
+    It only retrieves and exposes the stored payload.
+
+    Typical usage scenarios:
+    - Read supplier search results generated by the web-search subagent
+    - Retrieve structured datasets returned by the database manager
+    - Access intermediate results produced during multi-agent workflows
+    - Load large payloads that were intentionally stored outside agent messages
+
+    Examples:
+    - Load artifact "vYtM84r9uP2E9zXyB6Hn9c"
+    - Read supplier search output from artifact "aYtZ84r3uP2I9zPyB6Ln9c"
+
+    Artifact workflow:
+    1. Another tool or subagent generates structured data.
+    2. The data is stored in the artifact store.
+    3. An `artifact_id` is returned.
+    4. This tool is used to retrieve the stored content.
+
+    Args:
+        artifact_id:
+            Unique identifier of the artifact to load.
+
+            The identifier must reference an existing artifact previously
+            persisted in the artifact store.
+
+    Returns:
+        str:
+            The artifact content serialized as a raw JSON string.
+
+            Example:
+            '{"suppliers": [...], "metadata": {...}}'
+
+    Raises:
+        Errors generated by artifact loading are propagated by the underlying
+        artifact store implementation.
+    """
+    data = artifact_store.load(artifact_id)
+    return json.dumps(data)
 
 # List of available tools for the orchestrator
 tools = [
     run_search_agent,
-    run_dbmanager_agent
+    run_dbmanager_agent,
+    load_artifact
 ]
 
 # Bind tools to the LLM

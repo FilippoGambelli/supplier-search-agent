@@ -1,63 +1,91 @@
-from typing import Any, Dict, List, Union
-
 from langchain_core.tools import tool
 import json
 from logger import logger
-
-# Import the updated db functions
 from agent_dbmanager.db.db_manager import save_supplier_to_db, execute_search_query
+from artifact_store import artifact_store
+
 
 @tool
-def save_suppliers(suppliers_data: Union[List[Dict[str, Any]], Dict[str, Any]]) -> str:
+def save_suppliers(artifact_id: str) -> str:
     """
-    Save a list of suppliers to the database.
-    
-    Args:
-        suppliers_data: List of supplier objects or a single supplier object to save.
+    Save suppliers into the database using data loaded from an artifact.
+
+    This tool:
+    - Loads supplier data from an artifact
+    - Parses JSON content
+    - Persists each supplier into the database
+    - Returns a human-readable status string
+
+    IMPORTANT:
+    - Input MUST be an artifact_id
+    - The artifact MUST contain JSON data (list or single object)
     """
+
     try:
-        data = suppliers_data
-        
-        # Handle both array and single object for robustness
+        raw_data = artifact_store.load(artifact_id)
+        data = json.loads(raw_data) if isinstance(raw_data, str) else raw_data
+
         if not isinstance(data, list):
             data = [data]
 
-        saved_ids = []
+        saved_count = 0
+        error_count = 0
         errors = []
-        
+
         for item in data:
             try:
-                sup_id = save_supplier_to_db(item)
-                saved_ids.append(sup_id)
+                save_supplier_to_db(item)
+                saved_count += 1
             except Exception as e:
+                error_count += 1
                 errors.append(str(e))
-        
-        logger.info(f"[DBMANAGER TOOL] Saved {len(saved_ids)} suppliers, {len(errors)} errors.")
+                logger.error(f"[DBMANAGER TOOL] Save error: {e}")
 
-        return json.dumps({
-            "status": "success" if not errors else "partial_success",
-            "saved_count": len(saved_ids),
-            "error_count": len(errors)
-        })
-    
+        logger.info(f"[DBMANAGER TOOL] save_suppliers completed - saved: {saved_count}, errors: {error_count}")
+
+        if error_count == 0:
+            return f"SUCCESS: {saved_count} suppliers saved to database."
+
+        return (f"PARTIAL SUCCESS: {saved_count} saved, {error_count} failed. Errors: {errors}")
+
     except json.JSONDecodeError:
-        return json.dumps({"status": "error", "message": "The data format is not a valid JSON."})
+        logger.error("[DBMANAGER TOOL] Invalid JSON in artifact")
+        return "ERROR: Artifact content is not valid JSON."
+
     except Exception as e:
-        logger.error(f"[DBMANAGER TOOL] Save error: {e}")
-        return json.dumps({"status": "error", "message": f"System error: {str(e)}"})
+        logger.error(f"[DBMANAGER TOOL] Unexpected error: {e}")
+        return f"ERROR: {str(e)}"
+
 
 @tool
 def semantic_search_suppliers(location: str) -> str:
     """
-    Search for suppliers filtering by location.
-    
+    Search suppliers in the database filtered by location.
+
+    This tool:
+    - Executes a database search using the DB engine
+    - Stores results in an artifact
+    - Returns only the artifact_id as a string
+
     Args:
-        location: Place or city to search in (e.g., 'Pisa'). Leave empty if not specified.
+        location:
+            Geographic filter (e.g. city, region).
+            Can be empty for broader search.
     """
+
     try:
-        # The tool delegates SQL query construction and execution to the DB layer
         results = execute_search_query(location)
-        return json.dumps(results, ensure_ascii=False, indent=4)
+
+        artifact_id = artifact_store.save(
+            data=json.dumps(results, ensure_ascii=False, indent=4),
+            meta={
+                "type": "db_search",
+                "location": location
+            }
+        )
+
+        return artifact_id
+
     except Exception as e:
         logger.error(f"[DBMANAGER TOOL] Semantic search error: {e}")
-        return json.dumps({"status": "error", "message": f"Error during database search: {str(e)}"})
+        return f"ERROR: {str(e)}"
