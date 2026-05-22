@@ -1,3 +1,4 @@
+import json
 from typing import TypedDict, List, Dict, Optional
 from urllib.parse import urlparse
 from langgraph.graph import StateGraph, END
@@ -6,7 +7,7 @@ from agent_websearch.utils.scrape import scrape_company_website, is_valid_compan
 from agent_websearch.utils.extract import extract_data
 from logger import logger
 from config import SEARXNG_RESULTS_LIMIT
-from stats import get_stats, reset_stats
+from main import print_node_pipeline
 from langsmith import traceable
 
 
@@ -257,18 +258,14 @@ app = graph.compile()
 
 @traceable(name="pipeline_run_agent")
 def run_agent(query: str):
-    reset_stats()               # Reset stats at the beginning of each run
-    stats = get_stats()         # Get stats instance
-
-    stats.start()               # Start timing the execution
-
-    initial_state = {"query": query}
-
     try:
-        result = app.invoke(initial_state)
-        stats.stop()            # Stop timing after execution finishes
+        last_event = None
+        for event in app.stream({"query": query}):
+            print_node_pipeline(event)
+            last_event = event
+        message = last_event.get("final_answer", {}).get("final_answer")
+        return message, None
+        
     except Exception as e:
-        stats.stop()
-        result = {"final_answer": [], "error": str(e)}
-
-    return result
+        logger.error(f"[PIPELINE] Error: {e}")
+        return None, str(e)

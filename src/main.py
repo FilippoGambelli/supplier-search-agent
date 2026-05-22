@@ -1,132 +1,174 @@
 import json
-import sys
 import re
-from stats import get_stats
-from logger import logger
+from colorama import Fore, Style, init
+from stats import get_stats, reset_stats
+
+init(autoreset=True)
+
+# MODES
+MODES = {"tool", "pipeline", "orchestrator"}
+CURRENT_MODE = "orchestrator"
+
+# COLORS
+CYAN = Fore.CYAN + Style.BRIGHT
+MAGENTA = Fore.MAGENTA + Style.BRIGHT
+RED = Fore.RED + Style.BRIGHT
+DIM = Style.DIM
+GREEN = Fore.GREEN + Style.BRIGHT
+YELLOW = Fore.YELLOW + Style.BRIGHT
+
+def clean(text):
+    if not text:
+        return ""
+    return re.sub(r"\s+", " ", str(text).replace("\n\n", "\n")).strip()
+
+def extract_json(raw: str) -> str:
+    raw = raw.strip()
+    match = re.search(r'```(?:json)?(.*?)```', raw, re.DOTALL)
+    return match.group(1).strip() if match else raw
 
 
-def _run_cli(mode: str, run_agent, output_path: str) -> None:
-    print(f"\nLocal AI Search CLI ({mode} Mode)")
-    print("Type 'exit' to quit\n")
+def print_header():
+    print(CYAN + Style.BRIGHT + r"""
+███████╗ ███████╗  █████╗ 
+██╔════╝ ██╔════╝ ██╔══██╗
+███████╗ ███████╗ ███████║
+╚════██║ ╚════██║ ██╔══██║
+███████║ ███████║ ██║  ██║
+╚══════╝ ╚══════╝ ╚═╝  ╚═╝
+""" + Style.RESET_ALL)
+
+    print(DIM + "CLI Multi-Agent System")
+    print(DIM + "Modes: tool | pipeline | orchestrator")
+    print(DIM + "Use: /mode <name>\n")
+
+
+# MODE HANDLER
+def handle_mode(cmd: str):
+    global CURRENT_MODE
+
+    parts = cmd.split()
+
+    if len(parts) == 1:
+        print("\nAvailable modes:", ", ".join(MODES), "\n")
+        return
+
+    mode = parts[1].lower()
+
+    if mode in MODES:
+        CURRENT_MODE = mode
+        print(f"\n→ mode: {CURRENT_MODE}\n")
+    else:
+        print("\nInvalid mode\n")
+
+
+def print_node_pipeline(event: dict):
+    for key in event:
+        print(MAGENTA + f"\nNODE: {key.upper()}")
+
+
+def print_event(agent: str, event: dict):
+
+    if "agent" in event:
+        messages = event["agent"].get("messages", [])
+
+        for msg in messages:
+            print(CYAN + f"\n[AGENT - {agent}]")
+
+            # reasoning vs content
+            content = getattr(msg, "content", None)
+            reasoning = getattr(msg, "additional_kwargs", {}).get("reasoning_content", None)
+            if content:
+                print(DIM + clean(f"Response:\n{content}"))
+            elif reasoning:
+                print(DIM + clean(f"Reasoning:\n{reasoning}"))
+
+            # tool calls
+            tool_calls = getattr(msg, "tool_calls", []) or []
+            if tool_calls:
+                print(DIM + "Tools called:")
+                for tc in tool_calls:
+                    name = tc.get("name")
+                    args = tc.get("args")
+                    print(DIM + f"- {name} | {json.dumps(args, ensure_ascii=False)}")
+
+    elif "tools" in event:
+        tool_messages = event["tools"].get("messages", [])
+        
+        print(MAGENTA + f"\n[TOOLS - {agent}]")
+
+        for msg in tool_messages:
+            content = getattr(msg, "content", None)
+            name = getattr(msg, "name", None)
+            if name:
+                print(DIM + f"Tool name: {name}")
+            if content:
+                print(DIM + clean(f"Result: {content}"))
+
+
+def get_runner(mode: str):
+    if mode == "tool":
+        from agent_websearch.agent_tool import run_agent as run_websearch_agent
+        return run_websearch_agent
+    
+    elif mode == "pipeline":
+        from agent_websearch.agent_pipeline import run_agent as run_websearch_agent
+        return run_websearch_agent
+    
+    elif mode == "orchestrator":
+        from agent_orchestrator.agent import run_orchestrator
+        return run_orchestrator
+
+
+def run_cli():
+    global CURRENT_MODE
+
+    print_header()
+    runner = get_runner(CURRENT_MODE)
 
     while True:
-        try:
-            query = input("AI Search > ").strip()
-        except KeyboardInterrupt:
-            print("\nExiting...")
+        query = input(f"{CURRENT_MODE} > ").strip()
+
+        if query in {"exit", "quit"}:
+            print("\nBye!\n")
             break
 
-        if not query:
+        if query.startswith("/mode"):
+            handle_mode(query)
+            runner = get_runner(CURRENT_MODE)
             continue
 
-        if query.lower() in {"exit", "quit"}:
-            break
-
         try:
-            answer, error = run_agent(query)
+            reset_stats()
+            stats = get_stats()
+            stats.start()
+            msg, error = runner(query)
+            stats.stop()
 
-            if error or answer is None:
-                logger.error(f"[CLI ERROR] Query: '{query}' - Agent error: {error}")
-                print(f"\nERROR: {error}\n")
-                continue
+            if error:
+                print(RED + f"ERROR: {error}")
+            else:
+                print(GREEN + f"\nFinal answer:\n{msg}\n\n")
+            
+            stats_dict = stats.to_dict()
+            input_tokens = stats_dict.get("input_tokens", 0)
+            output_tokens = stats_dict.get("output_tokens", 0)
+            total_tokens = stats_dict.get("total_tokens", 0)
+            exec_time = stats_dict.get("total_execution_time_seconds", 0)
 
-            stats = get_stats().to_dict()
-            with open(output_path, "w", encoding="utf-8") as f:
-                json.dump(
-                    {"query": query, "answer": answer, "stats": stats, "error": None},
-                    f, indent=4, ensure_ascii=False
+            input_pct = (input_tokens / total_tokens * 100) if total_tokens else 0
+            output_pct = (output_tokens / total_tokens * 100) if total_tokens else 0
+
+            print(YELLOW + (
+                    f"STATS | "
+                    f"input tokens: {input_tokens} ({input_pct:.1f}%) | "
+                    f"output tokens: {output_tokens} ({output_pct:.1f}%) | "
+                    f"total tokens: {total_tokens} | "
+                    f"total execution time: {exec_time:.2f}s\n\n"
                 )
-
-            logger.info(f"[STATS] {stats}")
-
-            print(f"\nANSWER:\n\n{answer}\n")
-            print(f"STATS: {stats}\n")
-            print("-" * 50 + "\n")
-
+            )        
         except Exception as e:
-            logger.error(f"[CLI ERROR] Exception: {e}")
-            print(f"Unexpected exception: {e}")
-
-
-def main_tool():
-    """Run the Tool agent mode."""
-    from agent_websearch.agent_tool import run_agent as run_agent_tool
-
-    def run_agent(query):
-        raw_answer, error = run_agent_tool(query)
-        if error or raw_answer is None:
-            return None, error
-
-        cleaned_text = raw_answer.strip()
-        match = re.search(r'```(?:json)?(.*?)```', cleaned_text, re.DOTALL | re.IGNORECASE)
-        if match:
-            cleaned_text = match.group(1).strip()
-
-        try:
-            parsed_json = json.loads(cleaned_text)
-            return parsed_json, None
-        except json.JSONDecodeError as e:
-            logger.error(f"[AGENT PARSE ERROR] {str(e)}\nReceived string: {raw_answer}")
-            return None, f"JSON Decode Error: {str(e)}"
-
-    _run_cli("Tool", run_agent, "src/outputs/output_agent_tool.json")
-
-
-def main_pipeline():
-    """Run the Pipeline agent mode."""
-    from agent_websearch.agent_pipeline import run_agent as run_agent_pipeline
-
-    def run_agent(query):
-        result = run_agent_pipeline(query)
-        return result.get("final_answer"), result.get("error")
-
-    _run_cli("Pipeline", run_agent, "src/outputs/output_agent_pipeline.json")
-
-
-def main_orchestrator():
-    """Run the Orchestrator agent mode."""
-    from agent_orchestrator.agent import run_orchestrator
-
-    def run_agent(query):
-        raw_answer, error = run_orchestrator(query)
-
-        if error or raw_answer is None:
-            return None, error
-
-        cleaned_text = raw_answer.strip()
-        match = re.search(r'```(?:json)?(.*?)```', cleaned_text, re.DOTALL | re.IGNORECASE)
-        if match:
-            cleaned_text = match.group(1).strip()
-
-        try:
-            parsed_json = json.loads(cleaned_text)
-            return parsed_json, None
-        except json.JSONDecodeError as e:
-            logger.error(f"[AGENT PARSE ERROR] {str(e)}\nReceived string: {raw_answer}")
-            return None, f"JSON Decode Error: {str(e)}"
-
-    _run_cli("Orchestrator", run_agent, "src/outputs/output_orchestrator.json")
-
+            print(RED + f"\nEXCEPTION: {e}\n")
 
 if __name__ == "__main__":
-    print("\n--- Setup CLI ---")
-    print("Choose which version of the program you want to run:")
-    print("1. Tool - Autonomous LLM-driven supplier search")
-    print("2. Pipeline - Structured multi-step search")
-    print("3. Orchestrator - Coordinates Tool and DB agents")
-
-    try:
-        choice = ""
-        while choice not in {"1", "2", "3"}:
-            choice = input("Enter 1, 2 or 3: ").strip()
-
-        if choice == "1":
-            main_tool()
-        elif choice == "2":
-            main_pipeline()
-        elif choice == "3":
-            main_orchestrator()
-
-    except KeyboardInterrupt:
-        print("\nProgram interrupted. Goodbye!")
-        sys.exit(0)
+    run_cli()

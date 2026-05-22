@@ -6,8 +6,9 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from agent_websearch.tools import search_suppliers, is_valid_company, extract_from_paginegialle, research_and_extract_company
 from logger import logger
 from config import *
-from stats import get_stats, reset_stats
+from stats import get_stats
 from langsmith import traceable
+from main import print_event
 
 
 SYSTEM_PROMPT = """You are an autonomous, expert supplier search assistant.
@@ -151,18 +152,14 @@ graph.add_edge("tools", "agent")
 app = graph.compile()
 
 def run_agent(query: str):
-    reset_stats()
-    stats = get_stats()
-    stats.start()
-
     try:
-        result = app.invoke({"query": query})
-        stats.stop()
-
-        raw_answer = result.get("answer", "")
-        return raw_answer, None
-
+        last_event = None
+        for event in app.stream({"query": query}):
+            print_event("WEB SEARCHER", event)
+            last_event = event
+        messages = last_event["agent"].get("messages", [])[0]
+        return getattr(messages, "content", None), None
+    
     except Exception as e:
-        stats.stop()
         logger.error(f"[AGENT FATAL ERROR] {e}")
         return None, str(e)

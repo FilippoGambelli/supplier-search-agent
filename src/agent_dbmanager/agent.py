@@ -5,6 +5,7 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from config import *
 from logger import logger
+from stats import get_stats, reset_stats
 from agent_dbmanager.tools import save_suppliers, semantic_search_suppliers
 
 SYSTEM_PROMPT = """
@@ -137,14 +138,26 @@ def init_node(state: InputState):
 
 def agent_node(state: OverallState):
     logger.info("[AGENT-DBMANAGER] Executing database manager node")
+    stats = get_stats()
+    
     messages = state.get("messages", [])
     messages_with_system = [SystemMessage(content=SYSTEM_PROMPT)] + messages
 
     response = llm_with_tools.invoke(messages_with_system)
+
+    # Update stats
+    usage = response.usage_metadata or {}
+    input_tokens = usage.get("input_tokens", 0)
+    output_tokens = usage.get("output_tokens", 0)
+    stats.add_request(input_tokens, output_tokens)
+
     state_update = {"messages": [response]}
 
     if getattr(response, "tool_calls", None) is None or len(response.tool_calls) == 0:
         state_update["answer"] = response.content
+    else:
+        for _ in response.tool_calls:
+            stats.add_tool_call()
 
     return state_update
 
@@ -173,8 +186,13 @@ def init_database():
 
 def run_dbmanager(query: str):
     try:
-        result = app.invoke({"query": query})
-        return result.get("answer", ""), None
+        from main import print_event
+        last_event = None
+        for event in app.stream({"query": query}):
+            print_event("DB MANAGER", event)
+            last_event = event
+        messages = last_event["agent"].get("messages", [])[0]
+        return getattr(messages, "content", None), None
     except Exception as e:
         logger.error(f"[DBMANAGER FATAL ERROR] {e}")
         return None, str(e)
