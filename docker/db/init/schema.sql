@@ -26,11 +26,13 @@ CREATE TABLE IF NOT EXISTS supplier_locations (
 
     supplier_id INTEGER NOT NULL REFERENCES supplier(id) ON DELETE CASCADE,
 
-    country TEXT NOT NULL,
-    city TEXT NOT NULL,
+    country TEXT,
+    region TEXT,
+    province TEXT,
+    city TEXT,
     address TEXT
 
-    UNIQUE (supplier_id, country, city, address)
+    UNIQUE (supplier_id, country, region, province, city, address)
 );
 
 /*INDEXS*/

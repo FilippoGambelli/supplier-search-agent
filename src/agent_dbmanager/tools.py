@@ -58,29 +58,60 @@ def save_suppliers(artifact_id: str) -> str:
 
 
 @tool
-def semantic_search_suppliers(location: str) -> str:
+def semantic_search_suppliers(country: str = None, region: str = None, province: str = None, city: str = None) -> str:
     """
-    Search suppliers in the database filtered by location.
+    Search suppliers in the database using hierarchical geographic filters.
 
     This tool:
     - Executes a database search using the DB engine
+    - Filters suppliers by geographic fields (country, region, province, city)
     - Stores results in an artifact
     - Returns only the artifact_id as a string
 
     Args:
-        location:
-            Geographic filter (e.g. city, region).
-            Can be empty for broader search.
+        country:
+            Optional country filter (e.g. "Italy").
+
+        region:
+            Optional region/state filter (e.g. "Lombardy").
+
+        province:
+            Optional province filter (e.g. "Milan").
+
+        city:
+            Optional city filter (e.g. "Milan").
+
+    Requirements:
+        At least ONE of the filters must be provided:
+        country OR region OR province OR city
+
+    Returns:
+        artifact_id (str): reference to stored search results
+
+    Raises:
+        Exception: if database query or artifact storage fails
     """
 
     try:
-        results = execute_search_query(location)
+        # Validate that at least one filter is provided
+        if not any([country, region, province, city]):
+            return "ERROR: at least one location filter must be provided"
+
+        results = execute_search_query(
+            country=country,
+            region=region,
+            province=province,
+            city=city
+        )
 
         artifact_id = artifact_store.save(
             data=json.dumps(results, ensure_ascii=False, indent=4),
             meta={
                 "type": "db_search",
-                "location": location
+                "country": country,
+                "region": region,
+                "province": province,
+                "city": city
             }
         )
 

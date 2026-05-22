@@ -18,6 +18,9 @@ LLM = ChatOllama(
 def build_company_prompt(company: Dict) -> str:
     """
     Build extraction prompt for a single company.
+
+    The goal is to extract structured supplier data that fully matches
+    the database schema used by the ingestion pipeline.
     """
 
     title = company.get("title", "")
@@ -54,6 +57,8 @@ Return ONLY valid JSON matching EXACTLY this schema:
   "locations": [
     {{
       "country": "string",
+      "region": "string",
+      "province": "string",
       "city": "string",
       "address": "string"
     }}
@@ -65,23 +70,52 @@ RULES:
 - No markdown
 - No explanations
 - No comments
-- Use empty arrays [] when data is missing
-- Use empty string "" for missing strings
-- Do not invent data
-- Extract ALL emails found
-- Extract ALL phone numbers found
-- VAT number may appear as:
-  - VAT
-  - Partita IVA
-  - P.IVA
-  - IVA
-  - ITXXXXXXXXXXX
-- Locations must contain:
-  - country
-  - city
-  - full address if available
-- If multiple locations exist, include all of them
-- Description must be a short factual summary of the company
+- Do NOT hallucinate business data
+- Use "" for missing strings
+- Use [] for missing arrays
+- Extract ALL emails found in text
+- Extract ALL phone numbers found in text
+
+VAT NUMBER RULES:
+May appear as:
+- VAT
+- Partita IVA
+- P.IVA
+- IVA
+- ITXXXXXXXXXXX
+
+LOCATION RULES:
+- Extract ALL available locations from the text
+- Each location MUST include at least:
+  - city if available
+- address should be full structured address if available
+
+GEOGRAPHIC INFERENCE RULE (IMPORTANT):
+- If country, region, or province are NOT explicitly present in the text,
+  you MUST infer them using your general knowledge about geography
+- Inference must be consistent and realistic (no hallucinated entities)
+- If city is known, always infer:
+  - correct country
+  - correct region/state (if applicable)
+  - correct province (if applicable)
+
+- If multiple interpretations are possible, choose the MOST PROBABLE one
+
+CRITICAL GEOGRAPHY NORMALIZATION RULE:
+- All geographic names MUST be written in full form
+- Do NOT use abbreviations of any kind
+- Examples:
+  - "USA" → "United States"
+  - "UK" → "United Kingdom"
+  - "UAE" → "United Arab Emirates"
+  - "NY" → "New York"
+  - "CA" → "California" or "Canada" depending on context
+
+- Cities, regions, provinces, and countries must ALWAYS be fully written
+
+DESCRIPTION RULE:
+- Short factual summary of the company
+- Based ONLY on provided text
 
 COMPANY WEBSITE:
 {url}
@@ -96,7 +130,6 @@ JSON:
 """
 
     return prompt
-
 
 def extract_data(company: Dict) -> Dict:
     """

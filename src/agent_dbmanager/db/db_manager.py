@@ -20,40 +20,6 @@ SessionLocal = sessionmaker(
 
 def init_db():
     Base.metadata.create_all(bind=engine)
-
-
-def execute_search_query(location: str):
-    """
-    Generates and executes a raw SQL query in the database based on location.
-    Returns an array of dictionaries (the extracted results).
-    """
-    session = SessionLocal()
-    try:
-
-        sql_query = """
-            SELECT s.name, s.website, s.description, s.email, s.phone, s.vat_number,
-                sl.id AS location_id, sl.country, sl.city, sl.address
-            FROM supplier s
-            LEFT JOIN supplier_locations sl ON s.id = sl.supplier_id
-            WHERE 1=1
-        """
-        params = {}
-            
-        if location and location.strip():
-            sql_query += " AND sl.city ILIKE :loc"
-            params["loc"] = f"%{location.strip()}%"
-
-        result = session.execute(text(sql_query), params)
-        
-        suppliers = [dict(row._mapping) for row in result]
-        logger.info(f"[AGENT-DBMANAGER] Found {len(suppliers)} suppliers for location '{location}'")
-        
-        return suppliers
-    except Exception as e:
-        logger.error(f"[AGENT-DBMANAGER] Error executing SQL search query: {e}")
-        raise e
-    finally:
-        session.close()
         
 
 def save_supplier_to_db(data: dict):
@@ -67,10 +33,10 @@ def save_supplier_to_db(data: dict):
         vat_number = (data.get("vat_number", "").strip())
 
         supplier = None
-        match_reason = None  # <-- track why we matched
-        action_taken = None  # <-- final action log
+        match_reason = None
 
-        # 1. Search by VAT
+        # DUPLICATE DETECTION
+        # 1. VAT
         if vat_number:
             supplier = session.query(Supplier).filter(
                 Supplier.vat_number == vat_number
@@ -78,7 +44,7 @@ def save_supplier_to_db(data: dict):
             if supplier:
                 match_reason = "VAT"
 
-        # 2. Search by EMAIL
+        # 2. EMAIL
         if not supplier and normalized_email:
             supplier = session.query(Supplier).filter(
                 Supplier.normalized_email.op("&&")(normalized_email)
@@ -86,7 +52,7 @@ def save_supplier_to_db(data: dict):
             if supplier:
                 match_reason = "EMAIL"
 
-        # 3. Search by PHONE
+        # 3. PHONE
         if not supplier and normalized_phone:
             supplier = session.query(Supplier).filter(
                 Supplier.normalized_phone.op("&&")(normalized_phone)
@@ -94,7 +60,7 @@ def save_supplier_to_db(data: dict):
             if supplier:
                 match_reason = "PHONE"
 
-        # 4. Search by WEBSITE
+        # 4. WEBSITE
         if not supplier and normalized_website:
             supplier = session.query(Supplier).filter(
                 Supplier.normalized_website == normalized_website
@@ -102,7 +68,7 @@ def save_supplier_to_db(data: dict):
             if supplier:
                 match_reason = "WEBSITE"
 
-        # 5. Search by NAME
+        # 5. NAME
         if not supplier and normalized_name:
             supplier = session.query(Supplier).filter(
                 Supplier.normalized_name == normalized_name
@@ -110,7 +76,7 @@ def save_supplier_to_db(data: dict):
             if supplier:
                 match_reason = "NAME"
 
-        # DUPLICATE FOUND → update only
+        # DUPLICATE FOUND → UPDATE
         if supplier:
 
             added_locations = 0
@@ -118,6 +84,8 @@ def save_supplier_to_db(data: dict):
             existing_locations = {
                 (
                     loc.country.lower(),
+                    (loc.region or "").lower(),
+                    (loc.province or "").lower(),
                     loc.city.lower(),
                     (loc.address or "").lower()
                 )
@@ -125,20 +93,27 @@ def save_supplier_to_db(data: dict):
             }
 
             for loc in data.get("locations", []):
+
                 key = (
                     loc.get("country", "").lower(),
+                    loc.get("region", "").lower(),
+                    loc.get("province", "").lower(),
                     loc.get("city", "").lower(),
                     loc.get("address", "").lower()
                 )
 
                 if key not in existing_locations:
+
                     supplier.locations.append(
                         SupplierLocation(
                             country=loc.get("country", ""),
+                            region=loc.get("region"),
+                            province=loc.get("province"),
                             city=loc.get("city", ""),
                             address=loc.get("address")
                         )
                     )
+
                     added_locations += 1
 
             supplier.normalized_email = list(set((supplier.normalized_email or []) + normalized_email))
@@ -149,12 +124,10 @@ def save_supplier_to_db(data: dict):
 
             session.commit()
 
-            action_taken = (
-                f"UPDATED supplier_id={supplier.id} "
+            logger.info(
+                f"[AGENT-DBMANAGER] UPDATED supplier_id={supplier.id} "
                 f"(matched_by={match_reason}, added_locations={added_locations})"
             )
-
-            logger.info(f"[AGENT-DBMANAGER] {action_taken}")
 
             return supplier.id
 
@@ -173,9 +146,12 @@ def save_supplier_to_db(data: dict):
         )
 
         for loc in data.get("locations", []):
+
             supplier.locations.append(
                 SupplierLocation(
                     country=loc.get("country", ""),
+                    region=loc.get("region"),
+                    province=loc.get("province"),
                     city=loc.get("city", ""),
                     address=loc.get("address")
                 )
@@ -184,9 +160,7 @@ def save_supplier_to_db(data: dict):
         session.add(supplier)
         session.commit()
 
-        action_taken = f"CREATED supplier_id={supplier.id}"
-
-        logger.info(f"[AGENT-DBMANAGER] {action_taken}")
+        logger.info(f"[AGENT-DBMANAGER] CREATED supplier_id={supplier.id}")
 
         return supplier.id
 
@@ -195,5 +169,64 @@ def save_supplier_to_db(data: dict):
         logger.error(f"[AGENT-DBMANAGER] Error saving supplier: {e}")
         raise
 
+    finally:
+        session.close()
+
+def execute_search_query(country: str = None, region: str = None, province: str = None, city: str = None):
+    """
+    Search suppliers using hierarchical geographic filters:
+    country → region → province → city
+    """
+    session = SessionLocal()
+
+    try:
+        sql_query = """
+            SELECT s.name, s.website, s.description, s.email, s.phone, s.vat_number,
+                sl.id AS location_id, sl.country, sl.region, sl.province, sl.city, sl.address
+            FROM supplier s
+            LEFT JOIN supplier_locations sl
+                ON s.id = sl.supplier_id
+            WHERE 1=1
+        """
+
+        params = {}
+
+        # COUNTRY filter
+        if country and country.strip():
+            sql_query += " AND sl.country ILIKE :country"
+            params["country"] = f"%{country.strip()}%"
+
+        # REGION filter
+        if region and region.strip():
+            sql_query += " AND sl.region ILIKE :region"
+            params["region"] = f"%{region.strip()}%"
+
+        # PROVINCE filter
+        if province and province.strip():
+            sql_query += " AND sl.province ILIKE :province"
+            params["province"] = f"%{province.strip()}%"
+
+        # CITY filter
+        if city and city.strip():
+            sql_query += " AND sl.city ILIKE :city"
+            params["city"] = f"%{city.strip()}%"
+
+        result = session.execute(text(sql_query), params)
+
+        suppliers = [
+            dict(row._mapping)
+            for row in result
+        ]
+
+        logger.info(
+            f"[AGENT-DBMANAGER] Found {len(suppliers)} suppliers "
+            f"(country={country}, region={region}, province={province}, city={city})"
+        )
+
+        return suppliers
+
+    except Exception as e:
+        logger.error(f"[AGENT-DBMANAGER] Error executing search query: {e}")
+        raise
     finally:
         session.close()

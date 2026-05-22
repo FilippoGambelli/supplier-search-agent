@@ -52,8 +52,10 @@ class SupplierLocation(Base):
         nullable=False
     )
 
-    country = Column(Text, nullable=False)
-    city = Column(Text, nullable=False)
+    country = Column(Text)
+    region = Column(Text)
+    province = Column(Text)
+    city = Column(Text)
     address = Column(Text)
 
     supplier = relationship(

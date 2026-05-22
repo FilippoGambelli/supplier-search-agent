@@ -82,6 +82,15 @@ def research_and_extract_company(url: str, title: str = "") -> str:
         }
         
         result = extract_data(company_payload)
+        
+        emails = result.get("email", [])
+        if not isinstance(emails, list) or len(emails) == 0:
+            return f"INSUFFICIENT_DATA: cannot return structured JSON for {url}."
+        
+        phone = result.get("phone", [])
+        if not isinstance(phone, list) or len(emails) == 0:
+            return f"INSUFFICIENT_DATA: cannot return structured JSON for {url}."
+        
         return json.dumps(result, ensure_ascii=False)
         
     except Exception as e:
