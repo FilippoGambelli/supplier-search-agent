@@ -2,12 +2,18 @@ CREATE TABLE IF NOT EXISTS supplier (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     
     name TEXT NOT NULL,
+    normalized_name TEXT,
+
     website TEXT,
-    
+    normalized_website TEXT,
+
     description TEXT,
     
     email TEXT[],
+    normalized_email TEXT[],
+
     phone TEXT[],
+    normalized_phone TEXT[],
     
     vat_number TEXT,
 
@@ -23,6 +29,8 @@ CREATE TABLE IF NOT EXISTS supplier_locations (
     country TEXT NOT NULL,
     city TEXT NOT NULL,
     address TEXT
+
+    UNIQUE (supplier_id, country, city, address)
 );
 
 /*INDEXS*/

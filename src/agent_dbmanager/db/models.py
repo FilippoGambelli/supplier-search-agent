@@ -12,12 +12,18 @@ class Supplier(Base):
     id = Column(Integer, primary_key=True)
 
     name = Column(Text, nullable=False)
+    normalized_name = Column(Text)
+
     website = Column(Text)
+    normalized_website = Column(Text)
 
     description = Column(Text)
 
     email = Column(ARRAY(Text))
+    normalized_email = Column(ARRAY(Text))
+    
     phone = Column(ARRAY(Text))
+    normalized_phone = Column(ARRAY(Text))
 
     vat_number = Column(Text)
 
