@@ -2,7 +2,6 @@ import json
 from langchain_core.tools import tool
 from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -127,14 +126,6 @@ HARD RULES
 - Follow the workflow exactly
 """
 
-LLM = ChatOllama(
-    base_url=OLLAMA_BASE_URL,
-    model=AGENT_ORCHESTRATOR_MODEL,
-    reasoning=True,
-    temperature=0,
-    timeout=300
-)
-
 @tool("load_artifact")
 def load_artifact(artifact_id: str) -> str:
     """
@@ -199,7 +190,7 @@ tools = [
 ]
 
 # Bind tools to the LLM
-llm_with_tools = LLM.bind_tools(tools)
+llm_with_tools = AGENT_ORCHESTRATOR_LLM.bind_tools(tools)
 
 
 # State definitions for LangGraph

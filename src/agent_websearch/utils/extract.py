@@ -1,18 +1,8 @@
 import json
 from typing import Dict
-from langchain_ollama import ChatOllama
 from logger import logger
 from config import *
 from stats import get_stats
-
-LLM = ChatOllama(
-    base_url=OLLAMA_BASE_URL,
-    model=AGENT_TOOL_MODEL,
-    format="json",
-    reasoning=False,
-    temperature=0,
-    timeout=300
-)
 
 
 def build_company_prompt(company: Dict) -> str:
@@ -140,7 +130,7 @@ def extract_data(company: Dict) -> Dict:
     prompt = build_company_prompt(company)
 
     try:
-        response = LLM.invoke(prompt)
+        response = EXTRACT_LLM.invoke(prompt)
         raw_output = response.content
 
         # Update stats

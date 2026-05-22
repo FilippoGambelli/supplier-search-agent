@@ -1,6 +1,5 @@
 from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -73,13 +72,6 @@ DO NOT add any conversational text before or after the JSON.
 Do NOT produce any final response before Step 5 is fully complete.
 """
 
-LLM = ChatOllama(
-    base_url=OLLAMA_BASE_URL,
-    model=AGENT_TOOL_MODEL,
-    reasoning=True,
-    temperature=0,
-    timeout=300
-)
 
 tools = [
     search_suppliers, 
@@ -88,7 +80,7 @@ tools = [
     research_and_extract_company
 ]
 
-llm_with_tools = LLM.bind_tools(tools)
+llm_with_tools = AGENT_WEBSEARCH_LLM.bind_tools(tools)
 
 
 class InputState(TypedDict):

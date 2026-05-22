@@ -1,6 +1,5 @@
 from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -111,13 +110,6 @@ You must NEVER:
 - expose internal tool reasoning steps
 """
 
-LLM = ChatOllama(
-    base_url=OLLAMA_BASE_URL,
-    model=AGENT_DBMANAGER_MODEL,
-    temperature=0,
-    timeout=300
-)
-
 # List of available tools
 tools = [
     save_suppliers,
@@ -125,7 +117,7 @@ tools = [
 ]
 
 # Bind tools to the LLM
-llm_with_tools = LLM.bind_tools(tools)
+llm_with_tools = AGENT_DBMANAGER_LLM.bind_tools(tools)
 
 # State definitions for LangGraph
 class InputState(TypedDict):
