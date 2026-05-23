@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE IF NOT EXISTS supplier (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     
@@ -7,7 +9,12 @@ CREATE TABLE IF NOT EXISTS supplier (
     website TEXT,
     normalized_website TEXT,
 
+    category TEXT[],
+    normalized_category TEXT[],
+
     description TEXT,
+
+    embedding VECTOR(384),
     
     email TEXT[],
     normalized_email TEXT[],

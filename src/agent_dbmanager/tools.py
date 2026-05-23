@@ -58,13 +58,14 @@ def save_suppliers(artifact_id: str) -> str:
 
 
 @tool
-def semantic_search_suppliers(country: str = None, region: str = None, province: str = None, city: str = None) -> str:
+def semantic_search_suppliers(country: str = None, region: str = None, province: str = None, city: str = None, semantic_query: str = None) -> str:
     """
-    Search suppliers in the database using hierarchical geographic filters.
+    Search suppliers in the database using hierarchical geographic filters and optional semantic search.
 
     This tool:
     - Executes a database search using the DB engine
     - Filters suppliers by geographic fields (country, region, province, city)
+    - Optionally ranks results using semantic similarity via embedding search (semantic_query)
     - Stores results in an artifact
     - Returns only the artifact_id as a string
 
@@ -81,9 +82,21 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
         city:
             Optional city filter (e.g. "Milan").
 
+        semantic_query:
+            Optional natural language query used for semantic search over supplier embeddings.
+            If provided, results are ranked by similarity between the query embedding
+            and supplier embedding (vector-based search).
+
+            Examples:
+                - "suppliers of concrete and cement for infrastructure projects"
+                - "construction material distributors for residential buildings"
+                - "companies providing steel reinforcement bars for civil engineering"
+                - "building material suppliers specialized in sustainable construction"
+                - "suppliers of insulation materials for energy-efficient buildings"
+
     Requirements:
         At least ONE of the filters must be provided:
-        country OR region OR province OR city
+        country OR region OR province OR city OR semantic_query
 
     Returns:
         artifact_id (str): reference to stored search results
@@ -94,14 +107,15 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
 
     try:
         # Validate that at least one filter is provided
-        if not any([country, region, province, city]):
+        if not any([country, region, province, city, semantic_query]):
             return "ERROR: at least one location filter must be provided"
 
         results = execute_search_query(
             country=country,
             region=region,
             province=province,
-            city=city
+            city=city,
+            semantic_query=semantic_query
         )
 
         artifact_id = artifact_store.save(

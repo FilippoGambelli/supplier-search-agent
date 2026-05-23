@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Text, ForeignKey, TIMESTAMP, func
-
+from pgvector.sqlalchemy import Vector
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -18,6 +18,11 @@ class Supplier(Base):
     normalized_website = Column(Text)
 
     description = Column(Text)
+
+    category = Column(ARRAY(Text))
+    normalized_category  = Column(ARRAY(Text))
+
+    embedding = Column(Vector(384))
 
     email = Column(ARRAY(Text))
     normalized_email = Column(ARRAY(Text))

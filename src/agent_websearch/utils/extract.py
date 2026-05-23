@@ -39,8 +39,10 @@ Return ONLY valid JSON matching EXACTLY this schema:
   "website": "string",
   "description": "string",
 
-  "email": ["string"],
-  "phone": ["string"],
+  "category": ["string", "..."],
+
+  "email": ["string", "..."],
+  "phone": ["string", "..."],
 
   "vat_number": "string",
 
@@ -66,6 +68,45 @@ RULES:
 - Extract ALL emails found in text
 - Extract ALL phone numbers found in text
 
+CATEGORY RULES (IMPORTANT):
+- Extract categories representing what the company DOES, SELLS, INSTALLS,
+  PRODUCES, DISTRIBUTES, or SPECIALIZES IN
+- Categories are used for semantic company search
+- Output categories as short noun phrases
+- Categories MUST be lowercase
+- Categories MUST be generic and reusable
+- Include multiple categories if relevant
+- Prefer 2–10 categories
+- Do NOT invent unsupported categories
+- Do NOT include locations, company names, brands, slogans, certifications,
+  legal forms, or marketing language
+- Remove duplicates
+- Prefer categories at different abstraction levels
+
+Examples:
+- plumber
+- hydraulic systems
+- construction
+- masonry
+- tile sales
+- industrial automation
+- electrical installation
+- logistics
+- packaging
+- furniture manufacturing
+- metalworking
+- interior design
+- solar energy
+- software development
+- mechanical engineering
+- wholesale distribution
+
+Good:
+["construction", "masonry", "tile sales"]
+
+Bad:
+["best company", "quality", "professional team"]
+
 VAT NUMBER RULES:
 May appear as:
 - VAT
@@ -82,9 +123,9 @@ LOCATION RULES:
 
 GEOGRAPHIC INFERENCE RULE (IMPORTANT):
 - If country, region, or province are NOT explicitly present in the text,
-  you MUST infer them using your general knowledge about geography
-- Inference must be consistent and realistic (no hallucinated entities)
-- If city is known, always infer:
+  infer them using general geographic knowledge
+- Inference must remain conservative and realistic
+- If city is known, infer:
   - correct country
   - correct region/state (if applicable)
   - correct province (if applicable)
@@ -93,18 +134,18 @@ GEOGRAPHIC INFERENCE RULE (IMPORTANT):
 
 CRITICAL GEOGRAPHY NORMALIZATION RULE:
 - All geographic names MUST be written in full form
-- Do NOT use abbreviations of any kind
-- Examples:
-  - "USA" → "United States"
-  - "UK" → "United Kingdom"
-  - "UAE" → "United Arab Emirates"
-  - "NY" → "New York"
-  - "CA" → "California" or "Canada" depending on context
+- Do NOT use abbreviations
 
-- Cities, regions, provinces, and countries must ALWAYS be fully written
+Examples:
+- "USA" → "United States"
+- "UK" → "United Kingdom"
+- "UAE" → "United Arab Emirates"
+- "NY" → "New York"
+- "CA" → "California" or "Canada"
 
 DESCRIPTION RULE:
 - Short factual summary of the company
+- Maximum 2 sentences
 - Based ONLY on provided text
 
 COMPANY WEBSITE:

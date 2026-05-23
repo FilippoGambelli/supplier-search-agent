@@ -103,3 +103,25 @@ def normalize_name(name):
     ]
 
     return " ".join(words)
+
+def normalize_categories(categories):
+    result = []
+    for c in categories or []:
+        c = c.strip().lower()
+        if c:
+            result.append(c)
+    return list(set(result))
+
+def build_supplier_embedding_text(data):
+
+    categories = data.get("category", [])
+
+    description = data.get("description", "")
+
+    return f"""
+description:
+{description}
+
+categories:
+{" | ".join(categories)}
+""".strip()

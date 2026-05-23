@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-
+from agent_dbmanager.db.utils.embedding  import get_embedding
 from agent_dbmanager.db.models import Base, Supplier, SupplierLocation
 from logger import logger
 from agent_dbmanager.db.utils.normalization import *
@@ -30,7 +30,14 @@ def save_supplier_to_db(data: dict):
         normalized_website = normalize_website(data.get("website"))
         normalized_email = normalize_emails(data.get("email", []))
         normalized_phone = normalize_phones(data.get("phone", []))
+        normalized_category = normalize_categories(data.get("category", []))
         vat_number = (data.get("vat_number", "").strip())
+
+        embedding_text = build_supplier_embedding_text({
+            "description": data.get("description", ""),
+            "category": data.get("category", [])
+        })
+        embedding = get_embedding(embedding_text)
 
         supplier = None
         match_reason = None
@@ -122,6 +129,11 @@ def save_supplier_to_db(data: dict):
             supplier.normalized_phone = list(set((supplier.normalized_phone or []) + normalized_phone))
             supplier.phone = list(set((supplier.phone or []) + data.get("phone", [])))
 
+            supplier.category = list(set((supplier.category or []) + data.get("category", [])))
+            supplier.normalized_category = list(set((supplier.normalized_category or []) + normalized_category))
+
+            supplier.embedding = embedding
+
             session.commit()
 
             logger.info(
@@ -138,10 +150,13 @@ def save_supplier_to_db(data: dict):
             website=data.get("website"),
             normalized_website=normalized_website,
             description=data.get("description", ""),
+            category=data.get("category", []),
+            normalized_category=normalized_category,
             email=data.get("email", []),
             normalized_email=normalized_email,
             phone=data.get("phone", []),
             normalized_phone=normalized_phone,
+            embedding=embedding,
             vat_number=vat_number
         )
 
@@ -172,22 +187,38 @@ def save_supplier_to_db(data: dict):
     finally:
         session.close()
 
-def execute_search_query(country: str = None, region: str = None, province: str = None, city: str = None):
+def execute_search_query( country: str = None, region: str = None, province: str = None, city: str = None, semantic_query: str = None):
     """
     Search suppliers using hierarchical geographic filters:
     country → region → province → city
+    + optional semantic ranking on supplier embedding
     """
     session = SessionLocal()
 
     try:
-        sql_query = """
-            SELECT s.name, s.website, s.description, s.email, s.phone, s.vat_number,
-                sl.id AS location_id, sl.country, sl.region, sl.province, sl.city, sl.address
-            FROM supplier s
-            LEFT JOIN supplier_locations sl
-                ON s.id = sl.supplier_id
-            WHERE 1=1
-        """
+        query_embedding = None
+
+        if semantic_query and semantic_query.strip():
+            query_embedding = get_embedding(semantic_query)
+
+        if query_embedding is not None:
+            sql_query = """
+                SELECT DISTINCT ON (s.id) s.name, s.website, s.description, s.email, s.phone, s.vat_number, s.category, s.embedding <=> CAST(:query_embedding AS vector) AS similarity,
+                    sl.id AS location_id, sl.country, sl.region, sl.province, sl.city, sl.address
+                FROM supplier s
+                LEFT JOIN supplier_locations sl
+                    ON s.id = sl.supplier_id
+                WHERE 1=1
+            """
+        else:
+            sql_query = """
+                SELECT DISTINCT ON (s.id) s.name, s.website, s.description, s.email, s.phone, s.vat_number, s.category, NULL AS similarity,
+                    sl.id AS location_id, sl.country, sl.region, sl.province, sl.city, sl.address
+                FROM supplier s
+                LEFT JOIN supplier_locations sl
+                    ON s.id = sl.supplier_id
+                WHERE 1=1
+            """
 
         params = {}
 
@@ -211,16 +242,21 @@ def execute_search_query(country: str = None, region: str = None, province: str 
             sql_query += " AND sl.city ILIKE :city"
             params["city"] = f"%{city.strip()}%"
 
+        # EMBEDDING PARAM
+        if query_embedding is not None:
+            params["query_embedding"] = query_embedding
+            sql_query += " ORDER BY s.id, s.embedding <=> CAST(:query_embedding AS vector)"
+        else:
+            # fallback ordering (no semantic search)
+            sql_query += " ORDER BY s.id"
+
         result = session.execute(text(sql_query), params)
 
-        suppliers = [
-            dict(row._mapping)
-            for row in result
-        ]
+        suppliers = [dict(row._mapping) for row in result]
 
         logger.info(
             f"[AGENT-DBMANAGER] Found {len(suppliers)} suppliers "
-            f"(country={country}, region={region}, province={province}, city={city})"
+            f"(country={country}, region={region}, province={province}, city={city}, semantic_query={semantic_query})"
         )
 
         return suppliers
