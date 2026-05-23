@@ -160,7 +160,7 @@ def run_cli():
             output_pct = (output_tokens / total_tokens * 100) if total_tokens else 0
 
             print(YELLOW + (
-                    f"STATS | "
+                    f"STATS: "
                     f"input tokens: {input_tokens} ({input_pct:.1f}%) | "
                     f"output tokens: {output_tokens} ({output_pct:.1f}%) | "
                     f"total tokens: {total_tokens} | "

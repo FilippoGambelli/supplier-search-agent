@@ -291,7 +291,7 @@ def run_orchestrator(query: str) -> tuple:
         init_database()         # Initialize the database FIRST
         last_event = None
         for event in app.stream({"query": query}):
-            print_event("WEB SEARCHER", event)
+            print_event("ORCHESTRATOR", event)
             last_event = event
         messages = last_event["agent"].get("messages", [])[0]
         return getattr(messages, "content", None), None
