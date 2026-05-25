@@ -50,10 +50,10 @@ def search_web(query: str, limit: int = 2):
         logger.error(f"[SEARX SEARCH] Request failed. Error: {e}")
         return []
 
-    except ValueError:
+    except ValueError as e:
         logger.error(f"[SEARX SEARCH] Invalid JSON response. Error: {e}")
         return []
 
-    except Exception:
+    except Exception as e:
         logger.error(f"[SEARX SEARCH] Unexpected error. Error: {e}")
         return []

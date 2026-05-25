@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from agent_dbmanager.db.utils.embedding  import get_embedding
@@ -5,7 +6,10 @@ from agent_dbmanager.db.models import Base, Supplier, SupplierLocation
 from logger import logger
 from agent_dbmanager.db.utils.normalization import *
 
-DATABASE_URL = "postgresql+psycopg2://admin:admin@localhost:5432/suppliersearchagentdb"
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    "postgresql+psycopg2://admin:admin@localhost:5432/suppliersearchagentdb"
+)
 
 engine = create_engine(
     DATABASE_URL,
