@@ -7,7 +7,7 @@ services:
     volumes:
       - ../docker/searxng/settings.yml:/etc/searxng/settings.yml
     environment:
-      BASE_URL: http://localhost:8080/
+      BASE_URL: http://searxng:8080/
     restart: unless-stopped
     networks:
       - supplier_net
@@ -47,18 +47,6 @@ services:
         condition: service_healthy
     networks:
       - supplier_net
-
-  ollama:
-    container_name: ssa-ollama
-    image: ollama/ollama
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    networks:
-      - supplier_net
-
   app:
     container_name: ssa-app
     build:
@@ -72,7 +60,6 @@ services:
         condition: service_healthy
     environment:
       SEARXNG_URL: http://searxng:8080
-      OLLAMA_BASE_URL: http://ollama:11434
       DATABASE_URL: postgresql+psycopg2://admin:admin@postgres:5432/suppliersearchagentdb
     networks:
       - supplier_net
@@ -80,8 +67,6 @@ services:
 volumes:
   postgres_data:
     name: ssa_postgres_data
-  ollama_data:
-    name: ssa_ollama_data
 
 networks:
   supplier_net:
