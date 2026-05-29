@@ -7,7 +7,6 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from config import *
 from logger import logger
-from agent_dbmanager.agent import init_database
 from agent_orchestrator.sub_agents import run_search_agent, run_dbmanager_agent
 from artifact_store import artifact_store
 from main import print_event
@@ -288,7 +287,6 @@ def run_orchestrator(query: str) -> tuple:
     logger.info(f"[ORCHESTRATOR] Starting orchestration with query: {query}")
 
     try:
-        init_database()         # Initialize the database FIRST
         last_event = None
         for event in app.stream({"query": query}):
             print_event("ORCHESTRATOR", event)

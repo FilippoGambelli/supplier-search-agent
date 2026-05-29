@@ -179,11 +179,6 @@ graph.add_edge("tools", "agent")
 
 app = graph.compile()
 
-def init_database():
-    from agent_dbmanager.db.db_manager import init_db
-    init_db()
-    logger.info("[AGENT-DBMANAGER] Database initialized")
-
 def run_dbmanager(query: str):
     try:
         from main import print_event

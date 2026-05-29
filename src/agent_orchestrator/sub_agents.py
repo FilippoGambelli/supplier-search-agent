@@ -73,8 +73,7 @@ def run_search_agent(query: str) -> str:
             return f"Error in agent_tool execution: {error}"
         
         artifact_id = artifact_store.save(
-            data=result,
-            meta={"source": "web_search", "query": query}
+            data=result
         )
 
         return artifact_id

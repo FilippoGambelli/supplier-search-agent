@@ -5,8 +5,8 @@ from langchain_ollama import ChatOllama
 SEARXNG_URL = os.environ.get("SEARXNG_URL", "http://localhost:8080")
 
 # SEARCH LIMITS
-SEARXNG_RESULTS_LIMIT = int(os.environ.get("SEARXNG_RESULTS_LIMIT", "3"))
-PAGINEGIALLE_RESULTS_LIMIT = int(os.environ.get("PAGINEGIALLE_RESULTS_LIMIT", "2"))
+SEARXNG_RESULTS_LIMIT = 3
+PAGINEGIALLE_RESULTS_LIMIT = 2
 
 # OLLAMA CONFIG
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")

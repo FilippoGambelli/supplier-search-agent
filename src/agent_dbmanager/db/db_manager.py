@@ -22,8 +22,6 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
-def init_db():
-    Base.metadata.create_all(bind=engine)
         
 
 def save_supplier_to_db(data: dict):

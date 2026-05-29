@@ -119,14 +119,7 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
         )
 
         artifact_id = artifact_store.save(
-            data=json.dumps(results, ensure_ascii=False, indent=4),
-            meta={
-                "type": "db_search",
-                "country": country,
-                "region": region,
-                "province": province,
-                "city": city
-            }
+            data=json.dumps(results, ensure_ascii=False, indent=4)
         )
 
         return artifact_id
