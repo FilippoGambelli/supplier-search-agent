@@ -4,7 +4,7 @@ from agent_websearch.utils.search import search_web
 from agent_websearch.utils.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
 from agent_websearch.utils.extract import extract_data
 from logger import logger
-from config import PAGINEGIALLE_RESULTS_LIMIT
+from config import PAGINEGIALLE_RESULTS_LIMIT, SEARXNG_RESULTS_LIMIT
 
 
 @tool
@@ -16,7 +16,7 @@ def search_suppliers(query: str) -> str:
     """
     logger.info(f"[AGENT TOOL] Tool search_suppliers called with query: {query}")
     try:
-        results = search_web(query)
+        results = search_web(query, limit=SEARXNG_RESULTS_LIMIT)
         formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
         return f"Found {len(results)} results:\n{formatted}"
     except Exception as e:

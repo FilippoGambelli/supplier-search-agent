@@ -1,11 +1,14 @@
 import os
 from langchain_ollama import ChatOllama
+from sentence_transformers import SentenceTransformer
 
 # SEARXNG CONFIG
 SEARXNG_URL = os.environ.get("SEARXNG_URL", "http://localhost:8080")
 
+MODEL = SentenceTransformer("all-MiniLM-L6-v2")
+
 # SEARCH LIMITS
-SEARXNG_RESULTS_LIMIT = 3
+SEARXNG_RESULTS_LIMIT = 5
 PAGINEGIALLE_RESULTS_LIMIT = 2
 
 # OLLAMA CONFIG

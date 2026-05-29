@@ -131,8 +131,7 @@ def save_supplier_to_db(data: dict):
             supplier.normalized_phone = list(set((supplier.normalized_phone or []) + normalized_phone))
             supplier.phone = list(set((supplier.phone or []) + data.get("phone", [])))
 
-            supplier.category = list(set((supplier.category or []) + data.get("category", [])))
-            supplier.normalized_category = list(set((supplier.normalized_category or []) + normalized_category))
+            supplier.category = list(set((supplier.category or []) + normalized_category))
 
             supplier.embedding = embedding
 
@@ -152,8 +151,7 @@ def save_supplier_to_db(data: dict):
             website=data.get("website"),
             normalized_website=normalized_website,
             description=data.get("description", ""),
-            category=data.get("category", []),
-            normalized_category=normalized_category,
+            category=normalized_category,
             email=data.get("email", []),
             normalized_email=normalized_email,
             phone=data.get("phone", []),

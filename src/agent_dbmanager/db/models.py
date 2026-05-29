@@ -20,7 +20,6 @@ class Supplier(Base):
     description = Column(Text)
 
     category = Column(ARRAY(Text))
-    normalized_category  = Column(ARRAY(Text))
 
     embedding = Column(Vector(384))
 

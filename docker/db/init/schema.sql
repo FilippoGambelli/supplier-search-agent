@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS supplier (
     normalized_website TEXT,
 
     category TEXT[],
-    normalized_category TEXT[],
 
     description TEXT,
 
@@ -37,7 +36,7 @@ CREATE TABLE IF NOT EXISTS supplier_locations (
     region TEXT,
     province TEXT,
     city TEXT,
-    address TEXT
+    address TEXT,
 
     UNIQUE (supplier_id, country, region, province, city, address)
 );
