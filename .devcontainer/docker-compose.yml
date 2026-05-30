@@ -1,6 +1,5 @@
 services:
   searxng:
-    container_name: ssa-searxng
     image: searxng/searxng
     ports:
       - "8080:8080"
@@ -8,14 +7,11 @@ services:
       - ../docker/searxng/settings.yml:/etc/searxng/settings.yml
     environment:
       BASE_URL: http://searxng:8080/
-    restart: unless-stopped
     networks:
       - supplier_net
 
   postgres:
-    container_name: ssa-postgres
     image: pgvector/pgvector:pg16
-    restart: unless-stopped
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -34,9 +30,7 @@ services:
       - supplier_net
 
   pgadmin:
-    container_name: ssa-pgadmin
     image: dpage/pgadmin4
-    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -48,7 +42,6 @@ services:
     networks:
       - supplier_net
   app:
-    container_name: ssa-app
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
