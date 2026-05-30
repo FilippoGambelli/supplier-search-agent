@@ -8,6 +8,12 @@ load_dotenv()
 # SEARXNG CONFIG
 SEARXNG_URL = os.environ.get("SEARXNG_URL")
 
+# POSTGRESQL CONFIG
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    "postgresql+psycopg2://admin:admin@localhost:5432/suppliersearchagentdb"
+)
+
 MODEL = SentenceTransformer("all-MiniLM-L6-v2")
 
 # SEARCH LIMITS

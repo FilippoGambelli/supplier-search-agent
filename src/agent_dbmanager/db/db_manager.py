@@ -5,11 +5,7 @@ from agent_dbmanager.db.utils.embedding  import get_embedding
 from agent_dbmanager.db.models import Base, Supplier, SupplierLocation
 from logger import logger
 from agent_dbmanager.db.utils.normalization import *
-
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+psycopg2://admin:admin@localhost:5432/suppliersearchagentdb"
-)
+from config import DATABASE_URL
 
 engine = create_engine(
     DATABASE_URL,
@@ -34,12 +30,6 @@ def save_supplier_to_db(data: dict):
         normalized_phone = normalize_phones(data.get("phone", []))
         normalized_category = normalize_categories(data.get("category", []))
         vat_number = (data.get("vat_number", "").strip())
-
-        embedding_text = build_supplier_embedding_text({
-            "description": data.get("description", ""),
-            "category": data.get("category", [])
-        })
-        embedding = get_embedding(embedding_text)
 
         supplier = None
         match_reason = None
@@ -133,7 +123,12 @@ def save_supplier_to_db(data: dict):
 
             supplier.category = list(set((supplier.category or []) + normalized_category))
 
-            supplier.embedding = embedding
+            embedding_text = build_supplier_embedding_text({
+                "description": data.get("description", ""),
+                "category": supplier.category
+            })
+
+            supplier.embedding = get_embedding(embedding_text)
 
             session.commit()
 
@@ -145,6 +140,11 @@ def save_supplier_to_db(data: dict):
             return supplier.id
 
         # NEW SUPPLIER
+        embedding_text = build_supplier_embedding_text({
+            "description": data.get("description", ""),
+            "category": normalized_category
+        })
+
         supplier = Supplier(
             name=data.get("name", ""),
             normalized_name=normalized_name,
@@ -156,7 +156,7 @@ def save_supplier_to_db(data: dict):
             normalized_email=normalized_email,
             phone=data.get("phone", []),
             normalized_phone=normalized_phone,
-            embedding=embedding,
+            embedding=get_embedding(embedding_text),
             vat_number=vat_number
         )
 
