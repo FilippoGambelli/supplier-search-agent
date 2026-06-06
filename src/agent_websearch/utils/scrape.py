@@ -3,6 +3,30 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 from logger import logger
+import protego
+
+ROBOTS_CACHE = {}
+
+def can_fetch(url: str, user_agent: str = "MyCrawler") -> bool:
+    """
+    Check robots.txt before requesting URL.
+    Uses cache per domain to avoid re-downloading robots.txt.
+    """
+    from urllib.parse import urlparse
+
+    parsed = urlparse(url)
+    domain = parsed.scheme + "://" + parsed.netloc
+
+    if domain not in ROBOTS_CACHE:
+        robots_url = domain + "/robots.txt"
+        try:
+            response = requests.get(robots_url, timeout=5)
+            rp = protego.Protego.parse(response.text)
+        except Exception:
+            rp = protego.Protego.parse("")
+        ROBOTS_CACHE[domain] = rp
+
+    return ROBOTS_CACHE[domain].can_fetch(url, user_agent)
 
 
 HEADERS = {
@@ -59,6 +83,10 @@ def fetch_html(url: str) -> Optional[str]:
     Returns None if the request fails or an error occurs.
     """
     try:
+        if not can_fetch(url):
+            logger.warning(f"[ROBOTS BLOCKED] {url}")
+            return None
+
         response = requests.get(
             url,
             headers=HEADERS,
