@@ -148,6 +148,9 @@ DESCRIPTION RULE:
 - Maximum 2 sentences
 - Based ONLY on provided text
 
+LANGUAGE RULES (IMPORTANT):
+- All extracted textual values inside the JSON MUST be written in the company's native language whenever it can be determined from the source text or company location
+
 COMPANY WEBSITE:
 {url}
 
