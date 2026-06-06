@@ -1,4 +1,3 @@
-import json
 from typing import TypedDict, List, Dict, Optional
 from urllib.parse import urlparse
 from langgraph.graph import StateGraph, END
@@ -257,15 +256,24 @@ graph.set_entry_point("search")
 app = graph.compile()
 
 @traceable(name="pipeline_run_agent")
-def run_agent(query: str):
-    try:
-        last_event = None
-        for event in app.stream({"query": query}):
-            print_node_pipeline(event)
-            last_event = event
-        message = last_event.get("final_answer", {}).get("final_answer")
-        return message, None
-        
-    except Exception as e:
-        logger.error(f"[PIPELINE] Error: {e}")
-        return None, str(e)
+def run_agent(query: str, verbose = True):
+    if verbose:
+        try:
+            last_event = None
+            for event in app.stream({"query": query}):
+                print_node_pipeline(event)
+                last_event = event
+            message = last_event.get("final_answer", {}).get("final_answer")
+            return message, None
+            
+        except Exception as e:
+            logger.error(f"[PIPELINE] Error: {e}")
+            return None, str(e)
+    else:
+        try:
+            result = app.invoke({"query": query})
+            return result, None
+            
+        except Exception as e:
+            logger.error(f"[PIPELINE] Error: {e}")
+            return None, str(e)

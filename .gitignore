@@ -8,3 +8,4 @@ agent.egg-info
 *.log
 
 src/outputs/*.json
+src/benchmark_results/**

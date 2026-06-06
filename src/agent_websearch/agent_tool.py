@@ -151,15 +151,23 @@ graph.add_edge("tools", "agent")
 
 app = graph.compile()
 
-def run_agent(query: str):
-    try:
-        last_event = None
-        for event in app.stream({"query": query}):
-            print_event("WEB SEARCHER", event)
-            last_event = event
-        messages = last_event["agent"].get("messages", [])[0]
-        return getattr(messages, "content", None), None
-    
-    except Exception as e:
-        logger.error(f"[AGENT FATAL ERROR] {e}")
-        return None, str(e)
+def run_agent(query: str, verbose = True):
+    if verbose:
+        try:
+            last_event = None
+            for event in app.stream({"query": query}):
+                print_event("WEB SEARCHER", event)
+                last_event = event
+            messages = last_event["agent"].get("messages", [])[0]
+            return getattr(messages, "content", None), None
+        
+        except Exception as e:
+            logger.error(f"[AGENT FATAL ERROR] {e}")
+            return None, str(e)
+    else:
+        try:
+            result = app.invoke({"query": query})
+            return result, None
+        except Exception as e:
+            logger.error(f"[AGENT FATAL ERROR] Error: {e}")
+            return None, str(e)
