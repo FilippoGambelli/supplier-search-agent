@@ -4,9 +4,9 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ../docker/searxng/settings.yml:/etc/searxng/settings.yml
+      - ./docker/searxng/settings.yml:/etc/searxng/settings.yml
     environment:
-      BASE_URL: http://searxng:8080/
+      BASE_URL: http://localhost:8080/
     networks:
       - supplier_net
 
@@ -20,7 +20,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ../docker/db/init:/docker-entrypoint-initdb.d
+      - ./docker/db/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d suppliersearchagentdb"]
       interval: 10s
@@ -39,21 +39,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - supplier_net
-  app:
-    build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
-    volumes:
-      - ..:/workspace:cached
-    command: sleep infinity
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      SEARXNG_URL: http://searxng:8080
-      DATABASE_URL: postgresql+psycopg2://admin:admin@postgres:5432/suppliersearchagentdb
     networks:
       - supplier_net
 
