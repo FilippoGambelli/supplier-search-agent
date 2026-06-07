@@ -145,15 +145,21 @@ def scrape_node(state: InternalState) -> Dict:
 
 @traceable(name="extract_node")
 def extract_node(state: InternalState) -> Dict:
-    index = state["current_index"]
-    companies = state["scraped_data"]
+    scraped_data = state.get("scraped_data", [])
+    if not scraped_data:
+        return {
+            "should_finish": True,
+            "error": "No scraped data available for extraction"
+        }
 
-    if index >= len(companies):
+    current_index = state.get("current_index", 0)
+
+    if current_index >= len(scraped_data):
         return {
             "should_finish": True
         }
 
-    current_company = companies[index]
+    current_company = scraped_data[current_index]
 
     return {
         "current_company": current_company,
@@ -263,17 +269,28 @@ def run_agent(query: str, verbose = True):
             for event in app.stream({"query": query}):
                 print_node_pipeline(event)
                 last_event = event
-            message = last_event.get("final_answer", {}).get("final_answer")
-            return message, None
-            
+            if last_event is None:
+                return None, "Graph produced no events"
+
+            error_msg = last_event.get("error")
+            if error_msg:
+                return None, error_msg
+
+            final_answer = last_event.get("final_answer", {}).get("final_answer", [])
+            return final_answer, None
+
         except Exception as e:
             logger.error(f"[PIPELINE] Error: {e}")
             return None, str(e)
     else:
         try:
             result = app.invoke({"query": query})
-            return result, None
-            
+            error = result.get("error")
+            if error:
+                logger.error(f"[PIPELINE ERROR] Graph returned error: {error}")
+                return None, error
+            final_answer = result.get("final_answer", [])
+            return final_answer, None
         except Exception as e:
             logger.error(f"[PIPELINE] Error: {e}")
             return None, str(e)

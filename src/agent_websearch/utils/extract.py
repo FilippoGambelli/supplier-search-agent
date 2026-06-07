@@ -172,6 +172,7 @@ def extract_data(company: Dict) -> Dict:
     """
     stats = get_stats()
     prompt = build_company_prompt(company)
+    raw_output = None
 
     try:
         response = EXTRACT_LLM.invoke(prompt)
@@ -185,9 +186,15 @@ def extract_data(company: Dict) -> Dict:
 
         return json.loads(raw_output)
 
+    except json.JSONDecodeError as e:
+        logger.error(f"[LLM EXTRACTION ERROR] Invalid JSON from model: {e}")
+        return {
+            "error": f"Invalid JSON returned by model: {str(e)}",
+            "raw_output": raw_output
+        }
     except Exception as e:
         logger.error(f"[LLM EXTRACTION ERROR] {e}")
         return {
-            "error": f"Invalid JSON returned by model or connection error: {str(e)}",
-            "raw_output": raw_output if 'raw_output' in locals() else None
+            "error": f"Connection or model error: {str(e)}",
+            "raw_output": raw_output
         }

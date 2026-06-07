@@ -78,8 +78,11 @@ def run_search_agent(query: str) -> str:
 
         return artifact_id
 
+    except KeyError as e:
+        logger.error(f"[ORCHESTRATOR] Artifact error in agent_tool: {e}")
+        return f"Error in agent_tool execution: {e}"
     except Exception as e:
-        logger.error(f"[ORCHESTRATOR] Exception in agent_tool: {e}")
+        logger.error(f"[ORCHESTRATOR] Unexpected exception in agent_tool: {e}")
         return f"Tool exception: {str(e)}"
 
 
@@ -175,6 +178,9 @@ def run_dbmanager_agent(query: str) -> str:
             return f"Error in agent_dbmanager execution: {error}"
 
         return result
+    except KeyError as e:
+        logger.error(f"[ORCHESTRATOR] Artifact error in agent_dbmanager: {e}")
+        return f"Error in agent_dbmanager execution: {e}"
     except Exception as e:
-        logger.error(f"[ORCHESTRATOR] Exception in agent_dbmanager: {e}")
+        logger.error(f"[ORCHESTRATOR] Unexpected exception in agent_dbmanager: {e}")
         return f"Tool exception: {str(e)}"

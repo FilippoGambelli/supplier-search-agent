@@ -46,6 +46,10 @@ def search_web(query: str, limit: int = 2):
 
         return simplified
 
+    except requests.exceptions.Timeout:
+        logger.error(f"[SEARX SEARCH] Request timed out. Error: {e}")
+        return []
+
     except requests.exceptions.RequestException as e:
         logger.error(f"[SEARX SEARCH] Request failed. Error: {e}")
         return []

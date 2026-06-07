@@ -2,7 +2,6 @@ import json
 import re
 from colorama import Fore, Style, init
 from stats import get_stats, reset_stats
-from config import MODEL
 
 init(autoreset=True)
 
@@ -169,7 +168,7 @@ def run_cli():
                 )
             )        
         except Exception as e:
-            print(RED + f"\nEXCEPTION: {e}\n")
+            print(RED + f"\nEXCEPTION ({type(e).__name__}): {e}\n")
 
 if __name__ == "__main__":
     run_cli()

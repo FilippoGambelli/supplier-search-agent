@@ -1,4 +1,5 @@
 import os
+import sqlalchemy.exc
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from agent_dbmanager.db.utils.embedding  import get_embedding
@@ -179,9 +180,13 @@ def save_supplier_to_db(data: dict):
 
         return supplier.id
 
+    except sqlalchemy.exc.SQLAlchemyError as e:
+        session.rollback()
+        logger.error(f"[AGENT-DBMANAGER] Database error saving supplier: {e}")
+        raise
     except Exception as e:
         session.rollback()
-        logger.error(f"[AGENT-DBMANAGER] Error saving supplier: {e}")
+        logger.error(f"[AGENT-DBMANAGER] Unexpected error saving supplier: {e}")
         raise
 
     finally:
@@ -261,8 +266,11 @@ def execute_search_query( country: str = None, region: str = None, province: str
 
         return suppliers
 
+    except sqlalchemy.exc.SQLAlchemyError as e:
+        logger.error(f"[AGENT-DBMANAGER] Database error executing search query: {e}")
+        raise
     except Exception as e:
-        logger.error(f"[AGENT-DBMANAGER] Error executing search query: {e}")
+        logger.error(f"[AGENT-DBMANAGER] Unexpected error executing search query: {e}")
         raise
     finally:
         session.close()

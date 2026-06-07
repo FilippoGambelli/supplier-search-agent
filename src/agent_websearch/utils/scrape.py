@@ -21,8 +21,16 @@ def can_fetch(url: str, user_agent: str = "MyCrawler") -> bool:
         robots_url = domain + "/robots.txt"
         try:
             response = requests.get(robots_url, timeout=5)
+            response.raise_for_status()
             rp = protego.Protego.parse(response.text)
-        except Exception:
+        except requests.exceptions.Timeout:
+            logger.warning(f"[ROBOTS] Timed out fetching robots.txt for {robots_url}")
+            rp = protego.Protego.parse("")
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"[ROBOTS] Failed to fetch robots.txt for {robots_url}: {e}")
+            rp = protego.Protego.parse("")
+        except Exception as e:
+            logger.warning(f"[ROBOTS] Unexpected error parsing robots.txt for {robots_url}: {e}")
             rp = protego.Protego.parse("")
         ROBOTS_CACHE[domain] = rp
 
@@ -95,7 +103,10 @@ def fetch_html(url: str) -> Optional[str]:
 
         response.raise_for_status()
         return response.text
-    except Exception as e:
+    except requests.exceptions.Timeout:
+        logger.error(f"[FETCH ERROR] {url} -> Request timed out")
+        return None
+    except requests.exceptions.RequestException as e:
         logger.error(f"[FETCH ERROR] {url} -> {e}")
         return None
 
@@ -167,24 +178,28 @@ def extract_paginegialle_websites(pg_url: str, limit: int = 10) -> List[Dict[str
     soup = BeautifulSoup(html, "html.parser")
 
     # Stores extracted company profiles (name + paginegialle URL)
-    profiles_data = [] 
-    
+    profiles_data = []
+
     # Extract company profile links from search results page
-    for a_tag in soup.select('div.search-itm__dx > div a.remove_blank_for_app'):
-        href_pg = a_tag.get('href')
-        
-        # Extract company name from <h2>
-        h2_tag = a_tag.select_one('h2')
-        company_name = h2_tag.get_text(strip=True) if h2_tag else "Unknown name"
+    try:
+        for a_tag in soup.select('div.search-itm__dx > div a.remove_blank_for_app'):
+            href_pg = a_tag.get('href')
 
-        if href_pg and "paginegialle.it" in href_pg:
-            profiles_data.append({
-                "name": company_name,
-                "url": href_pg
-            })
+            # Extract company name from <h2>
+            h2_tag = a_tag.select_one('h2')
+            company_name = h2_tag.get_text(strip=True) if h2_tag else "Unknown name"
 
-        if len(profiles_data) >= limit:
-            break
+            if href_pg and "paginegialle.it" in href_pg:
+                profiles_data.append({
+                    "name": company_name,
+                    "url": href_pg
+                })
+
+            if len(profiles_data) >= limit:
+                break
+    except Exception as e:
+        logger.error(f"[PAGINEGIALLE] BeautifulSoup parsing error on {pg_url}: {e}")
+        return []
 
     logger.info(f"[PAGINEGIALLE] Found {len(profiles_data)} profiles to inspect...")
 

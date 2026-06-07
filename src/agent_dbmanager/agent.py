@@ -186,7 +186,20 @@ def run_dbmanager(query: str):
         for event in app.stream({"query": query}):
             print_event("DB MANAGER", event)
             last_event = event
-        messages = last_event["agent"].get("messages", [])[0]
+
+        if last_event is None:
+            logger.error("[DBMANAGER FATAL ERROR] Graph produced no events")
+            return None, "Graph produced no events"
+
+        agent_messages = last_event.get("agent", {}).get("messages", [])
+        if not agent_messages:
+            error_msg = last_event.get("error")
+            if error_msg:
+                return None, error_msg
+            logger.error("[DBMANAGER FATAL ERROR] No messages in last agent event")
+            return None, "No final answer produced"
+
+        messages = agent_messages[0]
         return getattr(messages, "content", None), None
     except Exception as e:
         logger.error(f"[DBMANAGER FATAL ERROR] {e}")

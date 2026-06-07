@@ -1,5 +1,6 @@
 from langchain_core.tools import tool
 import json
+import sqlalchemy.exc
 from logger import logger
 from agent_dbmanager.db.db_manager import save_supplier_to_db, execute_search_query
 from artifact_store import artifact_store
@@ -33,20 +34,29 @@ def save_suppliers(artifact_id: str) -> str:
         errors = []
 
         for item in data:
+            supplier_name = item.get("name", "Unknown")
             try:
                 save_supplier_to_db(item)
                 saved_count += 1
+            except sqlalchemy.exc.IntegrityError as e:
+                error_count += 1
+                errors.append(f"Supplier '{supplier_name}': Integrity constraint violation: {str(e)}")
+                logger.error(f"[DBMANAGER TOOL] Integrity error saving supplier '{supplier_name}': {e}")
+            except sqlalchemy.exc.SQLAlchemyError as e:
+                error_count += 1
+                errors.append(f"Supplier '{supplier_name}': Database error: {str(e)}")
+                logger.error(f"[DBMANAGER TOOL] Database error saving supplier '{supplier_name}': {e}")
             except Exception as e:
                 error_count += 1
-                errors.append(str(e))
-                logger.error(f"[DBMANAGER TOOL] Save error: {e}")
+                errors.append(f"Supplier '{supplier_name}': Unexpected error: {str(e)}")
+                logger.error(f"[DBMANAGER TOOL] Save error for supplier '{supplier_name}': {e}")
 
         logger.info(f"[DBMANAGER TOOL] save_suppliers completed - saved: {saved_count}, errors: {error_count}")
 
         if error_count == 0:
             return f"SUCCESS: {saved_count} suppliers saved to database."
 
-        return (f"PARTIAL SUCCESS: {saved_count} saved, {error_count} failed. Errors: {errors}")
+        return (f"PARTIAL SUCCESS: {saved_count} saved, {error_count} failed. Failed suppliers: {errors}")
 
     except json.JSONDecodeError:
         logger.error("[DBMANAGER TOOL] Invalid JSON in artifact")
@@ -124,6 +134,12 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
 
         return artifact_id
 
+    except KeyError as e:
+        logger.error(f"[DBMANAGER TOOL] Artifact error during search: {e}")
+        return f"ERROR: Artifact store error: {str(e)}"
+    except sqlalchemy.exc.SQLAlchemyError as e:
+        logger.error(f"[DBMANAGER TOOL] Database error during search: {e}")
+        return f"ERROR: Database query failed: {str(e)}"
     except Exception as e:
-        logger.error(f"[DBMANAGER TOOL] Semantic search error: {e}")
+        logger.error(f"[DBMANAGER TOOL] Unexpected error during search: {e}")
         return f"ERROR: {str(e)}"
