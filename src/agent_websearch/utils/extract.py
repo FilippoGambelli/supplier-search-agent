@@ -3,6 +3,7 @@ from typing import Dict
 from logger import logger
 from config import *
 from stats import get_stats
+from agent_websearch.exceptions import ExtractionError, InsufficientDataError
 
 
 def build_company_prompt(company: Dict) -> str:
@@ -149,7 +150,7 @@ DESCRIPTION RULE:
 - Based ONLY on provided text
 
 LANGUAGE RULES (IMPORTANT):
-- All extracted textual values inside the JSON MUST be written in the company's native language whenever it can be determined from the source text or company location
+All extracted textual values inside the JSON MUST be written in Italian. This requirement is mandatory and applies to every JSON field, regardless of the company's native language, the source language, or the company location. All text values must always be translated and returned in Italian.
 
 COMPANY WEBSITE:
 {url}
@@ -169,32 +170,45 @@ def extract_data(company: Dict) -> Dict:
     """
     Send the scraped content to the model using ChatOllama
     and extract structured business information.
+
+    Returns:
+        dict: Parsed JSON matching the company schema.
+
+    Raises:
+        InsufficientDataError: If the result lacks email and phone.
+        ExtractionError: If JSON parsing or model invocation fails.
     """
     stats = get_stats()
     prompt = build_company_prompt(company)
-    raw_output = None
 
     try:
         response = EXTRACT_LLM.invoke(prompt)
         raw_output = response.content
 
-        # Update stats
         usage = response.usage_metadata or {}
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
         stats.add_request(input_tokens, output_tokens)
 
-        return json.loads(raw_output)
+        result = json.loads(raw_output)
+
+        emails = result.get("email", [])
+        phone = result.get("phone", [])
+
+        if (
+            (not isinstance(emails, list) or len(emails) == 0)
+            and
+            (not isinstance(phone, list) or len(phone) == 0)
+        ):
+            raise InsufficientDataError(
+                f"No email or phone found for {company.get('url', 'unknown')}"
+            )
+
+        return result
 
     except json.JSONDecodeError as e:
-        logger.error(f"[LLM EXTRACTION ERROR] Invalid JSON from model: {e}")
-        return {
-            "error": f"Invalid JSON returned by model: {str(e)}",
-            "raw_output": raw_output
-        }
+        raise ExtractionError(f"Invalid JSON from LLM: {e}")
+    except InsufficientDataError:
+        raise
     except Exception as e:
-        logger.error(f"[LLM EXTRACTION ERROR] {e}")
-        return {
-            "error": f"Connection or model error: {str(e)}",
-            "raw_output": raw_output
-        }
+        raise ExtractionError(f"LLM extraction failed: {e}")

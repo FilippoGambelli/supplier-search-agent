@@ -2,8 +2,10 @@ from typing import TypedDict, List, Dict, Optional
 from urllib.parse import urlparse
 from langgraph.graph import StateGraph, END
 from agent_websearch.utils.search import search_web
-from agent_websearch.utils.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
+from agent_websearch.utils.scrape import scrape_company_website, is_valid_company_result
+from agent_websearch.utils.paginegialle import extract_paginegialle_websites
 from agent_websearch.utils.extract import extract_data
+from agent_websearch.exceptions import WebSearchError, InsufficientDataError
 from logger import logger
 from config import SEARXNG_RESULTS_LIMIT
 from main import print_node_pipeline
@@ -41,10 +43,10 @@ def search_node(state: InputState) -> Dict:
         logger.info(f"[SEARCH NODE] Starting web search with query: {query}")
         results = search_web(query, limit=SEARXNG_RESULTS_LIMIT)
         return {"search_results": results}
-    except Exception as e:
-        logger.error(f"[SEARCH NODE] Unexpected error: {e}")
+    except WebSearchError as e:
+        logger.error(f"[SEARCH NODE] {e}")
         return {
-            "error": "Unexpected error occurred. Please check the logs for more details.",
+            "error": str(e),
             "search_results": []
         }
 
@@ -60,7 +62,7 @@ def extract_pg_node(state: InternalState) -> Dict:
 
     for result in search_results:
         url = result.get("url", "")
-        
+
         if "paginegialle.it" in url.lower():
             logger.info(f"[EXTRACT PG NODE] PagineGialle detected, extracting real websites from: {url}")
 
@@ -71,7 +73,7 @@ def extract_pg_node(state: InternalState) -> Dict:
                         "title": item["title"],
                         "url": item["url"]
                     })
-            except Exception as e:
+            except WebSearchError as e:
                 logger.error(f"[EXTRACT PG NODE] Error extracting URL {url}: {e}")
 
     return {"pg_results": pg_results}
@@ -113,28 +115,24 @@ def scrape_node(state: InternalState) -> Dict:
     if duplicates_count > 0:
         logger.info(f"[SCRAPE NODE] Removed {duplicates_count} duplicate URLs")
 
-    # Standard blacklist check for other results
     for result in deduplicated_results:
         title = result.get("title", "")
         url = result.get("url", "")
 
-        # Check the blacklist and make sure to skip paginegialle.it 
-        if "paginegialle.it" in url.lower() or not is_valid_company_result(title, url):
+        if not is_valid_company_result(title, url):
             logger.warning(f"[SCRAPE NODE] Skipping blacklisted or directory: {url}")
             continue
 
         try:
             data = scrape_company_website(url)
-            if data is None:
-                continue
             data.update({"title": title, "url": url})
             scraped_data.append(data)
-        except Exception as e:
+        except WebSearchError as e:
             logger.error(f"[SCRAPE NODE] {url} -> {e}")
 
     if not scraped_data:
         return {"error": "No valid data scraped.", "scraped_data": []}
-    
+
     logger.info("=" * 80)
 
     return {
@@ -169,29 +167,18 @@ def extract_node(state: InternalState) -> Dict:
 @traceable(name="llm_extract_node")
 def llm_node(state: InternalState) -> Dict:
     company = state["current_company"]
-
     extracted_results = state.get("extracted_results", [])
 
     try:
         result = extract_data(company)
-
-        if result.get("error"):
-            logger.warning(f"[LLM NODE] Extraction error for {company.get('url')}: {result.get('error')}")
-            new_results = extracted_results
-        else:
-            emails = result.get("email", [])
-            phone = result.get("phone", [])
-
-            if (
-                (not isinstance(emails, list) or len(emails) == 0)
-                and
-                (not isinstance(phone, list) or len(phone) == 0)
-            ):
-                logger.warning(f"[LLM NODE] No email or phone found for {company.get('url')} — skipping")
-                new_results = extracted_results
-            else:
-                new_results = extracted_results + [result]
-                logger.info(f"[LLM NODE] Data successfully extracted by LLM from: {company.get('url')}")
+        new_results = extracted_results + [result]
+        logger.info(f"[LLM NODE] Data successfully extracted from: {company.get('url')}")
+    except InsufficientDataError as e:
+        logger.warning(f"[LLM NODE] {e}")
+        new_results = extracted_results
+    except WebSearchError as e:
+        logger.error(f"[LLM NODE] {company.get('url')} -> {e}")
+        new_results = extracted_results
     except Exception as e:
         logger.error(f"[LLM NODE] {company.get('url')} -> {e}")
         new_results = extracted_results

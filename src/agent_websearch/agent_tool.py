@@ -125,7 +125,7 @@ def agent_node(state: OverallState):
 
     state_update = {"messages": [response]}
 
-    if getattr(response, "tool_calls", None) is None or len(response.tool_calls) == 0:
+    if not getattr(response, "tool_calls", None):
         state_update["answer"] = response.content
     else:
         for _ in response.tool_calls:

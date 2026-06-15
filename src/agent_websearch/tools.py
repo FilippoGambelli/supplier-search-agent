@@ -1,9 +1,10 @@
 import json
-import requests
 from langchain_core.tools import tool
 from agent_websearch.utils.search import search_web
-from agent_websearch.utils.scrape import scrape_company_website, is_valid_company_result, extract_paginegialle_websites
+from agent_websearch.utils.scrape import scrape_company_website, is_valid_company_result
+from agent_websearch.utils.paginegialle import extract_paginegialle_websites
 from agent_websearch.utils.extract import extract_data
+from agent_websearch.exceptions import WebSearchError, InsufficientDataError
 from logger import logger
 from config import PAGINEGIALLE_RESULTS_LIMIT, SEARXNG_RESULTS_LIMIT
 
@@ -11,7 +12,7 @@ from config import PAGINEGIALLE_RESULTS_LIMIT, SEARXNG_RESULTS_LIMIT
 @tool
 def search_suppliers(query: str) -> str:
     """
-    Search for suppliers on the web using SearXNG. 
+    Search for suppliers on the web using SearXNG.
     Use this first to find potential companies.
     Returns a string containing a list of titles and URLs.
     """
@@ -22,15 +23,13 @@ def search_suppliers(query: str) -> str:
             return "No search results returned. The SearXNG instance may be unavailable."
         formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
         return f"Found {len(results)} results:\n{formatted}"
-    except requests.exceptions.Timeout:
-        logger.error(f"[TOOL ERROR] search_suppliers timed out for query: {query}")
-        return "Error: Search timed out. The SearXNG instance may be slow or unavailable."
-    except requests.exceptions.RequestException as e:
-        logger.error(f"[TOOL ERROR] search_suppliers request failed: {e}")
-        return f"Error: Network request failed during search: {str(e)}"
+    except WebSearchError as e:
+        logger.error(f"[TOOL ERROR] search_suppliers: {e}")
+        return f"Error: {e}"
     except Exception as e:
         logger.error(f"[TOOL ERROR] search_suppliers unexpected error: {e}")
-        return f"Error: {str(e)}"
+        return f"Unexpected error: {e}"
+
 
 @tool
 def is_valid_company(title: str, url: str) -> str:
@@ -41,20 +40,21 @@ def is_valid_company(title: str, url: str) -> str:
     logger.info(f"[AGENT TOOL] Tool is_valid_company called for URL: {url}")
     try:
         url_lower = url.lower()
-        
+
         if "paginegialle.it" in url_lower:
-            return "FALSE - This is a PagineGialle directory. ACTION REQUIRED: You MUST use the `extract_from_paginegialle` tool on this URL immediately to extract the real company websites."
-        
+            return f"FALSE [{url}] - PagineGialle directory. ACTION REQUIRED: You MUST use the `extract_from_paginegialle` tool on this URL immediately to extract the real company websites."
+
         is_valid = is_valid_company_result(title, url)
-        
+
         if is_valid:
-            return "TRUE - Valid company website. You can proceed to use `research_and_extract_company` on this URL."
+            return f"TRUE [{url}] - Valid company website. You can proceed to use `research_and_extract_company` on this URL."
         else:
-            return "FALSE - This is a generic aggregator, directory, or social media. Ignore this URL and move to the next one."
+            return f"FALSE [{url}] - Generic aggregator, directory, or social media. Ignore this URL and move to the next one."
 
     except Exception as e:
         logger.error(f"[TOOL ERROR] is_valid_company failed for {url}: {e}")
-        return f"Error: Unable to validate company: {str(e)}"
+        return f"Error: Unable to validate company: {e}"
+
 
 @tool
 def extract_from_paginegialle(pg_url: str) -> str:
@@ -69,15 +69,13 @@ def extract_from_paginegialle(pg_url: str) -> str:
             return "No real websites found from PagineGialle page."
         formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
         return f"Found these real websites:\n{formatted}"
-    except requests.exceptions.Timeout:
-        logger.error(f"[TOOL ERROR] extract_from_paginegialle timed out for {pg_url}")
-        return "Error: Request timed out while extracting from PagineGialle."
-    except requests.exceptions.RequestException as e:
-        logger.error(f"[TOOL ERROR] extract_from_paginegialle request failed: {e}")
-        return f"Error: Network request failed during PagineGialle extraction: {str(e)}"
+    except WebSearchError as e:
+        logger.error(f"[TOOL ERROR] extract_from_paginegialle: {e}")
+        return f"Error: {e}"
     except Exception as e:
         logger.error(f"[TOOL ERROR] extract_from_paginegialle unexpected error: {e}")
-        return f"Error: {str(e)}"
+        return f"Unexpected error: {e}"
+
 
 @tool
 def research_and_extract_company(url: str, title: str = "") -> str:
@@ -89,41 +87,23 @@ def research_and_extract_company(url: str, title: str = "") -> str:
     logger.info(f"[AGENT TOOL] Tool research_and_extract_company called for URL: {url}")
     try:
         data = scrape_company_website(url)
-        if not data:
-            return f"Failed to scrape {url}. The website might be blocking the connection or is offline."
-        
+
         company_payload = {
             "url": url,
             "title": title,
             "homepage_text": data.get("homepage_text", ""),
             "contact_text": data.get("contact_text", "")
         }
-        
+
         result = extract_data(company_payload)
-
-        # Check if extract_data returned an error
-        if result.get("error"):
-            logger.error(f"[TOOL ERROR] extract_data returned error: {result.get('error')}")
-            return f"Error during data extraction for {url}: {result.get('error')}"
-
-        emails = result.get("email", [])
-        phone = result.get("phone", [])
-
-        if (
-            (not isinstance(emails, list) or len(emails) == 0)
-            and
-            (not isinstance(phone, list) or len(phone) == 0)
-        ):
-            return f"INSUFFICIENT_DATA: cannot return structured JSON for {url}."
-
         return json.dumps(result, ensure_ascii=False)
 
-    except requests.exceptions.Timeout:
-        logger.error(f"[TOOL ERROR] research_and_extract_company timed out for {url}")
-        return f"Error: Request timed out for {url}."
-    except requests.exceptions.RequestException as e:
-        logger.error(f"[TOOL ERROR] research_and_extract_company request failed for {url}: {e}")
-        return f"Error: Network request failed for {url}: {str(e)}"
-    except Exception as e:
+    except InsufficientDataError as e:
+        logger.warning(f"[TOOL ERROR] research_and_extract_company insufficient data for {url}: {e}")
+        return f"INSUFFICIENT_DATA: {e}"
+    except WebSearchError as e:
         logger.error(f"[TOOL ERROR] research_and_extract_company: {e}")
-        return f"Error during extraction for {url}: {str(e)}"
+        return f"Error: {e}"
+    except Exception as e:
+        logger.error(f"[TOOL ERROR] research_and_extract_company unexpected error: {e}")
+        return f"Unexpected error: {e}"

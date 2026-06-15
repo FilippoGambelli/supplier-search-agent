@@ -1,8 +1,10 @@
 import requests
 from logger import logger
 from config import SEARXNG_URL
+from agent_websearch.exceptions import SearchTimeoutError, SearchConnectionError, SearchError
 
-def search_web(query: str, limit: int = 2):
+
+def search_web(query: str, limit: int = 2) -> list[dict]:
     """
     Perform a web search using a SearXNG instance.
 
@@ -18,7 +20,10 @@ def search_web(query: str, limit: int = 2):
             - title (str): The result title
             - url (str): The result URL
 
-        Returns an empty list in case of failure.
+    Raises:
+        SearchTimeoutError: If the SearXNG request times out.
+        SearchConnectionError: If the network request fails.
+        SearchError: For any other search failure (JSON parse, unexpected).
     """
     try:
         response = requests.get(
@@ -47,17 +52,13 @@ def search_web(query: str, limit: int = 2):
         return simplified
 
     except requests.exceptions.Timeout:
-        logger.error(f"[SEARX SEARCH] Request timed out. Error: {e}")
-        return []
+        raise SearchTimeoutError(f"SearXNG request timed out for query: {query}")
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"[SEARX SEARCH] Request failed. Error: {e}")
-        return []
+        raise SearchConnectionError(f"SearXNG request failed: {e}")
 
     except ValueError as e:
-        logger.error(f"[SEARX SEARCH] Invalid JSON response. Error: {e}")
-        return []
+        raise SearchError(f"Invalid JSON from SearXNG: {e}")
 
     except Exception as e:
-        logger.error(f"[SEARX SEARCH] Unexpected error. Error: {e}")
-        return []
+        raise SearchError(f"Unexpected search error: {e}")
