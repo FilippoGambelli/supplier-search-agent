@@ -174,8 +174,24 @@ def llm_node(state: InternalState) -> Dict:
 
     try:
         result = extract_data(company)
-        logger.info(f"[LLM NODE] Data successfully extracted by LLM from: {company.get('url')}")
-        new_results = extracted_results + [result]
+
+        if result.get("error"):
+            logger.warning(f"[LLM NODE] Extraction error for {company.get('url')}: {result.get('error')}")
+            new_results = extracted_results
+        else:
+            emails = result.get("email", [])
+            phone = result.get("phone", [])
+
+            if (
+                (not isinstance(emails, list) or len(emails) == 0)
+                and
+                (not isinstance(phone, list) or len(phone) == 0)
+            ):
+                logger.warning(f"[LLM NODE] No email or phone found for {company.get('url')} — skipping")
+                new_results = extracted_results
+            else:
+                new_results = extracted_results + [result]
+                logger.info(f"[LLM NODE] Data successfully extracted by LLM from: {company.get('url')}")
     except Exception as e:
         logger.error(f"[LLM NODE] {company.get('url')} -> {e}")
         new_results = extracted_results

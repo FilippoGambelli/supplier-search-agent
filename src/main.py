@@ -2,6 +2,7 @@ import json
 import re
 from colorama import Fore, Style, init
 from stats import get_stats, reset_stats
+from config import *
 
 init(autoreset=True)
 

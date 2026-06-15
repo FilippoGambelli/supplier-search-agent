@@ -201,7 +201,7 @@ def extract_domains(result) -> set:
 
 
 def save_row(path: Path, row: Dict[str, str]):
-    """Append one benchmark row to the CSV file, creating headers when needed."""
+    """Append one benchmark row to the CSV file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     file_exists = path.exists()
 
@@ -226,6 +226,11 @@ def group_rows_by_query(rows: List[Dict[str, str]]) -> Dict[int, Dict[str, Dict[
 
 def benchmark(csv_path: Path, queries: List[str], systems: Dict[str, str]):
     """Run every query against every system and store the benchmark results."""
+    # Clear the CSV file so each benchmark run starts fresh
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    with csv_path.open("w", newline="", encoding="utf-8") as f:
+        pass
+
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     runners = {
