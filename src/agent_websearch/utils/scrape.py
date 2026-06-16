@@ -20,6 +20,7 @@ HEADERS = {
 BLACKLIST = [
     "pagine bianche",
     "paginebianche",
+    "paginegialle",
     "yelp",
     "virgilio",
     "prontopro",
