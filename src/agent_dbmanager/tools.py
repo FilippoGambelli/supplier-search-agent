@@ -1,8 +1,11 @@
 from langchain_core.tools import tool
 import json
-import sqlalchemy.exc
 from logger import logger
 from agent_dbmanager.db.db_manager import save_supplier_to_db, execute_search_query
+from agent_dbmanager.exceptions import (
+    DbManagerError, DatabaseError, IntegrityError,
+    ArtifactError, InvalidJSONError, ValidationError
+)
 from artifact_store import artifact_store
 
 
@@ -38,11 +41,11 @@ def save_suppliers(artifact_id: str) -> str:
             try:
                 save_supplier_to_db(item)
                 saved_count += 1
-            except sqlalchemy.exc.IntegrityError as e:
+            except IntegrityError as e:
                 error_count += 1
                 errors.append(f"Supplier '{supplier_name}': Integrity constraint violation: {str(e)}")
                 logger.error(f"[DBMANAGER TOOL] Integrity error saving supplier '{supplier_name}': {e}")
-            except sqlalchemy.exc.SQLAlchemyError as e:
+            except DatabaseError as e:
                 error_count += 1
                 errors.append(f"Supplier '{supplier_name}': Database error: {str(e)}")
                 logger.error(f"[DBMANAGER TOOL] Database error saving supplier '{supplier_name}': {e}")
@@ -58,9 +61,13 @@ def save_suppliers(artifact_id: str) -> str:
 
         return (f"PARTIAL SUCCESS: {saved_count} saved, {error_count} failed. Failed suppliers: {errors}")
 
-    except json.JSONDecodeError:
-        logger.error("[DBMANAGER TOOL] Invalid JSON in artifact")
+    except json.JSONDecodeError as e:
+        logger.error(f"[DBMANAGER TOOL] Invalid JSON in artifact: {e}")
         return "ERROR: Artifact content is not valid JSON."
+
+    except DbManagerError as e:
+        logger.error(f"[DBMANAGER TOOL] {e}")
+        return f"ERROR: {str(e)}"
 
     except Exception as e:
         logger.error(f"[DBMANAGER TOOL] Unexpected error: {e}")
@@ -118,7 +125,7 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
     try:
         # Validate that at least one filter is provided
         if not any([country, region, province, city, semantic_query]):
-            return "ERROR: at least one location filter must be provided"
+            raise ValidationError("at least one location filter must be provided")
 
         results = execute_search_query(
             country=country,
@@ -134,12 +141,15 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
 
         return artifact_id
 
-    except KeyError as e:
+    except ArtifactError as e:
         logger.error(f"[DBMANAGER TOOL] Artifact error during search: {e}")
         return f"ERROR: Artifact store error: {str(e)}"
-    except sqlalchemy.exc.SQLAlchemyError as e:
+    except DatabaseError as e:
         logger.error(f"[DBMANAGER TOOL] Database error during search: {e}")
         return f"ERROR: Database query failed: {str(e)}"
+    except DbManagerError as e:
+        logger.error(f"[DBMANAGER TOOL] {e}")
+        return f"ERROR: {str(e)}"
     except Exception as e:
         logger.error(f"[DBMANAGER TOOL] Unexpected error during search: {e}")
         return f"ERROR: {str(e)}"

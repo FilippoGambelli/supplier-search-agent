@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from agent_dbmanager.db.utils.embedding  import get_embedding
 from agent_dbmanager.db.models import Base, Supplier, SupplierLocation
+from agent_dbmanager.exceptions import DbManagerError, DatabaseError, IntegrityError
 from logger import logger
 from agent_dbmanager.db.utils.normalization import *
 from config import DATABASE_URL
@@ -180,14 +181,18 @@ def save_supplier_to_db(data: dict):
 
         return supplier.id
 
+    except sqlalchemy.exc.IntegrityError as e:
+        session.rollback()
+        logger.error(f"[AGENT-DBMANAGER] Integrity error saving supplier: {e}")
+        raise IntegrityError(str(e)) from e
     except sqlalchemy.exc.SQLAlchemyError as e:
         session.rollback()
         logger.error(f"[AGENT-DBMANAGER] Database error saving supplier: {e}")
-        raise
+        raise DatabaseError(str(e)) from e
     except Exception as e:
         session.rollback()
         logger.error(f"[AGENT-DBMANAGER] Unexpected error saving supplier: {e}")
-        raise
+        raise DbManagerError(str(e)) from e
 
     finally:
         session.close()
@@ -268,9 +273,9 @@ def execute_search_query( country: str = None, region: str = None, province: str
 
     except sqlalchemy.exc.SQLAlchemyError as e:
         logger.error(f"[AGENT-DBMANAGER] Database error executing search query: {e}")
-        raise
+        raise DatabaseError(str(e)) from e
     except Exception as e:
         logger.error(f"[AGENT-DBMANAGER] Unexpected error executing search query: {e}")
-        raise
+        raise DbManagerError(str(e)) from e
     finally:
         session.close()

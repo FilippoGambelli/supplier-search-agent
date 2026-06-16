@@ -1,6 +1,9 @@
 from logger import logger
 from langchain_core.tools import tool
 from artifact_store import artifact_store
+from agent_orchestrator.exceptions import (
+    OrchestratorError, ArtifactError, SearchAgentError, DbManagerAgentError
+)
 
 @tool("run_search_agent")
 def run_search_agent(query: str) -> str:
@@ -69,8 +72,7 @@ def run_search_agent(query: str) -> str:
         logger.info(f"[ORCHESTRATOR] Result from agent_tool: {result}, Error: {error}")
 
         if error:
-            logger.error(f"[ORCHESTRATOR] agent_tool returned an error: {error}")
-            return f"Error in agent_tool execution: {error}"
+            raise SearchAgentError(f"agent_tool execution failed: {error}")
         
         artifact_id = artifact_store.save(
             data=result
@@ -78,9 +80,15 @@ def run_search_agent(query: str) -> str:
 
         return artifact_id
 
-    except KeyError as e:
+    except SearchAgentError as e:
+        logger.error(f"[ORCHESTRATOR] {e}")
+        return f"Error in agent_tool execution: {e}"
+    except ArtifactError as e:
         logger.error(f"[ORCHESTRATOR] Artifact error in agent_tool: {e}")
         return f"Error in agent_tool execution: {e}"
+    except OrchestratorError as e:
+        logger.error(f"[ORCHESTRATOR] {e}")
+        return str(e)
     except Exception as e:
         logger.error(f"[ORCHESTRATOR] Unexpected exception in agent_tool: {e}")
         return f"Tool exception: {str(e)}"
@@ -174,13 +182,18 @@ def run_dbmanager_agent(query: str) -> str:
         logger.info(f"[ORCHESTRATOR] Result from agent_dbmanager: {result}, Error: {error}")
 
         if error:
-            logger.error(f"[ORCHESTRATOR] agent_dbmanager returned an error: {error}")
-            return f"Error in agent_dbmanager execution: {error}"
+            raise DbManagerAgentError(f"agent_dbmanager execution failed: {error}")
 
         return result
-    except KeyError as e:
+    except DbManagerAgentError as e:
+        logger.error(f"[ORCHESTRATOR] {e}")
+        return f"Error in agent_dbmanager execution: {e}"
+    except ArtifactError as e:
         logger.error(f"[ORCHESTRATOR] Artifact error in agent_dbmanager: {e}")
         return f"Error in agent_dbmanager execution: {e}"
+    except OrchestratorError as e:
+        logger.error(f"[ORCHESTRATOR] {e}")
+        return str(e)
     except Exception as e:
         logger.error(f"[ORCHESTRATOR] Unexpected exception in agent_dbmanager: {e}")
         return f"Tool exception: {str(e)}"
