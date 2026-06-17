@@ -1,3 +1,4 @@
+from colorama import Fore, Style, init
 from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, START
@@ -8,6 +9,8 @@ from logger import logger
 from stats import get_stats
 from agent_dbmanager.tools import save_suppliers, semantic_search_suppliers
 from agent_dbmanager import tools as _tools_module
+
+init()
 
 SYSTEM_PROMPT = """
 You are a Database Manager Agent responsible for storing and retrieving supplier data.
@@ -75,9 +78,6 @@ Example mappings:
 - "suppliers in Milan, Lombardy" → city="Milan", region="Lombardy"
 
 STEP 2:
-Store results in artifact store (handled by tool)
-
-STEP 3:
 Return BOTH:
 - a short status string explaining the operation
 - the artifact_id where results are stored
@@ -159,7 +159,7 @@ def agent_node(state: OverallState):
             reasoning = chunk.additional_kwargs.get("reasoning_content", "")
             if reasoning:
                 if not has_reasoning:
-                    print("\n[DB MANAGER] Reasoning:")
+                    print(f"\n{Fore.GREEN}[DB MANAGER]{Style.RESET_ALL} Reasoning:")
                     has_reasoning = True
                 print(reasoning, end="", flush=True)
 
@@ -207,37 +207,16 @@ app = graph.compile()
 def run_dbmanager(query: str, verbose=True):
     _tools_module.VERBOSE = verbose
     initial_state = {"query": query, "verbose": verbose}
-    if verbose:
-        try:
-            last_event = None
-            for event in app.stream(initial_state):
-                last_event = event
-
-            if last_event is None:
-                logger.error("[DBMANAGER FATAL ERROR] Graph produced no events")
-                return None, "Graph produced no events"
-
-            agent_messages = last_event.get("agent", {}).get("messages", [])
-            if not agent_messages:
-                error_msg = last_event.get("error")
-                if error_msg:
-                    return None, error_msg
-                logger.error("[DBMANAGER FATAL ERROR] No messages in last agent event")
-                return None, "No final answer produced"
-
-            messages = agent_messages[0]
-            return getattr(messages, "content", None), None
-        except Exception as e:
-            logger.error(f"[DBMANAGER FATAL ERROR] {e}")
-            return None, str(e)
-    else:
-        try:
-            result = app.invoke(initial_state)
-            error = result.get("error")
-            if error:
-                logger.error(f"[DBMANAGER ERROR] Graph returned error: {error}")
-                return None, error
-            return result, None
-        except Exception as e:
-            logger.error(f"[DBMANAGER FATAL ERROR] Error: {e}")
-            return None, str(e)
+    try:
+        result = app.invoke(initial_state)
+        error = result.get("error")
+        if error:
+            logger.error(f"[DBMANAGER ERROR] Graph returned error: {error}")
+            return None, error
+        messages = result.get("messages", [])
+        if messages:
+            return getattr(messages[-1], "content", None), None
+        return result.get("answer"), None
+    except Exception as e:
+        logger.error(f"[DBMANAGER FATAL ERROR] Error: {e}")
+        return None, str(e)

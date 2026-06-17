@@ -152,21 +152,7 @@ def run_system(query: str, runner: Callable):
 
 def count_results(message: object) -> int:
     """Count how many results were returned by a system."""
-    if message is None:
-        return 0
-
-    if isinstance(message, list):
-        return len(message)
-
-    if isinstance(message, str):
-        parsed = load_json_if_possible(message)
-        if isinstance(parsed, list):
-            return len(parsed)
-        if isinstance(parsed, dict):
-            return 1
-        return 1
-
-    return 1
+    return len(normalize_output(message))
 
 
 def to_float(row: Dict[str, str], key: str) -> float:

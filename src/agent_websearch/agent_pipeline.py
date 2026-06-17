@@ -374,27 +374,13 @@ app = graph.compile()
 def run_agent(query: str, verbose=True):
     initial_state = {"query": query, "verbose": verbose}
     try:
-        if verbose:
-            last_event = None
-            for event in app.stream(initial_state):
-                last_event = event
-            if last_event is None:
-                return None, "Graph produced no events"
-
-            error_msg = last_event.get("error")
-            if error_msg:
-                return None, error_msg
-
-            final_answer = last_event.get("final_answer", {}).get("final_answer", [])
-            return json.dumps(final_answer, indent=2, ensure_ascii=False), None
-        else:
-            result = app.invoke(initial_state)
-            error = result.get("error")
-            if error:
-                logger.error(f"[PIPELINE ERROR] Graph returned error: {error}")
-                return None, error
-            final_answer = result.get("final_answer", [])
-            return json.dumps(final_answer, indent=2, ensure_ascii=False), None
+        result = app.invoke(initial_state)
+        error = result.get("error")
+        if error:
+            logger.error(f"[PIPELINE ERROR] Graph returned error: {error}")
+            return None, error
+        final_answer = result.get("final_answer", [])
+        return json.dumps(final_answer, indent=2, ensure_ascii=False), None
     except Exception as e:
         logger.error(f"[PIPELINE] Error: {e}")
         return None, str(e)

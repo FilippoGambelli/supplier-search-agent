@@ -1,4 +1,5 @@
 import json
+from colorama import Fore, Style, init
 from langchain_core.tools import tool
 from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -12,6 +13,8 @@ from agent_orchestrator.sub_agents import run_search_agent, run_dbmanager_agent
 from agent_orchestrator.exceptions import OrchestratorError, ArtifactNotFoundError
 from artifact_store import artifact_store
 from stats import get_stats
+
+init()
 
 # System prompt defining the orchestrator's behavior with strict workflow and deduplication rules
 SYSTEM_PROMPT = """
@@ -258,7 +261,7 @@ def agent_node(state: OverallState) -> OverallState:
             reasoning = chunk.additional_kwargs.get("reasoning_content", "")
             if reasoning:
                 if not has_reasoning:
-                    print("\n[ORCHESTRATOR] Reasoning:")
+                    print(f"\n{Fore.MAGENTA}[ORCHESTRATOR]{Style.RESET_ALL} Reasoning:")
                     has_reasoning = True
                 print(reasoning, end="", flush=True)
 
@@ -324,38 +327,16 @@ def run_orchestrator(query: str, verbose=True) -> tuple:
     _sub_agents_module.VERBOSE = verbose
     initial_state = {"query": query, "verbose": verbose}
 
-    if verbose:
-        try:
-            last_event = None
-            for event in app.stream(initial_state):
-                last_event = event
-
-            if last_event is None:
-                logger.error("[ORCHESTRATOR FATAL ERROR] Graph produced no events")
-                return None, "Graph produced no events"
-
-            agent_messages = last_event.get("agent", {}).get("messages", [])
-            if not agent_messages:
-                error_msg = last_event.get("error")
-                if error_msg:
-                    return None, error_msg
-                logger.error("[ORCHESTRATOR FATAL ERROR] No messages in last agent event")
-                return None, "No final answer produced"
-
-            messages = agent_messages[0]
-            return getattr(messages, "content", None), None
-
-        except Exception as e:
-            logger.error(f"[ORCHESTRATOR FATAL ERROR] {e}")
-            return None, str(e)
-    else:
-        try:
-            result = app.invoke(initial_state)
-            error = result.get("error")
-            if error:
-                logger.error(f"[ORCHESTRATOR ERROR] Graph returned error: {error}")
-                return None, error
-            return result, None
-        except Exception as e:
-            logger.error(f"[ORCHESTRATOR FATAL ERROR] Error: {e}")
-            return None, str(e)
+    try:
+        result = app.invoke(initial_state)
+        error = result.get("error")
+        if error:
+            logger.error(f"[ORCHESTRATOR ERROR] Graph returned error: {error}")
+            return None, error
+        messages = result.get("messages", [])
+        if messages:
+            return getattr(messages[-1], "content", None), None
+        return result.get("answer"), None
+    except Exception as e:
+        logger.error(f"[ORCHESTRATOR FATAL ERROR] Error: {e}")
+        return None, str(e)

@@ -12,7 +12,6 @@ class Artifact:
 class InMemoryArtifactStore:
     """
     Simple deterministic artifact store.
-    Replaceable later with Redis/S3/Postgres.
     """
 
     def __init__(self):

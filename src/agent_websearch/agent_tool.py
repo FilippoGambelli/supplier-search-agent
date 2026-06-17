@@ -1,3 +1,4 @@
+from colorama import Fore, Style, init
 from typing import Annotated, TypedDict
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, START
@@ -9,6 +10,8 @@ from logger import logger
 from config import *
 from stats import get_stats
 from langsmith import traceable
+
+init()
 
 
 SYSTEM_PROMPT = """You are an autonomous, expert supplier search assistant.
@@ -129,7 +132,7 @@ def agent_node(state: OverallState):
             reasoning = chunk.additional_kwargs.get("reasoning_content", "")
             if reasoning:
                 if not has_reasoning:
-                    print("\n[WEBSEARCHER] Reasoning:")
+                    print(f"\n{Fore.CYAN}[WEBSEARCHER]{Style.RESET_ALL} Reasoning:")
                     has_reasoning = True
                 print(reasoning, end="", flush=True)
 
@@ -177,38 +180,16 @@ app = graph.compile()
 def run_agent(query: str, verbose=True):
     _tools_module.VERBOSE = verbose
     initial_state = {"query": query, "verbose": verbose}
-    if verbose:
-        try:
-            last_event = None
-            for event in app.stream(initial_state):
-                last_event = event
-
-            if last_event is None:
-                logger.error("[AGENT FATAL ERROR] Graph produced no events")
-                return None, "Graph produced no events"
-
-            agent_messages = last_event.get("agent", {}).get("messages", [])
-            if not agent_messages:
-                error_msg = last_event.get("error")
-                if error_msg:
-                    return None, error_msg
-                logger.error("[AGENT FATAL ERROR] No messages in last agent event")
-                return None, "No final answer produced"
-
-            first_message = agent_messages[0]
-            return getattr(first_message, "content", None), None
-
-        except Exception as e:
-            logger.error(f"[AGENT FATAL ERROR] {e}")
-            return None, str(e)
-    else:
-        try:
-            result = app.invoke(initial_state)
-            error = result.get("error")
-            if error:
-                logger.error(f"[AGENT ERROR] Graph returned error: {error}")
-                return None, error
-            return result, None
-        except Exception as e:
-            logger.error(f"[AGENT FATAL ERROR] Error: {e}")
-            return None, str(e)
+    try:
+        result = app.invoke(initial_state)
+        error = result.get("error")
+        if error:
+            logger.error(f"[AGENT ERROR] Graph returned error: {error}")
+            return None, error
+        messages = result.get("messages", [])
+        if messages:
+            return getattr(messages[-1], "content", None), None
+        return result.get("answer"), None
+    except Exception as e:
+        logger.error(f"[AGENT FATAL ERROR] Error: {e}")
+        return None, str(e)

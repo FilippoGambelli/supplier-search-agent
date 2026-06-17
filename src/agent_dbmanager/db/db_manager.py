@@ -69,13 +69,13 @@ def save_supplier_to_db(data: dict):
             if supplier:
                 match_reason = "WEBSITE"
 
-        # 5. NAME
-        if not supplier and normalized_name:
-            supplier = session.query(Supplier).filter(
-                Supplier.normalized_name == normalized_name
-            ).first()
-            if supplier:
-                match_reason = "NAME"
+        # # 5. NAME
+        # if not supplier and normalized_name:
+        #     supplier = session.query(Supplier).filter(
+        #         Supplier.normalized_name == normalized_name
+        #     ).first()
+        #     if supplier:
+        #         match_reason = "NAME"
 
         # DUPLICATE FOUND → UPDATE
         if supplier:
@@ -84,10 +84,10 @@ def save_supplier_to_db(data: dict):
 
             existing_locations = {
                 (
-                    loc.country.lower(),
+                    (loc.country or "").lower(),
                     (loc.region or "").lower(),
                     (loc.province or "").lower(),
-                    loc.city.lower(),
+                    (loc.city or "").lower(),
                     (loc.address or "").lower()
                 )
                 for loc in supplier.locations
@@ -125,10 +125,7 @@ def save_supplier_to_db(data: dict):
 
             supplier.category = list(set((supplier.category or []) + normalized_category))
 
-            embedding_text = build_supplier_embedding_text({
-                "description": data.get("description", ""),
-                "category": supplier.category
-            })
+            embedding_text = build_supplier_embedding_text(data.get("description", ""), supplier.category)
 
             supplier.embedding = get_embedding(embedding_text)
 
@@ -142,10 +139,7 @@ def save_supplier_to_db(data: dict):
             return supplier.id
 
         # NEW SUPPLIER
-        embedding_text = build_supplier_embedding_text({
-            "description": data.get("description", ""),
-            "category": normalized_category
-        })
+        embedding_text = build_supplier_embedding_text(data.get("description", ""), normalized_category)
 
         supplier = Supplier(
             name=data.get("name", ""),
@@ -197,7 +191,7 @@ def save_supplier_to_db(data: dict):
     finally:
         session.close()
 
-def execute_search_query( country: str = None, region: str = None, province: str = None, city: str = None, semantic_query: str = None):
+def execute_search_query(country: str = None, region: str = None, province: str = None, city: str = None, semantic_query: str = None):
     """
     Search suppliers using hierarchical geographic filters:
     country → region → province → city

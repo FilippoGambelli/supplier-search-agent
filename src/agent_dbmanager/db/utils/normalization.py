@@ -112,12 +112,7 @@ def normalize_categories(categories):
             result.append(c)
     return list(set(result))
 
-def build_supplier_embedding_text(data):
-
-    categories = data.get("category", [])
-
-    description = data.get("description", "")
-
+def build_supplier_embedding_text(description, categories):
     return f"""
 description:
 {description}
