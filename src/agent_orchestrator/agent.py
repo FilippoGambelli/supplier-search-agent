@@ -7,10 +7,10 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from config import *
 from logger import logger
+from agent_orchestrator import sub_agents as _sub_agents_module
 from agent_orchestrator.sub_agents import run_search_agent, run_dbmanager_agent
-from agent_orchestrator.exceptions import OrchestratorError, ArtifactError, ArtifactNotFoundError
+from agent_orchestrator.exceptions import OrchestratorError, ArtifactNotFoundError
 from artifact_store import artifact_store
-from main import print_event
 from stats import get_stats
 
 # System prompt defining the orchestrator's behavior with strict workflow and deduplication rules
@@ -128,6 +128,7 @@ HARD RULES
 - Follow the workflow exactly
 """
 
+
 @tool("load_artifact")
 def load_artifact(artifact_id: str) -> str:
     """
@@ -183,7 +184,10 @@ def load_artifact(artifact_id: str) -> str:
     """
     try:
         data = artifact_store.load(artifact_id)
-        return json.dumps(data)
+        result = json.dumps(data)
+        if _sub_agents_module.VERBOSE:
+            print(f"\n[TOOLS] load_artifact\n  Arguments: artifact_id=\"{artifact_id}\"\n  Result: {result[:500]}{'... (truncated)' if len(result) > 500 else ''}")
+        return result
     except KeyError as e:
         raise ArtifactNotFoundError(str(e)) from e
     except Exception as e:
@@ -204,6 +208,7 @@ llm_with_tools = AGENT_ORCHESTRATOR_LLM.bind_tools(tools)
 class InputState(TypedDict):
     """Input state schema - requires a query string."""
     query: str
+    verbose: bool
 
 
 class OutputState(TypedDict):
@@ -239,7 +244,30 @@ def agent_node(state: OverallState) -> OverallState:
     messages = state.get("messages", [])
     messages_with_system = [SystemMessage(content=SYSTEM_PROMPT)] + messages
 
-    response = llm_with_tools.invoke(messages_with_system)
+    verbose = state.get("verbose", False)
+
+    if verbose:
+        full = None
+        has_reasoning = False
+        for chunk in llm_with_tools.stream(messages_with_system):
+            if full is None:
+                full = chunk
+            else:
+                full = full + chunk
+
+            reasoning = chunk.additional_kwargs.get("reasoning_content", "")
+            if reasoning:
+                if not has_reasoning:
+                    print("\n[ORCHESTRATOR] Reasoning:")
+                    has_reasoning = True
+                print(reasoning, end="", flush=True)
+
+        if has_reasoning:
+            print()
+
+        response = full
+    else:
+        response = llm_with_tools.invoke(messages_with_system)
 
     # Update stats
     usage = response.usage_metadata or {}
@@ -249,7 +277,7 @@ def agent_node(state: OverallState) -> OverallState:
 
     state_update = {"messages": [response]}
 
-    if getattr(response, "tool_calls", None) is None or len(response.tool_calls) == 0:
+    if not getattr(response, "tool_calls", None):
         state_update["answer"] = response.content
     else:
         for _ in response.tool_calls:
@@ -280,39 +308,54 @@ graph.add_edge("tools", "agent")
 app = graph.compile()
 
 
-def run_orchestrator(query: str) -> tuple:
+def run_orchestrator(query: str, verbose=True) -> tuple:
     """
     Execute the orchestrator agent with a given query.
 
     Args:
         query: The user query to process
+        verbose: Whether to show streaming reasoning and tool output
 
     Returns:
         Tuple of (answer, error) where error is None on success
     """
     logger.info(f"[ORCHESTRATOR] Starting orchestration with query: {query}")
 
-    try:
-        last_event = None
-        for event in app.stream({"query": query}):
-            print_event("ORCHESTRATOR", event)
-            last_event = event
+    _sub_agents_module.VERBOSE = verbose
+    initial_state = {"query": query, "verbose": verbose}
 
-        if last_event is None:
-            logger.error("[ORCHESTRATOR FATAL ERROR] Graph produced no events")
-            return None, "Graph produced no events"
+    if verbose:
+        try:
+            last_event = None
+            for event in app.stream(initial_state):
+                last_event = event
 
-        agent_messages = last_event.get("agent", {}).get("messages", [])
-        if not agent_messages:
-            error_msg = last_event.get("error")
-            if error_msg:
-                return None, error_msg
-            logger.error("[ORCHESTRATOR FATAL ERROR] No messages in last agent event")
-            return None, "No final answer produced"
+            if last_event is None:
+                logger.error("[ORCHESTRATOR FATAL ERROR] Graph produced no events")
+                return None, "Graph produced no events"
 
-        messages = agent_messages[0]
-        return getattr(messages, "content", None), None
+            agent_messages = last_event.get("agent", {}).get("messages", [])
+            if not agent_messages:
+                error_msg = last_event.get("error")
+                if error_msg:
+                    return None, error_msg
+                logger.error("[ORCHESTRATOR FATAL ERROR] No messages in last agent event")
+                return None, "No final answer produced"
 
-    except Exception as e:
-        logger.error(f"[ORCHESTRATOR FATAL ERROR] {e}")
-        return None, str(e)
+            messages = agent_messages[0]
+            return getattr(messages, "content", None), None
+
+        except Exception as e:
+            logger.error(f"[ORCHESTRATOR FATAL ERROR] {e}")
+            return None, str(e)
+    else:
+        try:
+            result = app.invoke(initial_state)
+            error = result.get("error")
+            if error:
+                logger.error(f"[ORCHESTRATOR ERROR] Graph returned error: {error}")
+                return None, error
+            return result, None
+        except Exception as e:
+            logger.error(f"[ORCHESTRATOR FATAL ERROR] Error: {e}")
+            return None, str(e)

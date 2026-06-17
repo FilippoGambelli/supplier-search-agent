@@ -5,6 +5,9 @@ from agent_orchestrator.exceptions import (
     OrchestratorError, ArtifactError, SearchAgentError, DbManagerAgentError
 )
 
+VERBOSE = False
+
+
 @tool("run_search_agent")
 def run_search_agent(query: str) -> str:
     """
@@ -66,32 +69,51 @@ def run_search_agent(query: str) -> str:
     try:
         # Dynamic import to avoid circular dependencies if agents share modules
         from agent_websearch.agent_tool import run_agent
-        
+
         logger.info(f"[ORCHESTRATOR] Delegating to agent_tool with query: {query}")
-        result, error = run_agent(query)
+
+        if VERBOSE:
+            print(f"\n[TOOLS] run_search_agent\n  Arguments: query=\"{query}\"")
+
+        result, error = run_agent(query, verbose=VERBOSE)
         logger.info(f"[ORCHESTRATOR] Result from agent_tool: {result}, Error: {error}")
 
         if error:
             raise SearchAgentError(f"agent_tool execution failed: {error}")
-        
+
         artifact_id = artifact_store.save(
             data=result
         )
+
+        if VERBOSE:
+            print(f"  Result: {artifact_id}")
 
         return artifact_id
 
     except SearchAgentError as e:
         logger.error(f"[ORCHESTRATOR] {e}")
-        return f"Error in agent_tool execution: {e}"
+        result_str = f"Error in agent_tool execution: {e}"
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str
     except ArtifactError as e:
         logger.error(f"[ORCHESTRATOR] Artifact error in agent_tool: {e}")
-        return f"Error in agent_tool execution: {e}"
+        result_str = f"Error in agent_tool execution: {e}"
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str
     except OrchestratorError as e:
         logger.error(f"[ORCHESTRATOR] {e}")
-        return str(e)
+        result_str = str(e)
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str
     except Exception as e:
         logger.error(f"[ORCHESTRATOR] Unexpected exception in agent_tool: {e}")
-        return f"Tool exception: {str(e)}"
+        result_str = f"Tool exception: {str(e)}"
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str
 
 
 @tool("run_dbmanager_agent")
@@ -175,25 +197,44 @@ def run_dbmanager_agent(query: str) -> str:
     """
     try:
         from agent_dbmanager.agent import run_dbmanager
-        
+
         logger.info(f"[ORCHESTRATOR] Delegating to agent_dbmanager with query: {query}")
-        result, error = run_dbmanager(query)
+
+        if VERBOSE:
+            print(f"\n[TOOLS] run_dbmanager_agent\n  Arguments: query=\"{query}\"")
+
+        result, error = run_dbmanager(query, verbose=VERBOSE)
 
         logger.info(f"[ORCHESTRATOR] Result from agent_dbmanager: {result}, Error: {error}")
 
         if error:
             raise DbManagerAgentError(f"agent_dbmanager execution failed: {error}")
 
+        if VERBOSE:
+            print(f"  Result: {result}")
+
         return result
     except DbManagerAgentError as e:
         logger.error(f"[ORCHESTRATOR] {e}")
-        return f"Error in agent_dbmanager execution: {e}"
+        result_str = f"Error in agent_dbmanager execution: {e}"
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str
     except ArtifactError as e:
         logger.error(f"[ORCHESTRATOR] Artifact error in agent_dbmanager: {e}")
-        return f"Error in agent_dbmanager execution: {e}"
+        result_str = f"Error in agent_dbmanager execution: {e}"
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str
     except OrchestratorError as e:
         logger.error(f"[ORCHESTRATOR] {e}")
-        return str(e)
+        result_str = str(e)
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str
     except Exception as e:
         logger.error(f"[ORCHESTRATOR] Unexpected exception in agent_dbmanager: {e}")
-        return f"Tool exception: {str(e)}"
+        result_str = f"Tool exception: {str(e)}"
+        if VERBOSE:
+            print(f"  Result: {result_str}")
+        return result_str

@@ -4,11 +4,11 @@ from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from agent_websearch.tools import search_suppliers, is_valid_company, extract_from_paginegialle, research_and_extract_company
+from agent_websearch import tools as _tools_module
 from logger import logger
 from config import *
 from stats import get_stats
 from langsmith import traceable
-from main import print_event
 
 
 SYSTEM_PROMPT = """You are an autonomous, expert supplier search assistant.
@@ -86,6 +86,7 @@ llm_with_tools = AGENT_WEBSEARCH_LLM.bind_tools(tools)
 
 class InputState(TypedDict):
     query: str
+    verbose: bool
 
 class OutputState(TypedDict):
     answer: str
@@ -109,13 +110,35 @@ def agent_node(state: OverallState):
     The Agent node. It represents the "brain" of the graph where the LLM thinks
     and decides whether to call a tool or provide the final answer.
     """
+    verbose = state.get("verbose", False)
     logger.info("[AGENT NODE] Executing agent node")
     stats = get_stats()
 
     messages = state.get("messages", [])
     messages_with_system = [SystemMessage(content=SYSTEM_PROMPT)] + messages
 
-    response = llm_with_tools.invoke(messages_with_system)
+    if verbose:
+        full = None
+        has_reasoning = False
+        for chunk in llm_with_tools.stream(messages_with_system):
+            if full is None:
+                full = chunk
+            else:
+                full = full + chunk
+
+            reasoning = chunk.additional_kwargs.get("reasoning_content", "")
+            if reasoning:
+                if not has_reasoning:
+                    print("\n[WEBSEARCHER] Reasoning:")
+                    has_reasoning = True
+                print(reasoning, end="", flush=True)
+
+        if has_reasoning:
+            print()
+
+        response = full
+    else:
+        response = llm_with_tools.invoke(messages_with_system)
 
     # Update stats
     usage = response.usage_metadata or {}
@@ -152,11 +175,12 @@ graph.add_edge("tools", "agent")
 app = graph.compile()
 
 def run_agent(query: str, verbose=True):
+    _tools_module.VERBOSE = verbose
+    initial_state = {"query": query, "verbose": verbose}
     if verbose:
         try:
             last_event = None
-            for event in app.stream({"query": query}):
-                print_event("WEB SEARCHER", event)
+            for event in app.stream(initial_state):
                 last_event = event
 
             if last_event is None:
@@ -179,7 +203,7 @@ def run_agent(query: str, verbose=True):
             return None, str(e)
     else:
         try:
-            result = app.invoke({"query": query})
+            result = app.invoke(initial_state)
             error = result.get("error")
             if error:
                 logger.error(f"[AGENT ERROR] Graph returned error: {error}")

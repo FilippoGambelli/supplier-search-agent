@@ -1,3 +1,4 @@
+import json
 from typing import TypedDict, List, Dict, Optional
 from urllib.parse import urlparse
 from langgraph.graph import StateGraph, END
@@ -8,12 +9,12 @@ from agent_websearch.utils.extract import extract_data
 from agent_websearch.exceptions import WebSearchError, InsufficientDataError
 from logger import logger
 from config import SEARXNG_RESULTS_LIMIT
-from main import print_node_pipeline
 from langsmith import traceable
 
 
 class InputState(TypedDict):
     query: str
+    verbose: bool
 
 class OutputState(TypedDict):
     final_answer: List[Dict]
@@ -39,12 +40,23 @@ def search_node(state: InputState) -> Dict:
     empty result set.
     """
     query = state["query"]
+    verbose = state.get("verbose", False)
     try:
         logger.info(f"[SEARCH NODE] Starting web search with query: {query}")
         results = search_web(query, limit=SEARXNG_RESULTS_LIMIT)
+        if verbose:
+            print(f"\n[SEARCH] \"{query}\" - {len(results)} result{'' if len(results) == 1 else 's'}")
+            for r in results:
+                url = r.get("url", "")
+                title = r.get("title", "")
+                label = title[:80] + "..." if len(title) > 80 else title
+                print(f"  \u2022 {label}")
+                print(f"    {url}")
         return {"search_results": results}
     except WebSearchError as e:
         logger.error(f"[SEARCH NODE] {e}")
+        if verbose:
+            print(f"\n[SEARCH] Error: {e}")
         return {
             "error": str(e),
             "search_results": []
@@ -56,25 +68,39 @@ def extract_pg_node(state: InternalState) -> Dict:
     Dedicated node to handle PagineGialle links.
     Extracts real company URLs and saves them separately in pg_results.
     """
-    logger.info("=" * 80)
+    verbose = state.get("verbose", False)
     search_results = state.get("search_results", [])
     pg_results = []
 
-    for result in search_results:
-        url = result.get("url", "")
+    pg_urls = [r.get("url", "") for r in search_results if "paginegialle.it" in r.get("url", "").lower()]
 
-        if "paginegialle.it" in url.lower():
-            logger.info(f"[EXTRACT PG NODE] PagineGialle detected, extracting real websites from: {url}")
+    for url in pg_urls:
+        logger.info(f"[EXTRACT PG NODE] PagineGialle detected, extracting real websites from: {url}")
 
-            try:
-                discovered_urls = extract_paginegialle_websites(url)
-                for item in discovered_urls:
-                    pg_results.append({
-                        "title": item["title"],
-                        "url": item["url"]
-                    })
-            except WebSearchError as e:
-                logger.error(f"[EXTRACT PG NODE] Error extracting URL {url}: {e}")
+        try:
+            discovered_urls = extract_paginegialle_websites(url)
+            for item in discovered_urls:
+                pg_results.append({
+                    "title": item["title"],
+                    "url": item["url"]
+                })
+        except WebSearchError as e:
+            logger.error(f"[EXTRACT PG NODE] Error extracting URL {url}: {e}")
+            if verbose:
+                print(f"\n[EXTRACT PG] {url} - error: {e}")
+
+    if verbose and pg_results:
+        pg_url_short = pg_urls[0][:70] + "..." if len(pg_urls[0]) > 70 else pg_urls[0]
+        print(f"\n[EXTRACT PG] {pg_url_short} - extracted {len(pg_results)} website{'' if len(pg_results) == 1 else 's'}")
+        for r in pg_results:
+            title = r.get("title", "")
+            url = r.get("url", "")
+            label = title[:70] + "..." if len(title) > 70 else title
+            print(f"  \u2022 {label}")
+            print(f"    {url}")
+    elif verbose and pg_urls:
+        pg_url_short = pg_urls[0][:70] + "..." if len(pg_urls[0]) > 70 else pg_urls[0]
+        print(f"\n[EXTRACT PG] {pg_url_short} - no websites found")
 
     return {"pg_results": pg_results}
 
@@ -84,13 +110,13 @@ def scrape_node(state: InternalState) -> Dict:
     Scrape websites from search results.
     Combines search_results and pg_results, removes duplicates, applies blacklist, and runs the standard scrape flow.
     """
-    logger.info("=" * 80)
+    verbose = state.get("verbose", False)
     search_results = state.get("search_results", [])
     pg_results = state.get("pg_results", [])
     scraped_data = []
 
     combined_results = search_results + pg_results
-    logger.info(f"[SCRAPE NODE] Combining {len(search_results)} search results with {len(pg_results)} PagineGialle results")    
+    logger.info(f"[SCRAPE NODE] Combining {len(search_results)} search results with {len(pg_results)} PagineGialle results")
 
     # Delete duplicates based on hostname
     unique_hostnames = set()
@@ -112,25 +138,53 @@ def scrape_node(state: InternalState) -> Dict:
             unique_hostnames.add(hostname)
             deduplicated_results.append(result)
 
-    if duplicates_count > 0:
-        logger.info(f"[SCRAPE NODE] Removed {duplicates_count} duplicate URLs")
-
+    lines = []
     for result in deduplicated_results:
         title = result.get("title", "")
         url = result.get("url", "")
 
         if not is_valid_company_result(title, url):
             logger.warning(f"[SCRAPE NODE] Skipping blacklisted or directory: {url}")
+            if verbose:
+                lines.append(f"\u2717 {url} (blacklisted)")
             continue
 
         try:
             data = scrape_company_website(url)
             data.update({"title": title, "url": url})
             scraped_data.append(data)
+            if verbose:
+                hl = len(data.get("homepage_text", "") or "")
+                cl = len(data.get("contact_text", "") or "")
+                label = title[:60] + "..." if len(title) > 60 else title
+                lines.append(f"\u2713 {label} ({hl}+{cl} chars)")
         except WebSearchError as e:
             logger.error(f"[SCRAPE NODE] {url} -> {e}")
+            if verbose:
+                err_str = str(e)
+                if "403" in err_str:
+                    short_err = "403 Forbidden"
+                elif "404" in err_str:
+                    short_err = "404 Not Found"
+                elif "timeout" in err_str.lower() or "timed out" in err_str.lower():
+                    short_err = "timeout"
+                elif "robots.txt" in err_str.lower():
+                    short_err = "blocked by robots.txt"
+                else:
+                    short_err = err_str[:60] + "..." if len(err_str) > 60 else err_str
+                label = title[:60] + "..." if len(title) > 60 else title
+                lines.append(f"\u2717 {label} - {short_err}")
+
+    if verbose:
+        total = len(combined_results)
+        dup_info = f", {duplicates_count} duplicate{'' if duplicates_count == 1 else 's'} removed" if duplicates_count > 0 else ""
+        print(f"\n[SCRAPE] {total} URL{'' if total == 1 else 's'} ({len(search_results)} search + {len(pg_results)} PG{dup_info})")
+        for line in lines:
+            print(f"  {line}")
 
     if not scraped_data:
+        if verbose:
+            print(f"  No valid data scraped.")
         return {"error": "No valid data scraped.", "scraped_data": []}
 
     logger.info("=" * 80)
@@ -138,19 +192,22 @@ def scrape_node(state: InternalState) -> Dict:
     return {
         "scraped_data": scraped_data,
         "current_index": 0,
-        "extracted_results": []
+        "extracted_results": [],
     }
 
 @traceable(name="extract_node")
 def extract_node(state: InternalState) -> Dict:
+    verbose = state.get("verbose", False)
     scraped_data = state.get("scraped_data", [])
+    current_index = state.get("current_index", 0)
+
     if not scraped_data:
+        if verbose:
+            print(f"\n[EXTRACT] No data to process")
         return {
             "should_finish": True,
             "error": "No scraped data available for extraction"
         }
-
-    current_index = state.get("current_index", 0)
 
     if current_index >= len(scraped_data):
         return {
@@ -158,40 +215,85 @@ def extract_node(state: InternalState) -> Dict:
         }
 
     current_company = scraped_data[current_index]
+    url = current_company.get("url", "")
+    title = current_company.get("title", "")
+    label = title[:80] + "..." if len(title) > 80 else title
+
+    if verbose:
+        print(f"\n[EXTRACT] ({current_index+1}/{len(scraped_data)}) {label}")
+        print(f"  {url}")
 
     return {
         "current_company": current_company,
-        "should_finish": False
+        "should_finish": False,
+        "current_index": current_index,
+        "total_companies": len(scraped_data),
     }
 
 @traceable(name="llm_extract_node")
 def llm_node(state: InternalState) -> Dict:
+    verbose = state.get("verbose", False)
     company = state["current_company"]
     extracted_results = state.get("extracted_results", [])
+    was_extracted = True
+    url = company.get("url", "")
+    title = company.get("title", "")
 
     try:
         result = extract_data(company)
         new_results = extracted_results + [result]
-        logger.info(f"[LLM NODE] Data successfully extracted from: {company.get('url')}")
+        logger.info(f"[LLM NODE] Data successfully extracted from: {url}")
+        if verbose:
+            emails = result.get("email", [])
+            phones = result.get("phone", [])
+            ei = f"{len(emails)} email" if emails else "no email"
+            pi = f"{len(phones)} phone" if phones else "no phone"
+            print(f"\n[LLM] {title} - {ei}, {pi}")
     except InsufficientDataError as e:
         logger.warning(f"[LLM NODE] {e}")
         new_results = extracted_results
+        was_extracted = False
+        if verbose:
+            print(f"[LLM] ({state['current_index']+1}) {title} - skipped (no email/phone)")
     except WebSearchError as e:
-        logger.error(f"[LLM NODE] {company.get('url')} -> {e}")
+        logger.error(f"[LLM NODE] {url} -> {e}")
         new_results = extracted_results
+        was_extracted = False
+        if verbose:
+            print(f"[LLM] ({state['current_index']+1}) {title} - error: {e}")
     except Exception as e:
-        logger.error(f"[LLM NODE] {company.get('url')} -> {e}")
+        logger.error(f"[LLM NODE] {url} -> {e}")
         new_results = extracted_results
+        was_extracted = False
+        if verbose:
+            print(f"[LLM] ({state['current_index']+1}) {title} - error: {e}")
 
     return {
         "extracted_results": new_results,
-        "current_index": state["current_index"] + 1
+        "current_index": state["current_index"] + 1,
+        "company_url": url,
+        "company_title": title,
+        "was_extracted": was_extracted,
     }
 
 
 def final_answer_node(state: InternalState) -> Dict:
     """Return final aggregated results."""
+    verbose = state.get("verbose", False)
     results = state.get("extracted_results", [])
+
+    if verbose:
+        if not results:
+            print(f"\n[FINAL ANSWER] No companies extracted")
+        else:
+            print(f"\n[FINAL ANSWER] {len(results)} compan{'' if len(results) == 1 else 'ies'} returned")
+            for c in results:
+                name = c.get("name", "")
+                web = c.get("website", "")
+                em = c.get("email", [])
+                ph = c.get("phone", [])
+                print(f"  \u2022 {name}")
+                print(f"    {web} | {len(em)} email{'' if len(em) == 1 else 's'}, {len(ph)} phone{'' if len(ph) == 1 else 's'}")
 
     return {
         "final_answer": results,
@@ -200,9 +302,13 @@ def final_answer_node(state: InternalState) -> Dict:
 
 
 def error_node(state: InternalState):
+    verbose = state.get("verbose", False)
+    err = state.get("error", "Unknown error")
+    if verbose:
+        print(f"\n[ERROR] {err}")
     return {
         "final_answer": [],
-        "error": state.get("error", "Unknown error")
+        "error": err
     }
 
 def route_after_search(state: InternalState):
@@ -265,12 +371,12 @@ graph.set_entry_point("search")
 app = graph.compile()
 
 @traceable(name="pipeline_run_agent")
-def run_agent(query: str, verbose = True):
-    if verbose:
-        try:
+def run_agent(query: str, verbose=True):
+    initial_state = {"query": query, "verbose": verbose}
+    try:
+        if verbose:
             last_event = None
-            for event in app.stream({"query": query}):
-                print_node_pipeline(event)
+            for event in app.stream(initial_state):
                 last_event = event
             if last_event is None:
                 return None, "Graph produced no events"
@@ -280,20 +386,15 @@ def run_agent(query: str, verbose = True):
                 return None, error_msg
 
             final_answer = last_event.get("final_answer", {}).get("final_answer", [])
-            return final_answer, None
-
-        except Exception as e:
-            logger.error(f"[PIPELINE] Error: {e}")
-            return None, str(e)
-    else:
-        try:
-            result = app.invoke({"query": query})
+            return json.dumps(final_answer, indent=2, ensure_ascii=False), None
+        else:
+            result = app.invoke(initial_state)
             error = result.get("error")
             if error:
                 logger.error(f"[PIPELINE ERROR] Graph returned error: {error}")
                 return None, error
             final_answer = result.get("final_answer", [])
-            return final_answer, None
-        except Exception as e:
-            logger.error(f"[PIPELINE] Error: {e}")
-            return None, str(e)
+            return json.dumps(final_answer, indent=2, ensure_ascii=False), None
+    except Exception as e:
+        logger.error(f"[PIPELINE] Error: {e}")
+        return None, str(e)

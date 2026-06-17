@@ -1,110 +1,58 @@
+from pathlib import Path
 import json
-import re
 from colorama import Fore, Style, init
 from stats import get_stats, reset_stats
 from config import *
 
 init(autoreset=True)
 
-# MODES
 MODES = {"tool", "pipeline", "orchestrator"}
 CURRENT_MODE = "orchestrator"
 
-# COLORS
-CYAN = Fore.CYAN + Style.BRIGHT
-MAGENTA = Fore.MAGENTA + Style.BRIGHT
 RED = Fore.RED + Style.BRIGHT
-DIM = Style.DIM
-GREEN = Fore.GREEN + Style.BRIGHT
 YELLOW = Fore.YELLOW + Style.BRIGHT
 
-def clean(text):
-    if not text:
-        return ""
-    return re.sub(r"\s+", " ", str(text).replace("\n\n", "\n")).strip()
+MODE_MAP = {"1": "tool", "2": "pipeline", "3": "orchestrator"}
 
-def extract_json(raw: str) -> str:
-    raw = raw.strip()
-    match = re.search(r'```(?:json)?(.*?)```', raw, re.DOTALL)
-    return match.group(1).strip() if match else raw
-
-
-def print_header():
-    print(CYAN + Style.BRIGHT + r"""
-███████╗ ███████╗  █████╗ 
-██╔════╝ ██╔════╝ ██╔══██╗
-███████╗ ███████╗ ███████║
-╚════██║ ╚════██║ ██╔══██║
-███████║ ███████║ ██║  ██║
-╚══════╝ ╚══════╝ ╚═╝  ╚═╝
-""" + Style.RESET_ALL)
-
-    print(DIM + "CLI Multi-Agent System")
-    print(DIM + "Modes: tool | pipeline | orchestrator")
-    print(DIM + "Use: /mode <name>\n")
+OUTPUT_DIR = Path("src/outputs")
+MODE_FILE_MAP = {
+    "tool": "agentic_websearch",
+    "pipeline": "pipeline_websearch",
+    "orchestrator": "orchestrator_websearch_store",
+}
 
 
-# MODE HANDLER
+def save_output(content: str, mode: str):
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    name = MODE_FILE_MAP.get(mode, mode)
+    path = OUTPUT_DIR / f"{name}.json"
+    try:
+        data = json.loads(content)
+        path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    except json.JSONDecodeError:
+        path.write_text(content, encoding="utf-8")
+
+
+def print_mode_help():
+    print("\nModes: [1] Agentic WebSearch | [2] Pipeline WebSearch | [3] WebSearch + Store")
+    print("Use: /mode <number>")
+
+
 def handle_mode(cmd: str):
     global CURRENT_MODE
 
     parts = cmd.split()
 
     if len(parts) == 1:
-        print("\nAvailable modes:", ", ".join(MODES), "\n")
         return
 
-    mode = parts[1].lower()
+    raw = parts[1].lower()
+    mode = MODE_MAP.get(raw, raw)
 
     if mode in MODES:
         CURRENT_MODE = mode
-        print(f"\n→ mode: {CURRENT_MODE}\n")
     else:
-        print("\nInvalid mode\n")
-
-
-def print_node_pipeline(event: dict):
-    for key in event:
-        print(MAGENTA + f"\nNODE: {key.upper()}")
-
-
-def print_event(agent: str, event: dict):
-
-    if "agent" in event:
-        messages = event["agent"].get("messages", [])
-
-        for msg in messages:
-            print(CYAN + f"\n[AGENT - {agent}]")
-
-            # reasoning vs content
-            content = getattr(msg, "content", None)
-            reasoning = getattr(msg, "additional_kwargs", {}).get("reasoning_content", None)
-            if content:
-                print(DIM + clean(f"Response:\n{content}"))
-            elif reasoning:
-                print(DIM + clean(f"Reasoning:\n{reasoning}"))
-
-            # tool calls
-            tool_calls = getattr(msg, "tool_calls", []) or []
-            if tool_calls:
-                print(DIM + "Tools called:")
-                for tc in tool_calls:
-                    name = tc.get("name")
-                    args = tc.get("args")
-                    print(DIM + f"- {name} | {json.dumps(args, ensure_ascii=False)}")
-
-    elif "tools" in event:
-        tool_messages = event["tools"].get("messages", [])
-        
-        print(MAGENTA + f"\n[TOOLS - {agent}]")
-
-        for msg in tool_messages:
-            content = getattr(msg, "content", None)
-            name = getattr(msg, "name", None)
-            if name:
-                print(DIM + f"Tool name: {name}")
-            if content:
-                print(DIM + clean(f"Result: {content}"))
+        print("\nInvalid mode. Use /mode <number>")
 
 
 def get_runner(mode: str):
@@ -124,14 +72,14 @@ def get_runner(mode: str):
 def run_cli():
     global CURRENT_MODE
 
-    print_header()
     runner = get_runner(CURRENT_MODE)
 
     while True:
+        print_mode_help()
         query = input(f"{CURRENT_MODE} > ").strip()
 
         if query in {"exit", "quit"}:
-            print("\nBye!\n")
+            print("Bye!\n")
             break
 
         if query.startswith("/mode"):
@@ -149,8 +97,9 @@ def run_cli():
             if error:
                 print(RED + f"ERROR: {error}")
             else:
-                print(GREEN + f"\nFinal answer:\n{msg}\n\n")
-            
+                save_output(msg, CURRENT_MODE)
+                print(f"\nFinal answer:\n{msg}\n")
+
             stats_dict = stats.to_dict()
             input_tokens = stats_dict.get("input_tokens", 0)
             output_tokens = stats_dict.get("output_tokens", 0)
@@ -167,7 +116,7 @@ def run_cli():
                     f"total tokens: {total_tokens} | "
                     f"total execution time: {exec_time:.2f}s\n\n"
                 )
-            )        
+            )
         except Exception as e:
             print(RED + f"\nEXCEPTION ({type(e).__name__}): {e}\n")
 

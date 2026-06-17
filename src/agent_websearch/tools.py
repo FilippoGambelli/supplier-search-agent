@@ -8,6 +8,8 @@ from agent_websearch.exceptions import WebSearchError, InsufficientDataError
 from logger import logger
 from config import PAGINEGIALLE_RESULTS_LIMIT, SEARXNG_RESULTS_LIMIT
 
+VERBOSE = False
+
 
 @tool
 def search_suppliers(query: str) -> str:
@@ -20,15 +22,20 @@ def search_suppliers(query: str) -> str:
     try:
         results = search_web(query, limit=SEARXNG_RESULTS_LIMIT)
         if not results:
-            return "No search results returned. The SearXNG instance may be unavailable."
-        formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
-        return f"Found {len(results)} results:\n{formatted}"
+            result = "No search results returned. The SearXNG instance may be unavailable."
+        else:
+            formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
+            result = f"Found {len(results)} results:\n{formatted}"
     except WebSearchError as e:
         logger.error(f"[TOOL ERROR] search_suppliers: {e}")
-        return f"Error: {e}"
+        result = f"Error: {e}"
     except Exception as e:
         logger.error(f"[TOOL ERROR] search_suppliers unexpected error: {e}")
-        return f"Unexpected error: {e}"
+        result = f"Unexpected error: {e}"
+
+    if VERBOSE:
+        print(f"\n[TOOLS] search_suppliers - Query=\"{query}\"\n{result}")
+    return result
 
 
 @tool
@@ -42,18 +49,20 @@ def is_valid_company(title: str, url: str) -> str:
         url_lower = url.lower()
 
         if "paginegialle.it" in url_lower:
-            return f"FALSE [{url}] - PagineGialle directory. ACTION REQUIRED: You MUST use the `extract_from_paginegialle` tool on this URL immediately to extract the real company websites."
-
-        is_valid = is_valid_company_result(title, url)
-
-        if is_valid:
-            return f"TRUE [{url}] - Valid company website. You can proceed to use `research_and_extract_company` on this URL."
+            result = f"FALSE [{url}] - PagineGialle directory. ACTION REQUIRED: You MUST use the `extract_from_paginegialle` tool on this URL immediately to extract the real company websites."
         else:
-            return f"FALSE [{url}] - Generic aggregator, directory, or social media. Ignore this URL and move to the next one."
-
+            is_valid = is_valid_company_result(title, url)
+            if is_valid:
+                result = f"TRUE [{url}] - Valid company website. You can proceed to use `research_and_extract_company` on this URL."
+            else:
+                result = f"FALSE [{url}] - Generic aggregator, directory, or social media. Ignore this URL and move to the next one."
     except Exception as e:
         logger.error(f"[TOOL ERROR] is_valid_company failed for {url}: {e}")
-        return f"Error: Unable to validate company: {e}"
+        result = f"Error: Unable to validate company: {e}"
+
+    if VERBOSE:
+        print(f"\n[TOOLS] is_valid_company - URL=\"{url}\"\n{result}")
+    return result
 
 
 @tool
@@ -66,15 +75,20 @@ def extract_from_paginegialle(pg_url: str) -> str:
     try:
         results = extract_paginegialle_websites(pg_url, limit=PAGINEGIALLE_RESULTS_LIMIT)
         if not results:
-            return "No real websites found from PagineGialle page."
-        formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
-        return f"Found these real websites:\n{formatted}"
+            result = "No real websites found from PagineGialle page."
+        else:
+            formatted = "\n".join([f"- {r.get('title', 'N/A')}: {r.get('url', 'N/A')}" for r in results])
+            result = f"Found these real websites:\n{formatted}"
     except WebSearchError as e:
         logger.error(f"[TOOL ERROR] extract_from_paginegialle: {e}")
-        return f"Error: {e}"
+        result = f"Error: {e}"
     except Exception as e:
         logger.error(f"[TOOL ERROR] extract_from_paginegialle unexpected error: {e}")
-        return f"Unexpected error: {e}"
+        result = f"Unexpected error: {e}"
+
+    if VERBOSE:
+        print(f"\n[TOOLS] extract_from_paginegialle - PG_URL=\"{pg_url}\"\n{result}")
+    return result
 
 
 @tool
@@ -96,14 +110,18 @@ def research_and_extract_company(url: str, title: str = "") -> str:
         }
 
         result = extract_data(company_payload)
-        return json.dumps(result, ensure_ascii=False)
+        result = json.dumps(result, ensure_ascii=False)
 
     except InsufficientDataError as e:
         logger.warning(f"[TOOL ERROR] research_and_extract_company insufficient data for {url}: {e}")
-        return f"INSUFFICIENT_DATA: {e}"
+        result = f"INSUFFICIENT_DATA: {e}"
     except WebSearchError as e:
         logger.error(f"[TOOL ERROR] research_and_extract_company: {e}")
-        return f"Error: {e}"
+        result = f"Error: {e}"
     except Exception as e:
         logger.error(f"[TOOL ERROR] research_and_extract_company unexpected error: {e}")
-        return f"Unexpected error: {e}"
+        result = f"Unexpected error: {e}"
+
+    if VERBOSE:
+        print(f"\n[TOOLS] research_and_extract_company - URL=\"{url}\"\n{result}")
+    return result

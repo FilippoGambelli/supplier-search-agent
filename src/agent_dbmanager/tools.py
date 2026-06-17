@@ -4,9 +4,11 @@ from logger import logger
 from agent_dbmanager.db.db_manager import save_supplier_to_db, execute_search_query
 from agent_dbmanager.exceptions import (
     DbManagerError, DatabaseError, IntegrityError,
-    ArtifactError, InvalidJSONError, ValidationError
+    ArtifactError, ValidationError
 )
 from artifact_store import artifact_store
+
+VERBOSE = False
 
 
 @tool
@@ -57,21 +59,25 @@ def save_suppliers(artifact_id: str) -> str:
         logger.info(f"[DBMANAGER TOOL] save_suppliers completed - saved: {saved_count}, errors: {error_count}")
 
         if error_count == 0:
-            return f"SUCCESS: {saved_count} suppliers saved to database."
-
-        return (f"PARTIAL SUCCESS: {saved_count} saved, {error_count} failed. Failed suppliers: {errors}")
+            result = f"SUCCESS: {saved_count} suppliers saved to database."
+        else:
+            result = f"PARTIAL SUCCESS: {saved_count} saved, {error_count} failed. Failed suppliers: {errors}"
 
     except json.JSONDecodeError as e:
         logger.error(f"[DBMANAGER TOOL] Invalid JSON in artifact: {e}")
-        return "ERROR: Artifact content is not valid JSON."
+        result = "ERROR: Artifact content is not valid JSON."
 
     except DbManagerError as e:
         logger.error(f"[DBMANAGER TOOL] {e}")
-        return f"ERROR: {str(e)}"
+        result = f"ERROR: {str(e)}"
 
     except Exception as e:
         logger.error(f"[DBMANAGER TOOL] Unexpected error: {e}")
-        return f"ERROR: {str(e)}"
+        result = f"ERROR: {str(e)}"
+
+    if VERBOSE:
+        print(f"\n[TOOLS] save_suppliers\n  Arguments: artifact_id=\"{artifact_id}\"\n  Result: {result}")
+    return result
 
 
 @tool
@@ -139,17 +145,22 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
             data=json.dumps(results, ensure_ascii=False, indent=4)
         )
 
-        return artifact_id
+        result = artifact_id
 
     except ArtifactError as e:
         logger.error(f"[DBMANAGER TOOL] Artifact error during search: {e}")
-        return f"ERROR: Artifact store error: {str(e)}"
+        result = f"ERROR: Artifact store error: {str(e)}"
     except DatabaseError as e:
         logger.error(f"[DBMANAGER TOOL] Database error during search: {e}")
-        return f"ERROR: Database query failed: {str(e)}"
+        result = f"ERROR: Database query failed: {str(e)}"
     except DbManagerError as e:
         logger.error(f"[DBMANAGER TOOL] {e}")
-        return f"ERROR: {str(e)}"
+        result = f"ERROR: {str(e)}"
     except Exception as e:
         logger.error(f"[DBMANAGER TOOL] Unexpected error during search: {e}")
-        return f"ERROR: {str(e)}"
+        result = f"ERROR: {str(e)}"
+
+    if VERBOSE:
+        args_str = json.dumps({k: v for k, v in {"country": country, "region": region, "province": province, "city": city, "semantic_query": semantic_query}.items() if v is not None}, ensure_ascii=False)
+        print(f"\n[TOOLS] semantic_search_suppliers\n  Arguments: {args_str}\n  Result: {result}")
+    return result
