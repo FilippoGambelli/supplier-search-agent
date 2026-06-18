@@ -27,8 +27,8 @@ The platform then:
 
 - Searches for relevant supplier companies
 - Extracts company information and contact details
-- Retrieves previously discovered suppliers from the database
-- Stores newly discovered suppliers for future searches
+- Stores newly discovered suppliers and updates existing ones for future searches
+- Retrieves suppliers from the database
 - Returns a consolidated list of supplier candidates
 
 This significantly reduces manual supplier research effort and accelerates quotation and procurement workflows.
@@ -41,14 +41,9 @@ The platform is implemented as a **multi-agent system** designed to automate sup
 
 The architecture is composed of:
 
-- **LangGraph** for multi-agent orchestration and execution graphs
-- **LangChain** for LLM and agent abstractions
-- **1 Orchestrator Agent**
-- **1 Web Searcher Agent**
-- **1 Database Manager Agent**
-- **SearXNG** for web search aggregation
-- **PostgreSQL + pgvector** for persistent and semantic data retrieval
-- **Ollama** as the LLM provider
+- **Orchestrator Agent**
+- **Web Searcher Agent**
+- **Database Manager Agent**
 
 The overall objective is to combine **live supplier discovery** with **persistent knowledge accumulation**, allowing the system to become increasingly valuable over time.
 
@@ -79,7 +74,7 @@ This allows users to benefit from both past knowledge and fresh market data.
 
 ## Web Searcher Agent
 
-The Web Searcher is responsible for supplier discovery from external sources.
+The Web Searcher is responsible for supplier discovery from the web.
 
 It transforms the user request into targeted web searches and performs all extraction and processing activities required to identify relevant suppliers.
 
@@ -88,58 +83,16 @@ Main responsibilities:
 - Performing supplier searches
 - Collecting supplier websites
 - Extracting company information
-- Retrieving contacts
 - Identifying business categories
 - Gathering company locations
 - Structuring extracted data
 
-The platform supports **two alternative execution strategies** for web search and information extraction.
+The platform supports **two alternative execution strategies**:
 
----
+- **Option 1 - Agentic Web Search** — A dedicated web search agent autonomously searches, validates, filters, and extracts supplier data using its own tools, maximizing retrieval quality.
+- **Option 2 - Deterministic Pipeline** — A fixed sequence of predefined steps (search, scrape, extract, and structure data) without agent reasoning. Useful for controlled and reproducible runs.
 
-### Option 1 - Agentic Web Search (Default in Current Architecture)
-
-This is the default mode used inside the multi-agent system.
-
-In this configuration, the **Orchestrator dynamically coordinates the Web Searcher Agent**, deciding how searches, extraction, validation, and persistence should be executed.
-
-This approach provides:
-
-- Adaptive decision making
-- Flexible search strategies
-- Dynamic execution flows
-- Better handling of heterogeneous search results
-- Improved extensibility for future agents and capabilities
-
-The agent autonomously decides how to explore and process web information to maximize supplier retrieval quality.
-
----
-
-### Option 2 - Deterministic Search Pipeline
-
-As an alternative, the platform also supports a fully deterministic execution pipeline.
-
-In this mode, supplier discovery follows a predefined sequence of steps instead of relying on agent-based reasoning:
-
-1. Generate search queries
-2. Execute web searches
-3. Collect result pages
-4. Extract company information
-5. Normalize and structure data
-6. Store results in the database
-
-This approach provides:
-
-- Predictable execution
-- Easier debugging
-- Reproducible outputs
-- Lower orchestration complexity
-
-Although not used by default, this pipeline remains available for experimentation or controlled deployments.
-
----
-
-### Web Search Engine - SearXNG
+#### Web Search Engine - SearXNG
 
 Both execution modes rely on **SearXNG** as the web search provider.
 
@@ -170,18 +123,7 @@ Main responsibilities:
 - Executing structured and semantic queries
 - Maintaining supplier metadata
 
-Each discovered company is stored with:
-
-- Company details
-- Contact information
-- Categories
-- Descriptions
-- Locations
-- Additional metadata useful for procurement workflows
-
----
-
-## Database - PostgreSQL + pgvector
+#### Database - PostgreSQL + pgvector
 
 The system uses **PostgreSQL** as its primary database.
 
@@ -206,19 +148,17 @@ By combining relational storage with vector search, the platform supports both s
 
 The platform uses **Ollama** as the Large Language Model (LLM) provider.
 
-Ollama abstracts model execution and enables flexible deployment options.
-
-This allows the system to operate with:
-
-- Local models running on local hardware
-- Cloud-hosted models
-- Easy switching between different LLMs
+Ollama is executed locally, on the same machine as the application, providing fast inference without external API dependencies.
 
 Current configuration:
 
 ```text
-gemma4:31b-cloud
-````
+Model: qwen3.6:35b
+Hardware: NVIDIA GH200 480GB
+CUDA: 12.3
+Ollama: v0.24.0
+Performance: ~100 tk/s
+```
 
 Ollama keeps the architecture model-agnostic and highly flexible depending on infrastructure constraints.
 
@@ -228,9 +168,7 @@ Ollama keeps the architecture model-agnostic and highly flexible depending on in
 
 The Supplier Search Agent provides two main ways to interact with the system depending on the desired level of control and observability.
 
----
-
-## Option 1 - Command Line Interface (CLI)
+### Option 1 - Command Line Interface (CLI)
 
 The primary interface is a **Command Line Interface (CLI)**.
 
@@ -240,53 +178,13 @@ Start the application from the project root:
 python src/main.py
 ```
 
-The CLI allows direct interaction with the system and supports multiple execution modes.
+The CLI allows direct interaction with the system and supports multiple execution modes selectable at runtime with `/mode <number>`:
 
-### Full Multi-Agent System (Default)
+1. **WebSearch + Store** *(default)* — Full multi-agent orchestration. Coordinates the Web Searcher Agent and Database Manager Agent to discover new suppliers and store them for future searches.
+2. **Agentic WebSearch** — Runs the agentic Web Searcher alone. Autonomously searches and extracts supplier data without database persistence.
+3. **Deterministic WebSearch** — Executes a deterministic search pipeline. Follows a fixed sequence of search, scrape, and extract steps. Useful for reproducibility and debugging.
 
-This is the recommended mode.
-
-User requests are processed by the **Orchestrator**, which coordinates:
-
-* Web Searcher Agent
-* Database Manager Agent
-
-It combines:
-
-* historical supplier data from PostgreSQL
-* newly discovered suppliers from the web
-
-This is the full system experience.
-
----
-
-### Web Search Only - Agentic Mode
-
-This mode runs only the **agentic Web Searcher** without full orchestration.
-
-The agent autonomously:
-
-* decides search strategy
-* processes results
-* extracts supplier information
-
-Useful for focused supplier discovery tasks.
-
----
-
-### Web Search Only - Deterministic Pipeline
-
-This mode executes a predefined search pipeline without agent reasoning.
-
-Useful for:
-
-* reproducibility
-* debugging
-* controlled execution
-
----
-
-## Option 2 - LangGraph Development Interface
+### Option 2 - LangGraph Development Interface
 
 For development and debugging, the system can be run using **LangGraph Dev**:
 
@@ -311,75 +209,55 @@ This mode is primarily used for development, testing, and system analysis.
 
 # Quick Start
 
-1. Open the project in VS Code
-2. Click **"Reopen in Container"**
-   or use:
+1. Clone the repository:
 
-   ```bash
-   Ctrl + Shift + P -> Dev Containers: Reopen in Container
-   ```
-3. Wait for container build
-4. Run:
+```bash
+git clone <url>
+cd supplier-search-agent
+```
+
+2. Create a Python virtual environment and install dependencies:
+
+```bash
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# Linux / macOS
+source .venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+3. Start the required Docker services (SearXNG, PostgreSQL, pgAdmin):
+
+```bash
+docker compose up -d
+```
+
+4. Pull the LLM model and start Ollama:
+
+```bash
+ollama pull qwen3.6:35b
+ollama serve
+```
+
+5. Run the application:
 
 ```bash
 python src/main.py
 ```
 
----
+### Environment Configuration
 
-# Ollama Model Setup (First Run Only)
+Create a `.env` file in the project root with the following variables:
 
-This project uses a cloud-hosted model:
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `LANGSMITH_TRACING` | Yes | Set to `true` or `false` to enable/disable LangSmith tracing |
+| `LANGSMITH_API_KEY` | Yes* | Your LangSmith API key |
+| `LANGCHAIN_PROJECT` | Yes | Project name, set to `supplier-search-agent` |
+| `LANGCHAIN_ENDPOINT` | Yes* | LangSmith endpoint URL. See [LangChain documentation](https://docs.langchain.com/oss/python/langchain/studio) |
+| `OLLAMA_BASE_URL` | Yes | Ollama server URL (e.g. `http://localhost:11434`) |
+| `HF_TOKEN` | No | HuggingFace token (optional, for gated models) |
 
-```text
-gemma4:31b-cloud
-```
-
-### Setup
-
-Open a shell inside the Ollama container:
-
-```bash
-docker exec -it ssa-ollama sh
-```
-
-Pull the model:
-
-```bash
-ollama pull gemma4:31b-cloud
-```
-
-Run it to trigger authentication:
-
-```bash
-ollama run gemma4:31b-cloud
-```
-
-**Open the browser link and complete authentication.**
-
----
-
-# Developer Notes (Internal)
-
-## Connect PostgreSQL from pgAdmin
-
-Register a new server:
-
-```text
-Host: postgres
-Port: 5432
-Database: suppliersearchagentdb
-Username: admin
-Password: admin
-```
-
----
-
-## Reset Database
-
-To completely reset the database:
-
-```bash
-docker compose down
-docker volume rm supplier-search-agent_postgres_data
-```
+*\*Required only if `LANGSMITH_TRACING=true`.*

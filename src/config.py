@@ -14,8 +14,8 @@ DATABASE_URL = "postgresql+psycopg2://admin:admin@localhost:5432/suppliersearcha
 MODEL = SentenceTransformer("all-MiniLM-L6-v2")
 
 # SEARCH LIMITS
-SEARXNG_RESULTS_LIMIT = 5
-PAGINEGIALLE_RESULTS_LIMIT = 2
+SEARXNG_RESULTS_LIMIT = 15
+PAGINEGIALLE_RESULTS_LIMIT = 10
 
 # OLLAMA CONFIG
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL")
