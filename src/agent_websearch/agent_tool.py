@@ -43,6 +43,16 @@ Process the response as follows:
     "FALSE - This is a generic aggregator, directory, or social media. Ignore this URL and move to the next one."
     → Discard this URL permanently. Do NOT process it further.
 
+IMPORTANT VALIDATION RULE
+
+The output of `is_valid_company` is a recommendation, not an absolute decision.
+
+* If the tool returns a response starting with `FALSE`, you MUST follow the instruction provided by the tool and treat the URL as invalid (or process it through the PagineGialle workflow when instructed).
+* If the tool returns a response starting with `TRUE`, the URL is only considered a potential company website. You MUST still apply your own judgment before deciding whether to proceed.
+* When a URL appears to be a directory, aggregator, marketplace, listing portal, search results page, social media profile, or other non-company website, you MAY discard it even if the tool returned `TRUE`.
+* However, be conservative when discarding URLs. If there is any reasonable doubt and the URL could belong to a real supplier, company, manufacturer, distributor, or business website, you SHOULD keep it and continue with the extraction workflow.
+* In other words: only discard a `TRUE` result when you are highly confident that the website is not an actual company website. When uncertain, proceed with extraction.
+
 You MUST call `is_valid_company` on every single candidate URL before moving to Step 3.
 
 STEP 3 — PAGINEGIALLE EXTRACTION
