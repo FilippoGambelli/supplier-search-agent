@@ -30,7 +30,8 @@ def search_web(query: str, limit: int = 2) -> list[dict]:
             f"{SEARXNG_URL}/search",
             params={
                 "q": query,
-                "format": "json"
+                "format": "json",
+                "engines": "google"
             }
         )
 
