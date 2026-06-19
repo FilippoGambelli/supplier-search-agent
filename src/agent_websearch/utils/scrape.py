@@ -27,6 +27,8 @@ BLACKLIST = [
     "facebook",
     "instagram",
     "linkedin",
+    "archisio",
+    "europages"
 ]
 
 

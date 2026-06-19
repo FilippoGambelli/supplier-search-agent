@@ -4,7 +4,7 @@ from agent_websearch.utils.search import search_web
 from agent_websearch.utils.scrape import scrape_company_website, is_valid_company_result
 from agent_websearch.utils.paginegialle import extract_paginegialle_websites
 from agent_websearch.utils.extract import extract_data
-from agent_websearch.exceptions import WebSearchError, InsufficientDataError
+from agent_websearch.exceptions import WebSearchError, InsufficientDataError, NotACompanyError
 from logger import logger
 from config import PAGINEGIALLE_RESULTS_LIMIT, SEARXNG_RESULTS_LIMIT
 
@@ -115,6 +115,9 @@ def research_and_extract_company(url: str, title: str = "") -> str:
     except InsufficientDataError as e:
         logger.warning(f"[TOOL ERROR] research_and_extract_company insufficient data for {url}: {e}")
         result = f"INSUFFICIENT_DATA: {e}"
+    except NotACompanyError as e:
+        logger.warning(f"[TOOL ERROR] research_and_extract_company - not a valid company {url}")
+        result = f"NOT A VALID COMPANY: {e}"
     except WebSearchError as e:
         logger.error(f"[TOOL ERROR] research_and_extract_company: {e}")
         result = f"Error: {e}"

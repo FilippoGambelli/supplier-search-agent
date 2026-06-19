@@ -3,7 +3,7 @@ from typing import Dict
 from logger import logger
 from config import *
 from stats import get_stats
-from agent_websearch.exceptions import ExtractionError, InsufficientDataError
+from agent_websearch.exceptions import ExtractionError, InsufficientDataError, NotACompanyError
 
 
 def build_company_prompt(company: Dict) -> str:
@@ -68,6 +68,31 @@ RULES:
 - Use [] for missing arrays
 - Extract ALL emails found in text
 - Extract ALL phone numbers found in text
+
+COMPANY VALIDATION RULE (CRITICAL):
+
+Before extracting any information, determine whether the provided content represents a single identifiable company.
+
+If the content appears to belong to:
+
+* a business directory
+* an aggregator website
+* a marketplace
+* a listing portal
+* a classified ads website
+* a search results page
+* a company catalog containing multiple businesses
+* a franchise locator
+* a social network profile collection
+* any page describing multiple unrelated companies
+
+then DO NOT extract any data.
+
+In these cases, return an empty JSON object as {{' '}}.
+
+Only perform extraction when the content clearly refers to one specific company and its own business activities, contact information, locations, products, or services.
+
+When uncertain, prefer extraction rather than returning an empty object. Return empty json only when there is strong evidence that the content is not about a single company.
 
 CATEGORY RULES (IMPORTANT):
 - Extract categories representing what the company DOES, SELLS, INSTALLS,
@@ -192,6 +217,9 @@ def extract_data(company: Dict) -> Dict:
 
         result = json.loads(raw_output)
 
+        if result == {}:
+            raise NotACompanyError(f"Content does not represent a single company: {company.get('url', 'unknown')}")
+
         emails = result.get("email", [])
         phone = result.get("phone", [])
 
@@ -209,6 +237,8 @@ def extract_data(company: Dict) -> Dict:
     except json.JSONDecodeError as e:
         raise ExtractionError(f"Invalid JSON from LLM: {e}")
     except InsufficientDataError:
+        raise
+    except NotACompanyError:
         raise
     except Exception as e:
         raise ExtractionError(f"LLM extraction failed: {e}")

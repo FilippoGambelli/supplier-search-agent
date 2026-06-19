@@ -6,7 +6,7 @@ from agent_websearch.utils.search import search_web
 from agent_websearch.utils.scrape import scrape_company_website, is_valid_company_result
 from agent_websearch.utils.paginegialle import extract_paginegialle_websites
 from agent_websearch.utils.extract import extract_data
-from agent_websearch.exceptions import WebSearchError, InsufficientDataError
+from agent_websearch.exceptions import WebSearchError, InsufficientDataError, NotACompanyError
 from logger import logger
 from config import SEARXNG_RESULTS_LIMIT
 from langsmith import traceable
@@ -255,6 +255,13 @@ def llm_node(state: InternalState) -> Dict:
         was_extracted = False
         if verbose:
             print(f"[LLM] ({state['current_index']+1}) {title} - skipped (no email/phone)")
+    except NotACompanyError as e:
+        logger.info(f"[LLM NODE] {e}")
+        new_results = extracted_results
+        was_extracted = False
+
+        if verbose:
+            print(f"[LLM] ({state['current_index']+1}) {title} - skipped (not a company)")
     except WebSearchError as e:
         logger.error(f"[LLM NODE] {url} -> {e}")
         new_results = extracted_results

@@ -32,3 +32,6 @@ class ExtractionError(WebSearchError):
 
 class InsufficientDataError(WebSearchError):
     """Extracted data lacks required fields (email/phone)."""
+
+class NotACompanyError(WebSearchError):
+    """Not a company"""
