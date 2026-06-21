@@ -25,7 +25,12 @@ QUERIES = [
     "fornitori vernici Siena",
     "fornitori pavimenti Grosseto",
     "fornitori sanitari Massa",
-    "fornitori rubinetteria Carrara",
+    "fornitori ferramenta Pisa",
+    "fornitori ponteggi Lucca",
+    "fornitori coperture tetti Siena",
+    "fornitori laterizi Prato",
+    "fornitori ferro per edilizia Arezzo",
+    "fornitori serramenti Massa",
 ]
 
 SYSTEMS = {
