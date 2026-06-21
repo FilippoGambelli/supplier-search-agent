@@ -73,7 +73,7 @@ def run_search_agent(query: str) -> str:
         logger.info(f"[ORCHESTRATOR] Delegating to agent_tool with query: {query}")
 
         if VERBOSE:
-            print(f"\n[TOOLS] run_search_agent\n  Arguments: query=\"{query}\"")
+            print(f"\n[TOOL run_search_agent]\n  Arguments: query=\"{query}\"")
 
         result, error = run_agent(query, verbose=VERBOSE)
         logger.info(f"[ORCHESTRATOR] Result from agent_tool: {result}, Error: {error}")
@@ -201,7 +201,7 @@ def run_dbmanager_agent(query: str) -> str:
         logger.info(f"[ORCHESTRATOR] Delegating to agent_dbmanager with query: {query}")
 
         if VERBOSE:
-            print(f"\n[TOOLS] run_dbmanager_agent\n  Arguments: query=\"{query}\"")
+            print(f"\n[TOOL run_dbmanager_agent]\n  Arguments: query=\"{query}\"")
 
         result, error = run_dbmanager(query, verbose=VERBOSE)
 

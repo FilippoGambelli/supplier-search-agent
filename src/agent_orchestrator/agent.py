@@ -189,7 +189,7 @@ def load_artifact(artifact_id: str) -> str:
         data = artifact_store.load(artifact_id)
         result = json.dumps(data)
         if _sub_agents_module.VERBOSE:
-            print(f"\n[TOOLS] load_artifact\n  Arguments: artifact_id=\"{artifact_id}\"\n  Result: {result[:500]}{'... (truncated)' if len(result) > 500 else ''}")
+            print(f"\n[TOOL load_artifact]\n  Arguments: artifact_id=\"{artifact_id}\"\n  Result: {result[:500]}{'... (truncated)' if len(result) > 500 else ''}")
         return result
     except KeyError as e:
         raise ArtifactNotFoundError(str(e)) from e

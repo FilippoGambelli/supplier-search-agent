@@ -76,7 +76,7 @@ def save_suppliers(artifact_id: str) -> str:
         result = f"ERROR: {str(e)}"
 
     if VERBOSE:
-        print(f"\n[TOOLS] save_suppliers\n  Arguments: artifact_id=\"{artifact_id}\"\n  Result: {result}")
+        print(f"\n[TOOL save_suppliers]\n  Arguments: artifact_id=\"{artifact_id}\"\n  Result: {result}")
     return result
 
 
@@ -162,5 +162,5 @@ def semantic_search_suppliers(country: str = None, region: str = None, province:
 
     if VERBOSE:
         args_str = json.dumps({k: v for k, v in {"country": country, "region": region, "province": province, "city": city, "semantic_query": semantic_query}.items() if v is not None}, ensure_ascii=False)
-        print(f"\n[TOOLS] semantic_search_suppliers\n  Arguments: {args_str}\n  Result: {result}")
+        print(f"\n[TOOL semantic_search_suppliers]\n  Arguments: {args_str}\n  Result: {result}")
     return result

@@ -34,7 +34,7 @@ def search_suppliers(query: str) -> str:
         result = f"Unexpected error: {e}"
 
     if VERBOSE:
-        print(f"\n[TOOLS] search_suppliers - Query=\"{query}\"\n{result}")
+        print(f"\n[TOOL search_suppliers] - Query=\"{query}\"\n{result}")
     return result
 
 
@@ -61,7 +61,7 @@ def is_valid_company(title: str, url: str) -> str:
         result = f"Error: Unable to validate company: {e}"
 
     if VERBOSE:
-        print(f"\n[TOOLS] is_valid_company - URL=\"{url}\"\n{result}")
+        print(f"\n[TOOL is_valid_company] - URL=\"{url}\"\n{result}")
     return result
 
 
@@ -87,7 +87,7 @@ def extract_from_paginegialle(pg_url: str) -> str:
         result = f"Unexpected error: {e}"
 
     if VERBOSE:
-        print(f"\n[TOOLS] extract_from_paginegialle - PG_URL=\"{pg_url}\"\n{result}")
+        print(f"\n[TOOL extract_from_paginegialle] - PG_URL=\"{pg_url}\"\n{result}")
     return result
 
 
@@ -126,5 +126,5 @@ def research_and_extract_company(url: str, title: str = "") -> str:
         result = f"Unexpected error: {e}"
 
     if VERBOSE:
-        print(f"\n[TOOLS] research_and_extract_company - URL=\"{url}\"\n{result}")
+        print(f"\n[TOOL research_and_extract_company] - URL=\"{url}\"\n{result}")
     return result
